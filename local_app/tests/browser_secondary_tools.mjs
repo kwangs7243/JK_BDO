@@ -127,9 +127,9 @@ try {
   await send("Runtime.enable");
   await waitFor(async () => evaluate("document.querySelector('#app-content')?.getAttribute('aria-busy') === 'false' && document.querySelectorAll('.inventory-row').length === 70"), "app workspace ready");
 
-  const requiredIds = ["open-schedule", "open-tuning", "brief-open-tuning", "open-map-tools", "open-map-speed", "open-map-balance", "brief-map-speed", "brief-map-balance", "open-engine-diagnostics", "schedule-dialog", "tuning-dialog", "map-tools-dialog", "engine-diagnostics-dialog"];
+  const requiredIds = ["open-schedule", "open-tuning", "brief-open-tuning", "open-map-tools", "open-map-speed", "open-map-balance", "brief-map-speed", "brief-map-balance", "open-engine-diagnostics", "briefing-panel", "tuning-dialog", "map-tools-dialog", "engine-diagnostics-dialog"];
   assert.deepEqual(await evaluate(`(${JSON.stringify(requiredIds)}).map(id=>!!document.getElementById(id))`), requiredIds.map(() => true), "all secondary tool and opener IDs remain");
-  assert.equal(await evaluate("document.querySelectorAll('#schedule-dialog .dialog-titlebar [data-close-dialog]').length"), 1);
+  assert.equal(await evaluate("document.querySelectorAll('#briefing-panel [data-close-dialog]').length"), 0);
   assert.equal(await evaluate("document.querySelectorAll('#tuning-dialog .dialog-titlebar [data-close-dialog]').length"), 1);
   assert.equal(await evaluate("document.querySelectorAll('#map-tools-dialog .dialog-titlebar [data-close-dialog]').length"), 1);
   assert.equal(await evaluate("document.querySelectorAll('#engine-diagnostics-dialog .dialog-titlebar [data-close-dialog]').length"), 1);
@@ -164,7 +164,8 @@ try {
     await assertViewport(width, height, [{ id: "map-tools-dialog" }]);
     await close("map-tools-dialog");
 
-    await open("schedule-dialog", "#open-schedule");
+    await click("#open-schedule");
+    await waitFor(async()=>evaluate("!document.querySelector('#briefing-panel').hidden"),"briefing workspace");
     const schedule = await evaluate("(()=>({heading:document.querySelector('#briefing-title').textContent,primary:document.querySelector('#generate-schedule').textContent,modeRole:document.querySelector('.brief-mode-tabs').getAttribute('role'),modes:[...document.querySelectorAll('[data-brief-mode]')].map(x=>[x.dataset.briefMode,x.getAttribute('role'),x.getAttribute('aria-selected')]),slotLabel:document.querySelector('.briefing-saved-schedule .tool-dialog-group-label')?.textContent,aux:document.querySelector('.briefing-secondary-tools .tool-dialog-group-label')?.textContent,status:document.querySelector('#schedule-status').getAttribute('role'),cols:getComputedStyle(document.querySelector('#schedule-columns')).gridTemplateColumns,freeRoot:!!document.querySelector('#free-route-root .mv-free-route'),diagnostics:document.querySelector('.schedule-diagnostics').open}))()");
     assert.equal(schedule.primary, "스케줄 생성 / 다시 계산");
     assert.equal(schedule.modeRole, "tablist");
@@ -175,7 +176,7 @@ try {
     assert.equal(schedule.status, "status");
     assert.equal(schedule.diagnostics, false, "raw schedule diagnostics starts collapsed");
     if (width <= 900) assert.equal(schedule.cols.trim().split(/\s+/).length, 1, `schedule columns stack at ${width}`);
-    await assertViewport(width, height, [{ id: "schedule-dialog" }]);
+    await assertViewport(width, height, [{ id: "briefing-panel" }]);
 
     await click("#open-engine-diagnostics");
     await waitFor(async () => evaluate("document.querySelector('#engine-diagnostics-dialog').open"), "route diagnostics");
@@ -185,9 +186,9 @@ try {
     assert.equal(diagnostics.rawOpen, false);
     assert.equal(diagnostics.copy, true);
     assert.equal(diagnostics.status, "status");
-    await assertViewport(width, height, [{ id: "schedule-dialog" }, { id: "engine-diagnostics-dialog" }]);
+    await assertViewport(width, height, [{ id: "briefing-panel" }, { id: "engine-diagnostics-dialog" }]);
     await close("engine-diagnostics-dialog");
-    await close("schedule-dialog");
+    await click('[data-workspace-view="session"]');
 
     const overflow = await evaluate("({document:document.documentElement.scrollWidth,body:document.body.scrollWidth,viewport:innerWidth})");
     assert.ok(overflow.document <= width + 1 && overflow.body <= width + 1, `page overflows horizontally at ${width}: ${JSON.stringify(overflow)}`);

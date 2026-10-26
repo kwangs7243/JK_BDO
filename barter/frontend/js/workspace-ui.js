@@ -56,7 +56,8 @@ export function initWorkspaceUI() {
     document.getElementById(id).append(status);
   }
   const workspace = document.getElementById('app-content');
-  const views = {session: document.getElementById('trade-session-panel'), inventory: document.getElementById('mainPanel')};
+  const views = {session: document.getElementById('trade-session-panel'), briefing: document.getElementById('briefing-panel'), inventory: document.getElementById('mainPanel')};
+  const titles = {session:'현재 회차', briefing:'출항 브리핑', inventory:'창고 재고'};
   const showView = name => {
     if (!views[name]) return;
     workspace.dataset.view = name;
@@ -65,8 +66,10 @@ export function initWorkspaceUI() {
       if (button.dataset.workspaceView === name) button.setAttribute('aria-current', 'page');
       else button.removeAttribute('aria-current');
     }
-    document.getElementById('workspace-title').textContent = name === 'session' ? '현재 회차' : '창고 재고';
+    document.getElementById('workspace-title').textContent = titles[name];
   };
+  window.__bdoOpenBriefing = () => showView('briefing');
+  document.getElementById('open-schedule').addEventListener('click', window.__bdoOpenBriefing);
   for (const button of document.querySelectorAll('[data-workspace-view]')) button.addEventListener('click', () => showView(button.dataset.workspaceView));
   for (const button of document.querySelectorAll('[data-open-tool]')) button.addEventListener('click', () => {
     const target = document.getElementById(button.dataset.openTool);

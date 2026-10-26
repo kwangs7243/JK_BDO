@@ -220,7 +220,7 @@ try {
   checks.mapOnlyJson = { status: "PASS", invalidImportPreservedPriorMap: true, replacementCodeIncluded: false, importRoundTrip: true, importStrippedReplacementCode: true, customSeconds: 240, snapshotKind: JSON.parse(exported).kind };
 
   await click(".mv-header button"); await click("#map-tools-dialog [data-close-dialog]"); await click("#open-schedule");
-  await waitFor(async()=>await evaluate("document.querySelector('#schedule-dialog').open&&!!document.querySelector('#free-route-root .mv-free-route')"),"schedule free-route host");
+  await waitFor(async()=>await evaluate("!document.querySelector('#briefing-panel').hidden&&!!document.querySelector('#free-route-root .mv-free-route')"),"schedule free-route host");
   await click(".briefing-free-route > summary");
   await setValue("#free-route-root input:nth-of-type(1)",pair[0]);await setValue("#free-route-root input:nth-of-type(2)",pair[1]);
   const freeResult=await evaluate("document.querySelector('#free-route-root .mv-free-result').textContent");

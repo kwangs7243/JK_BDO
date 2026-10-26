@@ -55,27 +55,12 @@ try {
   await evaluate(`document.querySelector('#trade-json-input').value=${JSON.stringify(JSON.stringify([trade]))};document.querySelector('#apply-new-session').click()`);
   await idle();await click('#open-schedule');await click('#generate-schedule');
   await waitFor(async()=>await evaluate("document.querySelectorAll('#col-speed .sortie-card').length>0&&document.querySelectorAll('#col-balance .sortie-card').length>0"),'schedule generated');
-  const rectangle=()=>evaluate("(()=>{const r=document.querySelector('#schedule-dialog').getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}})()");
-  const drag=async(x,y,dx,dy)=>{
-    await send('Input.dispatchMouseEvent',{type:'mouseMoved',x,y});
-    await send('Input.dispatchMouseEvent',{type:'mousePressed',x,y,button:'left',clickCount:1});
-    for(let i=1;i<=5;i++){await send('Input.dispatchMouseEvent',{type:'mouseMoved',x:x+dx*i/5,y:y+dy*i/5,button:'left',buttons:1});await delay(20);}
-    await send('Input.dispatchMouseEvent',{type:'mouseReleased',x:x+dx,y:y+dy,button:'left',clickCount:1});await delay(100);
-  };
-  await evaluate("document.querySelector('#schedule-dialog').scrollTop=0");
-  const before=await rectangle();
-  const title=await evaluate("(()=>{const r=document.querySelector('#schedule-dialog .dialog-titlebar').getBoundingClientRect();return {x:r.x+90,y:r.y+18}})()");
-  await drag(title.x,title.y,24,18);
-  const moved=await rectangle();
-  if(moved.x-before.x<12||moved.y-before.y<8)throw Error('briefing title drag stopped working: '+JSON.stringify({before,moved,title,hit:await evaluate(`document.elementFromPoint(${title.x},${title.y})?.outerHTML`)}));
-  await drag(moved.x+moved.width-3,moved.y+moved.height-3,38,32);
-  const resized=await rectangle();
-  if(resized.width-moved.width<15||resized.height-moved.height<12)throw Error('briefing native resize stopped working: '+JSON.stringify({moved,resized}));
+  if(!await evaluate("!document.querySelector('#briefing-panel').hidden&&!document.querySelector('dialog[open]')"))throw Error('briefing workspace did not open');
   for(const mode of ['speed','balance','both']) {
     await click(`[data-brief-mode=${mode}]`);
     if(!await evaluate(`import('/assets/js/state.js').then(({state})=>state.session.selection.briefMode==='${mode}')`))throw Error('briefing mode did not select');
   }
-  await click('#schedule-dialog [data-close-dialog]');await click('#open-tuning');
+  await click('[data-workspace-view=session]');await click('#open-tuning');
   const tuningBefore=Number(await evaluate("document.querySelector('#temp-tune-useClustering').value"));
   await evaluate(`const input=document.querySelector('#temp-tune-useClustering');input.value='${tuningBefore+1}';input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));document.querySelector('#tuning-root [data-tuning-temporary] button').click()`);
   await idle();
@@ -105,7 +90,7 @@ try {
   await click('#schedule-slot-controls button:nth-of-type(3)');
   await waitFor(async()=>!(await boot()).scheduleSlots['1'],'slot 1 delete');
   if(!(await boot()).scheduleSlots['2'])throw Error('slot deletion changed other slot');
-  await click('#schedule-dialog [data-close-dialog]');
+  await click('[data-workspace-view=session]');
   const resetBefore=await boot();await click('#reset-session');
   await waitFor(async()=>(await boot()).workingSession===null,'session reset');
   const resetAfter=await boot();
@@ -116,7 +101,7 @@ try {
   for(const mode of ['balance','speed'])await evaluate(`const s=document.querySelector('.mv-window:modal .mv-toolbar select.mv-select:nth-of-type(2)');s.value='${mode}';s.dispatchEvent(new Event('change',{bubbles:true}))`);
   await evaluate("const s=document.querySelector('.mv-window:modal .mv-toolbar select.mv-select:nth-of-type(3)');s.value='0';s.dispatchEvent(new Event('change',{bubbles:true}));const b=[...document.querySelectorAll('.mv-window:modal .mv-toolbar button')].find(b=>b.textContent.includes('선택 출항 보기'));if(!b)throw Error('selected sortie button missing');b.click()");
   if(!await evaluate("document.querySelector('.mv-mode-label').textContent.includes('저장 슬롯 2')&&document.querySelectorAll('.mv-route').length>=2&&document.querySelector('#mv-overview-panel').innerText.includes('저장 슬롯 2')"))throw Error('saved-slot map context/route missing');
-  console.log('browser_session_controls: PASS · drag/resize, temporary tuning, independent slots, timer reset, process restart, load/delete, reset, saved-slot map');
+  console.log('browser_session_controls: PASS · briefing workspace, temporary tuning, independent slots, timer reset, process restart, load/delete, reset, saved-slot map');
 } finally {
   try { } catch {} try { socket?.close(); } catch {} try { chrome?.kill(); } catch {} try { server?.kill(); } catch {}
   await delay(300); if (profile.startsWith(tmpdir())) await rm(profile, { recursive: true, force: true, maxRetries: 8, retryDelay: 250 }).catch(error=>console.warn('Temporary Chrome profile cleanup: '+error.message));

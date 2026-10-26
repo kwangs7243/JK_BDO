@@ -17,12 +17,10 @@ function applyAppZoomMetrics() {
   document.documentElement.style.setProperty('--viewport-height', `${window.innerHeight / scale}px`);
   document.documentElement.style.setProperty('--viewport-width', `${window.innerWidth / scale}px`);
   const width = (fraction) => Math.min(window.innerWidth - 24, window.innerWidth * fraction) / scale;
-  const height = (fraction) => Math.min(window.innerHeight - 24, window.innerHeight * fraction) / scale;
   for (const dialog of dialogs) {
     dialog.style.maxWidth = `${(window.innerWidth - 24) / scale}px`;
     dialog.style.maxHeight = `${(window.innerHeight - 24) / scale}px`;
-    if (dialog.classList.contains("briefing-dialog")) { dialog.style.width = `${width(.94)}px`; dialog.style.height = `${height(.94)}px`; }
-    else if (dialog.classList.contains("tuning-dialog")) { dialog.style.width = `${Math.min(1120, width(.94))}px`; dialog.style.height = "fit-content"; }
+    if (dialog.classList.contains("tuning-dialog")) { dialog.style.width = `${Math.min(1120, width(.94))}px`; dialog.style.height = "fit-content"; }
     else if (dialog.classList.contains("map-tools-dialog")) { dialog.style.width = `${Math.min(1100, width(.92))}px`; dialog.style.height = "fit-content"; }
     else if (dialog.classList.contains("settings-dialog")) { dialog.style.width = `${Math.min(760, width(.92))}px`; }
     else dialog.style.width = `${Math.min(620, (window.innerWidth - 24) / scale)}px`;
@@ -43,7 +41,6 @@ for (const button of document.querySelectorAll("[data-close-dialog]")) {
 for (const [buttonId, dialogId] of [
   ["open-json-import", "json-import-dialog"],
   ["open-settings", "settings-dialog"],
-  ["open-schedule", "schedule-dialog"],
   ["open-tuning", "tuning-dialog"],
   ["open-map-tools", "map-tools-dialog"],
   ["open-engine-diagnostics", "engine-diagnostics-dialog"],

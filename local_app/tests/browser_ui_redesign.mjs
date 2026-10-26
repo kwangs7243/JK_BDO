@@ -129,7 +129,7 @@ try {
    await page.locator('[data-brief-mode="both"]').click(); await shot('schedule-both-1920');
    await page.locator('[data-brief-mode="speed"]').click();
  }
- await page.locator('#schedule-dialog [data-close-dialog]').click();
+ await page.locator('[data-workspace-view="session"]').click();
  await page.locator('[data-workspace-view="inventory"]').click();
  await shot('inventory-1920');
  await page.locator('#open-warehouse-scan').click(); await shot('warehouse-1920');
@@ -242,7 +242,7 @@ try {
      assert.ok(close.y>=0&&close.y+close.height<=size.height,'warehouse close inside viewport');
      await shot(`warehouse-${size.width}`); await page.locator('#warehouse-scan-dialog [data-action="close"]').click();
      await page.locator('[data-workspace-view="session"]').click(); await page.locator('#open-schedule').click();
-     await shot(`schedule-${size.width}`); await page.locator('#schedule-dialog [data-close-dialog]').click();
+     await shot(`schedule-${size.width}`); await page.locator('[data-workspace-view="session"]').click();
    }
    await page.setViewportSize({width:1920,height:1080});
    const denseTrades=JSON.parse(await readFile(resolve(root,'local_app/tests/fixtures/USER_CAPTURE_20260923_74_ROWS.json'),'utf8'));
@@ -258,7 +258,7 @@ try {
      await page.locator('#open-schedule').click(); await page.locator('#generate-schedule').click();
      await page.waitForFunction(()=>document.querySelectorAll('.route-trade').length>2);
      await shot('dense-schedule-1920');
-     await page.locator('#schedule-dialog [data-close-dialog]').click();
+     await page.locator('[data-workspace-view="session"]').click();
    }
    assert.deepEqual(errors,[]);
  await writeFile(join(out,'current-audit.json'),JSON.stringify({status:'PASS',errors,viewports:[[1920,1080],[1440,900],[2560,1440]].map(([width,height])=>({width,height,zoom:100})),database:temp,ocr:'mocked fixture for visual review',actualUserDataWrites:0,temporaryDatabase:true},null,2));

@@ -283,7 +283,6 @@ export function initScheduleUI(setStatus) {
   document.getElementById("close-waypoint").addEventListener("click", window.closeWaypointModal);
   document.getElementById("retry-completion-save").addEventListener("click", () => window.__bdoScheduleRuntime.retryCompletion());
   renderScheduleSlots(setStatus);
-  document.getElementById("open-schedule").addEventListener("click", syncScheduleState);
   document.querySelectorAll("[data-brief-mode]").forEach((button) => button.addEventListener("click", () => {
     if (window.__bdoScheduleRuntime.pending) { setScheduleStatus("완료 저장을 먼저 확인하거나 재시도하세요.", "error"); syncScheduleState(); return; }
     const mode = button.dataset.briefMode; state.session.selection ||= {}; state.session.selection.briefMode = mode;
