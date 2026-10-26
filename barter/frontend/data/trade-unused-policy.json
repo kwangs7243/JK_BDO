@@ -1,5 +1,5 @@
 {
   "version": 2,
   "autoExcludeUnregisteredOutputs": true,
-  "excludedOutputs": ["화려한 암염 주괴", "화려한 진주 결정"]
+  "excludedOutputs": ["화려한 암염 주괴", "화려한 진주 결정", "순수한 진주 결정"]
 }

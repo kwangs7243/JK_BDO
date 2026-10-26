@@ -13,6 +13,7 @@ const makeRow = (toItem, island = "나르보 섬") => ({captureId:"capture", ord
   island, fromItem:catalog.masterData[5][0], toItem, reqAmount:1, count:null, yield:null,
 }).map(([key, value]) => [key, field(value)]))});
 const prepare = (rows) => prepareLiveTradeRows({rows}, catalog, {policy});
+assert.ok(policy.excludedOutputs.includes("순수한 진주 결정"));
 
 for (const name of policy.excludedOutputs) {
   const row = makeRow(name), baseline=structuredClone(row);
