@@ -77,6 +77,42 @@ def _default_settings(order: dict[str, list[str]]) -> dict[str, Any]:
     }
 
 
+def _trade_sample_collection(capture, details):
+    import hashlib
+    rows = details.get("snapshot", {}).get("rows", [])
+    missing = []
+    for row in rows:
+        for name, field in row["fields"].items():
+            if field.get("valueSource") in {"USER_REVIEW", "USER_EDIT"}:
+                reason = "USER_FEEDBACK"
+            elif field.get("reviewRequired") or field.get("corrected") is None:
+                reason = "REVIEW_REQUIRED"
+            elif field.get("valueSource") not in {"VERIFIED_TEMPLATE", "TRADE_RULE"}:
+                reason = "OCR_FALLBACK"
+            else:
+                continue
+            missing.append({"ordinal": row["ordinal"], "field": name, "reason": reason})
+    if rows and not missing and not details["corrections"]:
+        return None
+    image_hash = hashlib.sha256(capture["imageBytes"]).hexdigest()
+    # Ignore upload IDs, review phase and presentation-only fields when deduplicating evidence.
+    evidence_keys = {"rawOCR", "corrected", "reviewRequired", "confidence", "valueSource", "box",
+                     "variants", "recognizedStage", "templateEvidence", "error", "reviewReason"}
+    evidence_rows = [{"ordinal": row["ordinal"], "rowBox": row["rowBox"],
+                      "excluded": row.get("excluded", False),
+                      "fields": {name: {key: value for key, value in field.items() if key in evidence_keys}
+                                 for name, field in row["fields"].items()}} for row in rows]
+    evidence = {"imageSha256": image_hash, "engineId": details["engineId"],
+                "modelVersion": details["modelVersion"], "workerVersion": details["workerVersion"],
+                "rows": evidence_rows,
+                "corrections": [{key: value for key, value in correction.items() if key != "captureId"}
+                                for correction in details["corrections"]]}
+    fingerprint = hashlib.sha256(json.dumps(evidence, ensure_ascii=False, sort_keys=True,
+                                           separators=(",", ":"), allow_nan=False).encode("utf-8")).hexdigest()
+    return {"policyVersion": 1, "imageSha256": image_hash, "fingerprint": fingerprint,
+            "missingFields": missing, "reason": "MISSING_OR_REVIEWED_FIELDS" if rows else "NO_ROWS_OR_LEGACY_FEEDBACK"}
+
+
 class Storage:
     def __init__(self, database_path: Path, catalog: dict[str, int], order: dict[str, list[str]]):
         self.database_path = Path(database_path)
@@ -148,6 +184,8 @@ class Storage:
                     image_png BLOB NOT NULL, details_json TEXT NOT NULL,
                     PRIMARY KEY (feedback_id, capture_id)
                 )""")
+                connection.execute("""CREATE UNIQUE INDEX IF NOT EXISTS trade_correction_collection_fingerprint
+                    ON trade_correction(json_extract(details_json, '$.collection.fingerprint'))""")
                 connection.execute(
                     "INSERT OR IGNORE INTO app_meta (id, schema_version, revision, last_mutation_id, last_mutation_hash) VALUES (1, ?, 0, NULL, NULL)",
                     (SCHEMA_VERSION,),
@@ -337,7 +375,7 @@ class Storage:
         return scan_id
 
     def record_trade_corrections(self, feedback, captures):
-        """Keep human corrections independently of the working-state revision."""
+        """Collect missing template evidence and human feedback without changing working state."""
         import hashlib
         encoded = json.dumps(feedback, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
         digest = hashlib.sha256(encoded.encode("utf-8"))
@@ -354,6 +392,7 @@ class Storage:
                         raise MutationConflict("correction feedback ID was reused for different values")
                     connection.rollback()
                     return False
+                created = False
                 for capture in captures:
                     details = {"metadata": capture["metadata"], "engineId": feedback["engineId"],
                                "modelVersion": feedback["modelVersion"], "workerVersion": feedback["workerVersion"],
@@ -365,12 +404,21 @@ class Storage:
                         details["snapshot"] = {"phase": snapshot["phase"], "batchId": result["batchId"],
                                                "runtime": result.get("runtime"),
                                                "rows": [row for row in result["rows"] if row["captureId"] == capture["captureId"]]}
+                    collection = _trade_sample_collection(capture, details)
+                    if collection is None:
+                        continue
+                    if connection.execute("""SELECT 1 FROM trade_correction
+                            WHERE json_extract(details_json, '$.collection.fingerprint') = ?""",
+                                          (collection["fingerprint"],)).fetchone():
+                        continue
+                    details["collection"] = collection
                     connection.execute("""INSERT INTO trade_correction VALUES
                         (?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now'), ?, ?)""",
                         (feedback["feedbackId"], capture["captureId"], request_hash, capture["imageBytes"],
                          json.dumps(details, ensure_ascii=False, allow_nan=False)))
+                    created = True
                 connection.commit()
-                return True
+                return created
             except Exception:
                 connection.rollback()
                 raise

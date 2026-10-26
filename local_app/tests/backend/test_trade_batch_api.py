@@ -6,12 +6,13 @@ import unittest
 from contextlib import closing
 from pathlib import Path
 from uuid import uuid4
+from unittest.mock import patch
 from PIL import Image
 from werkzeug.datastructures import MultiDict
 from local_app.backend.app import create_app
 from barter.backend.services.trade_batch_runtime import ENGINE_ID, MODEL_BUNDLE_SHA256, WORKER_VERSION
 from .test_recognition_contracts import capture_metadata
-from .test_trade_batch_runtime import ReadyRuntime, fake_worker
+from .test_trade_batch_runtime import ReadyRuntime, fake_worker, live_result
 
 
 class LiveApiTests(unittest.TestCase):
@@ -51,6 +52,136 @@ class LiveApiTests(unittest.TestCase):
         with closing(sqlite3.connect(self.database)) as db:
             rows = db.execute("SELECT * FROM trade_correction").fetchall()
             return rows if include_automatic else [row for row in rows if json.loads(row[5]).get("snapshot", {}).get("phase") != "recognized"]
+
+    def covered_result(self, batch=None):
+        batch = batch or self.batch()
+        result = live_result(batch["batchId"], batch["captures"])
+        result["runtime"] = {"engineId": ENGINE_ID, "modelBundleSha256": MODEL_BUNDLE_SHA256,
+                             "workerVersion": WORKER_VERSION}
+        for row in result["rows"]:
+            for name, field in row["fields"].items():
+                field.update(reviewRequired=False, valueSource="TRADE_RULE" if name == "reqAmount" else "VERIFIED_TEMPLATE")
+                if field["valueSource"] == "VERIFIED_TEMPLATE":
+                    field["templateEvidence"] = {"bankSha256": "fixture-bank", "references": ["fixture-reference"]}
+        return batch, result
+
+    def post_result(self, batch, result, **kwargs):
+        with patch.object(self.app.extensions["trade_batch_runtime"], "recognize_live", return_value=result):
+            return self.post(batch, **kwargs)
+
+    def snapshot_feedback(self, result, phase="reviewed"):
+        return {"version": 2, "feedbackId": str(uuid4()), "captures": [self.capture], "engineId": ENGINE_ID,
+                "modelVersion": MODEL_BUNDLE_SHA256, "workerVersion": WORKER_VERSION, "corrections": [],
+                "snapshot": {"phase": phase, "result": result}}
+
+    def test_fully_covered_capture_does_not_grow_history_or_change_result(self):
+        batch, result = self.covered_result()
+        before = self.client.get("/api/bootstrap").get_json()
+        response = self.post_result(batch, result)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json()["result"], result)
+        self.assertEqual(self.records(include_automatic=True), [])
+        feedback = self.snapshot_feedback(result)
+        self.assertFalse(self.post(feedback, field="feedback").get_json()["created"])
+        self.assertFalse(self.post(feedback, field="feedback").get_json()["created"])
+        self.assertEqual(self.records(include_automatic=True), [])
+        self.assertEqual(self.client.get("/api/bootstrap").get_json(), before)
+
+    def test_only_capture_with_missing_field_is_collected_with_all_source_rows(self):
+        metadata = capture_metadata(width=80, height=50, task="trade")
+        batch = self.batch()
+        batch["captures"].append({"captureId": metadata["captureId"], "metadata": metadata})
+        batch, result = self.covered_result(batch)
+        result["rows"][1]["fields"]["count"].update(valueSource="OCR", rawOCR="2")
+        response = self.post_result(batch, result, copies=2)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json()["result"], result)
+        rows = self.records(include_automatic=True)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][1], metadata["captureId"])
+        self.assertEqual(rows[0][4], self.image)
+        details = json.loads(rows[0][5])
+        self.assertEqual(details["snapshot"]["rows"], [result["rows"][1]])
+        self.assertEqual(details["collection"]["missingFields"], [{"ordinal": 0, "field": "count", "reason": "OCR_FALLBACK"}])
+
+    def test_identical_missing_evidence_is_not_saved_again_after_review_or_restart(self):
+        batch, result = self.covered_result()
+        result["rows"][0]["fields"]["count"].update(valueSource="OCR")
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        original = self.records(include_automatic=True)
+        self.assertEqual(len(original), 1)
+        for field in result["rows"][0]["fields"].values():
+            field["automaticCorrected"] = field["corrected"]
+        for phase in ("reviewed", "applied"):
+            feedback = self.snapshot_feedback(result, phase)
+            self.assertFalse(self.post(feedback, field="feedback").get_json()["created"])
+            self.assertEqual(self.records(include_automatic=True), original)
+        self.app.extensions["bdo_storage"].initialize()
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        self.assertEqual(self.records(include_automatic=True), original)
+
+    def test_same_image_with_new_upload_ids_is_deduplicated(self):
+        batch, result = self.covered_result()
+        result["rows"][0]["fields"]["count"].update(valueSource="OCR")
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        self.metadata["captureId"] = str(uuid4())
+        self.capture["captureId"] = self.metadata["captureId"]
+        batch, result = self.covered_result()
+        result["rows"][0]["fields"]["count"].update(valueSource="OCR")
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        self.assertEqual(len(self.records(include_automatic=True)), 1)
+
+    def test_changed_evidence_and_template_bank_are_not_hidden_as_duplicates(self):
+        batch, result = self.covered_result()
+        result["rows"][0]["fields"]["count"].update(valueSource="OCR")
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        result["rows"][0]["fields"]["count"]["corrected"] = 3
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        result["rows"][0]["fields"]["island"]["templateEvidence"]["bankSha256"] = "new-bank"
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        self.assertEqual(len(self.records(include_automatic=True)), 3)
+
+    def test_human_correction_of_covered_field_is_preserved(self):
+        batch, result = self.covered_result()
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        field = result["rows"][0]["fields"]["island"]
+        field.update(corrected="수정한 섬", valueSource="USER_REVIEW", automaticCorrected="품목")
+        feedback = self.snapshot_feedback(result)
+        self.assertTrue(self.post(feedback, field="feedback").get_json()["created"])
+        self.assertFalse(self.post(feedback, field="feedback").get_json()["created"])
+        details = json.loads(self.records()[0][5])
+        self.assertEqual(details["snapshot"]["rows"], result["rows"])
+        self.assertEqual(details["collection"]["missingFields"][0]["reason"], "USER_FEEDBACK")
+
+    def test_unresolved_and_empty_results_are_retained_for_diagnosis(self):
+        batch, result = self.covered_result()
+        result["rows"][0]["fields"]["count"].update(corrected=None, reviewRequired=True)
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        details = json.loads(self.records(include_automatic=True)[0][5])
+        self.assertEqual(details["collection"]["missingFields"][0]["reason"], "REVIEW_REQUIRED")
+        result["rows"] = []
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        self.assertEqual(len(self.records(include_automatic=True)), 2)
+
+    def test_duplicate_check_uses_index_without_scanning_image_history(self):
+        self.assertEqual(self.client.get("/api/bootstrap").status_code, 200)
+        with closing(sqlite3.connect(self.database)) as db:
+            plan = db.execute("""EXPLAIN QUERY PLAN SELECT 1 FROM trade_correction
+                WHERE json_extract(details_json, '$.collection.fingerprint') = ?""", ("fixture",)).fetchall()
+        self.assertTrue(any("trade_correction_collection_fingerprint" in row[-1] for row in plan), plan)
+
+    def test_existing_history_survives_collection_index_initialization(self):
+        self.assertEqual(self.post(self.batch()).status_code, 200)
+        with closing(sqlite3.connect(self.database)) as db:
+            record = db.execute("SELECT * FROM trade_correction").fetchone()
+            details = json.loads(record[5])
+            details.pop("collection")
+            db.execute("DROP INDEX trade_correction_collection_fingerprint")
+            db.execute("UPDATE trade_correction SET details_json = ?", (json.dumps(details, ensure_ascii=False),))
+            db.commit()
+            legacy = db.execute("SELECT * FROM trade_correction").fetchall()
+        self.app.extensions["bdo_storage"].initialize()
+        self.assertEqual(self.records(include_automatic=True), legacy)
 
     def test_live_recognition_preserves_all_source_rows_without_changing_working_state(self):
         before=self.client.get("/api/bootstrap").get_json()

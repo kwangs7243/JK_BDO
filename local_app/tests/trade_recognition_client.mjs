@@ -28,6 +28,9 @@ await saveTradeCorrections([first,second],{runtime:{engineId:"engine",workerVers
 assert.equal(seen.url,"/api/recognition/trade-corrections");
 assert.equal(seen.options.body.getAll("image").length,1);
 assert.equal(JSON.parse(seen.options.body.get("feedback")).captures[0].captureId,second.metadata.captureId);
+globalThis.fetch=async()=>Response.json({ok:true,created:false});
+await saveTradeCorrections([second],{runtime:{engineId:"engine",workerVersion:"worker",modelBundleSha256:"model"}},
+  [{captureId:second.metadata.captureId,field:"island",finalValue:"섬"}],crypto.randomUUID());
 
 let finishRecognition, requestBatch, pollCalls = 0;
 let progressReceived;
