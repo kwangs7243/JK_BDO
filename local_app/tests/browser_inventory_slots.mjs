@@ -42,7 +42,7 @@ try {
   await first.getByRole('button',{name:`${name} 재고 1 증가`,exact:true}).click();await idle();
   assert.equal(await first.locator('input[data-value="stock"]').inputValue(),'1');
   await first.locator('input[data-value="target"]').fill('40');await first.locator('input[data-value="target"]').press('Tab');await idle();
-  assert.equal(await first.locator('.stock-balance').textContent(),'39 부족');
+  assert.match(await first.locator('.stock-balance').textContent(),/목표까지\s*39개 부족/);
   await page.locator('#inventory-search').fill('씨앗');assert.equal(await page.locator('.inventory-row:visible').count(),3);
   await page.locator('#inventory-stock-filter').selectOption('short');assert.equal(await page.locator('.inventory-row:visible').count(),1);
   await page.locator('#inventory-search').fill('');await page.locator('#inventory-stock-filter').selectOption('all');

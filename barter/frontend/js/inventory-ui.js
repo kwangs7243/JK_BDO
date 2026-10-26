@@ -64,7 +64,9 @@ export function renderInventory(root, setStatus) {
       const balance = el("span", "stock-balance");
       const known = item.stock !== null && item.target !== null;
       balance.dataset.kind = !known ? "unknown" : item.stock < item.target ? "short" : "ready";
-      balance.textContent = !known ? "미확인" : item.stock < item.target ? `${item.target - item.stock} 부족` : "충족";
+      if (known && item.stock < item.target) {
+        balance.append(el("span", "", "목표까지"), el("strong", "", `${item.target - item.stock}개 부족`));
+      } else balance.textContent = !known ? "수량 미확인" : "목표 충족";
       const footer = el("div", "inventory-slot-footer"); footer.append(targetCell, balance);
       row.append(nameCell, stockCell, footer); slots.append(row);
       for (const [field, input] of [["stock", stockInput], ["target", targetInput]]) {
