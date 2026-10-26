@@ -367,16 +367,16 @@ class LiveListTests(unittest.TestCase):
                 result = read_catalog_name(reader, Image.new("RGB", (30, 20)), ["고대인을 형상화한 초상화"])
             self.assertTrue(result["reviewRequired"])
 
-    def test_agreeing_visible_name_cannot_be_silently_replaced_with_another_word(self):
+    def test_unique_master_correction_does_not_require_review(self):
         raw = "[7단계] 타리프의 주술 항아리"
         reader = Mock(); reader.read.return_value = (raw, .97)
         with patch("barter.tools.trade_live_ocr.read_name", return_value=(raw, .96)):
             result = read_catalog_name(reader, Image.new("RGB", (30, 20)), ["타리프의 마법 항아리"])
         self.assertEqual(result["corrected"], "타리프의 마법 항아리")
-        self.assertTrue(result["reviewRequired"])
-        self.assertEqual(result["masterMatch"], "UNRESOLVED")
-        self.assertEqual(result["catalogNameConflict"]["readName"], "타리프의 주술 항아리")
-        self.assertEqual(result["catalogNameConflict"]["agreeingReadings"], 3)
+        self.assertFalse(result["reviewRequired"])
+        self.assertEqual(result["masterMatch"], "RESOLVED")
+        self.assertEqual(result["valueSource"], "MASTER")
+        self.assertNotIn("catalogNameConflict", result)
         self.assertEqual(result["rawOCR"], raw)
 
     def test_single_character_ocr_correction_and_unique_prefix_remain_automatic(self):

@@ -34,6 +34,23 @@ class TradeTemplateReaderTests(unittest.TestCase):
         self.assertIsNone(templates.lookup(bank, 'item', other, groups))
         self.assertIsNone(templates.text_mask(image.crop((5, 0, 40, 20)), extractor))
 
+    def test_verified_visible_names_resolve_to_master_without_review(self):
+        root = Path(__file__).resolve().parents[3]
+        reader = templates.TemplateReader(root / 'barter/recognition_data/trade-templates.json', ink=_ink, crop=_crop)
+        reader.configure(Image.new('RGB', (987, 456)), {'sourceType': 'native-screen',
+                         'fidelity': {'rescaled': False, 'evidence': 'native-pixels'}})
+        for fixture, kind, canonical in [('crow-ship-ellipsis.png', 'island', '까마귀 상단 소유의 선박'),
+                                          ('tariff-master-name.png', 'item', '타리프의 마법 항아리')]:
+            with self.subTest(fixture=fixture), Image.open(root / 'local_app/tests/fixtures/trade-recognition' / fixture) as crop:
+                result = reader.match(kind, crop, allowed={canonical})
+            self.assertIsNotNone(result)
+            self.assertEqual(result['corrected'], canonical)
+            self.assertFalse(result['reviewRequired'])
+            self.assertEqual(result['valueSource'], 'VERIFIED_TEMPLATE')
+            self.assertEqual(result['masterMatch'], 'RESOLVED')
+            self.assertEqual(result['rawOCR'], '')
+            self.assertTrue(result['templateEvidence']['references'])
+
     def test_ambiguous_or_disallowed_labels_and_partial_number_abstain(self):
         refs = [{'value': 12, 'referenceId': 'a'}]
         bank = {'lookup': {'quantity|native|key': refs}}

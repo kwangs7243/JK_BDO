@@ -143,12 +143,8 @@ export function applyMasterNameRules(row, catalog) {
   const islands = [...catalog.islands, ...catalog.t6Islands, ...catalog.t7Islands];
   for (const name of ["toItem", "fromItem", "island"]) {
     const field = row.fields[name];
-    if (["USER_REVIEW", "USER_EDIT"].includes(field.valueSource)) { delete field.catalogNameConflict; continue; }
-    if (field.reviewDraft !== undefined) continue;
-    if (field.catalogNameConflict) {
-      Object.assign(field, {reviewRequired:true, masterMatch:"CONFLICT", valueSource:"OCR_CANDIDATE"});
-      continue;
-    }
+    delete field.catalogNameConflict;
+    if (["USER_REVIEW", "USER_EDIT"].includes(field.valueSource) || field.reviewDraft !== undefined) continue;
     const destination = getItemTier(row.fields.toItem.corrected, catalog.masterData, catalog.specialItems);
     const candidates = name === "island" ? islands : name === "fromItem" && Number.isInteger(destination) && destination >= 1 ? catalog.masterData[destination - 1] || [] : items;
     const readings = [field.rawOCR, ...(field.variants || []).map(v => v.text)].filter(Boolean);
@@ -201,7 +197,7 @@ export function prepareLiveTradeRows(result, catalog, unused = {}) {
   for (const outcome of parsed.outcomes) {
     if (["accepted", "duplicate"].includes(outcome.status)) {
       for (const field of Object.values(ready[outcome.index].fields)) {
-        if (field.importReview === true && !field.catalogNameConflict) { field.reviewRequired = false; delete field.importReview; delete field.reviewReason; }
+        if (field.importReview === true) { field.reviewRequired = false; delete field.importReview; delete field.reviewReason; }
       }
       applyLiveTradeRules(ready[outcome.index], catalog);
     } else {
@@ -223,7 +219,7 @@ export function prepareLiveTradeRows(result, catalog, unused = {}) {
   const identities = new Map();
   for (const row of result.rows) {
     for (const field of Object.values(row.fields)) {
-      if (field.conflictReview && !field.catalogNameConflict) { field.reviewRequired = false; delete field.conflictReview; delete field.reviewReason; }
+      if (field.conflictReview) { field.reviewRequired = false; delete field.conflictReview; delete field.reviewReason; }
     }
   }
   result.rows.forEach((row, index) => {
