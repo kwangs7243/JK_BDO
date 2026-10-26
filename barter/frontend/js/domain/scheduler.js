@@ -1,4 +1,9 @@
 /* SPEC-005 T003 FUNCTIONS — copied from the selected final definitions in BDO_물교_v1.0.html. */
+function showSchedulerNotice(message) {
+    if (window.BDONotifications) window.BDONotifications.notice(message, "warning");
+    else alert(message);
+}
+
 function schedulerNumberOrDefault(value, fallback) {
     if (value === null || value === undefined || (typeof value !== 'number' && typeof value !== 'string')
         || (typeof value === 'string' && value.trim() === '')) return fallback;
@@ -32,7 +37,7 @@ function runAlgorithmAllModes(silent = false) {
     const activeTrades = scannedTrades.map((t, i) => ({ ...t, originalIndex: i })).filter(t => (parseInt(t.count) || 0) > 0 && !t.deleted && !t.disabled && t.fromItem && t.toItem && t.island && Number.isInteger(t.yield) && t.yield > 0);
     const missingWeights = activeTrades.filter(t => [t.fromItem, t.toItem].some(name => !Number.isFinite(getItemWeight(getItemTier(name), name))));
     const vTrades = activeTrades.filter(t => !missingWeights.includes(t));
-    if (missingWeights.length && !silent) alert(`개당 무게가 등록되지 않은 교환 ${missingWeights.length}건은 스케줄에서 보류했습니다.\n${missingWeights.map(t => t.fromItem + ' → ' + t.toItem).join('\n')}`);
+    if (missingWeights.length && !silent) showSchedulerNotice(`개당 무게가 등록되지 않은 교환 ${missingWeights.length}건은 스케줄에서 보류했습니다.\n${missingWeights.map(t => t.fromItem + ' → ' + t.toItem).join('\n')}`);
     
     // ⭐ [생성 실패 진단 가드] 스케줄이 안 만들어지는 원인을 사용자에게 구체적으로 안내
     if (!silent) {
@@ -43,12 +48,12 @@ function runAlgorithmAllModes(silent = false) {
         const _perP = Math.min(...vTrades.map(t => getItemTier(t.toItem) === 'coin' ? APP_CONFIG.CROW_PARLEY : APP_CONFIG.PARLEY_PER_TRADE).filter(cost => cost > 0));
 
         if (invalidYieldTrades.length > 0) {
-            alert(`⚠️ 수율이 없거나 올바른 양의 정수가 아닌 교환 ${invalidYieldTrades.length}건은 계산에서 보류했습니다.\n\n교환 목록의 수율을 확인해 주세요.`);
+            showSchedulerNotice(`⚠️ 수율이 없거나 올바른 양의 정수가 아닌 교환 ${invalidYieldTrades.length}건은 계산에서 보류했습니다.\n\n교환 목록의 수율을 확인해 주세요.`);
         }
 
         // (1) 교환 리스트 자체가 텅 빔 — 가장 흔한 케이스 (창고 스캔과 혼동)
         if (_activeTrades.length === 0) {
-            alert("📋 교환 리스트가 비어 있습니다.\n\n스케줄을 만들려면 먼저 '물물교환 리스트'가 있어야 합니다.\n\n  ▸ 인게임 물물교환 목록을 캡처해 [물교 리스트 스캔]으로 인식시키거나\n  ▸ 표에 직접 교환을 추가해 주세요.\n\n※ 주의: '창고 재고 스캔'은 교환 리스트가 아니라 '보유 재고'를 채우는 기능입니다.\n   교환 목록 캡처를 창고 스캔에 넣으면 교환 리스트는 비어 있게 됩니다. 둘은 별개입니다.");
+            showSchedulerNotice("📋 교환 리스트가 비어 있습니다.\n\n스케줄을 만들려면 먼저 '물물교환 리스트'가 있어야 합니다.\n\n  ▸ 인게임 물물교환 목록을 캡처해 [물교 리스트 스캔]으로 인식시키거나\n  ▸ 표에 직접 교환을 추가해 주세요.\n\n※ 주의: '창고 재고 스캔'은 교환 리스트가 아니라 '보유 재고'를 채우는 기능입니다.\n   교환 목록 캡처를 창고 스캔에 넣으면 교환 리스트는 비어 있게 됩니다. 둘은 별개입니다.");
             return false;
         }
         // (2) 교환은 있는데 전부 비활성/0회/정보누락이라 유효 교환이 0
@@ -59,22 +64,22 @@ function runAlgorithmAllModes(silent = false) {
             if (_offCnt > 0)  _why += `\n  • 비활성(OFF) 상태: ${_offCnt}건 → 켜 주세요.`;
             if (_zeroCnt > 0) _why += `\n  • 교환 횟수가 0: ${_zeroCnt}건 → 횟수를 1 이상으로.`;
             if (!_why) _why = "\n  • 섬·교환 아이템 정보가 비어 있는 항목이 있습니다.";
-            alert("⚠️ 입력된 교환은 있지만, 스케줄에 쓸 수 있는 유효한 교환이 없습니다." + _why);
+            showSchedulerNotice("⚠️ 입력된 교환은 있지만, 스케줄에 쓸 수 있는 유효한 교환이 없습니다." + _why);
             return false;
         }
         // (3) 교섭력 미입력/0 — 출항을 한 번도 못 돎
         if (_maxP <= 0) {
-            alert("⚖️ 현재 교섭력이 0 입니다.\n\n좌측 상단 '현재 교섭' 칸에 보유 교섭력을 입력해 주세요.\n교섭력이 있어야 교환을 진행할 수 있습니다.");
+            showSchedulerNotice("⚖️ 현재 교섭력이 0 입니다.\n\n좌측 상단 '현재 교섭' 칸에 보유 교섭력을 입력해 주세요.\n교섭력이 있어야 교환을 진행할 수 있습니다.");
             return false;
         }
         // (4) 교섭력이 1회 교환 비용 이하 — 사실상 스케줄을 짤 만큼 교환 불가
         if (Number.isFinite(_perP) && _maxP < _perP) {
-            alert(`⚖️ 교섭력이 부족합니다.\n\n현재 교섭력(${_maxP.toLocaleString()})이 1회 교환 비용(${_perP.toLocaleString()})보다 적습니다.\n\n교섭력을 더 채우거나, 교환 1회 비용 설정을 확인해 주세요.`);
+            showSchedulerNotice(`⚖️ 교섭력이 부족합니다.\n\n현재 교섭력(${_maxP.toLocaleString()})이 1회 교환 비용(${_perP.toLocaleString()})보다 적습니다.\n\n교섭력을 더 채우거나, 교환 1회 비용 설정을 확인해 주세요.`);
             return false;
         }
         // (5) 무게 한계 미입력/0 — 짐을 실을 수 없음
         if (_normW <= 0 || _maxW <= 0) {
-            alert("⚖️ 적재 무게 한계가 설정되지 않았습니다.\n\n'100%(과적)'과 '170%(한계)' 무게 칸에 본인 배의 적재량을 입력해 주세요.\n0이면 짐을 실을 수 없어 스케줄이 만들어지지 않습니다.");
+            showSchedulerNotice("⚖️ 적재 무게 한계가 설정되지 않았습니다.\n\n'100%(과적)'과 '170%(한계)' 무게 칸에 본인 배의 적재량을 입력해 주세요.\n0이면 짐을 실을 수 없어 스케줄이 만들어지지 않습니다.");
             return false;
         }
     }
@@ -334,7 +339,7 @@ function runAlgorithmAllModes(silent = false) {
         return true;
     });
 
-    if(validTrades.length === 0) { if(!silent) alert("탐색 가능한 노드가 없습니다. (대해 탐색 허용 여부를 확인하세요!)"); return false; }
+    if(validTrades.length === 0) { if(!silent) showSchedulerNotice("탐색 가능한 노드가 없습니다. (대해 탐색 허용 여부를 확인하세요!)"); return false; }
 
     // 3. 7단 하이브리드 엔진 분기
     // 👇 여기에도 t7_2region_south 추가

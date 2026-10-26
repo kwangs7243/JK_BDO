@@ -9,6 +9,7 @@ import { openPatchReview } from "./patch-review.js";
 import { initTradeSessionUI, renderTradeList } from "./trade-ui.js";
 import { initScheduleUI, syncScheduleState } from "./schedule-ui.js";
 import { initWorkspaceUI } from "./workspace-ui.js";
+import { initLeaveGuard } from "./leave-guard.js";
 
 const status = document.querySelector("#runtime-status");
 const content = document.querySelector("#app-content");
@@ -36,23 +37,9 @@ initWorkspaceUI();
 window.__bdoRenderTradeList = renderTradeList;
 window.__bdoRenderAll = renderAll;
 window.addEventListener("bdo:trade-list-changed", renderTradeList);
-const dialogDrafts = new Map();
-const draftValue = (input) => input.type === "checkbox" ? input.checked : input.value;
-document.addEventListener("focusin", ({ target }) => {
-  if (target.matches("dialog textarea, dialog input[type=number], dialog select") && !dialogDrafts.has(target)) {
-    dialogDrafts.set(target, draftValue(target));
-  }
-});
-window.addEventListener("beforeunload", (event) => {
-  for (const input of dialogDrafts.keys()) if (!input.isConnected) dialogDrafts.delete(input);
-  const unsavedInput = [...dialogDrafts].some(([input, initial]) => draftValue(input) !== initial);
-  if (state.persistencePending > 0 || window.__bdoScheduleRuntime?.pending || unsavedInput
-      || recognitionUI.getTradeDraftCount() > 0 || recognitionUI.hasUnappliedReview()
-      || warehouseCaptureUI.getQueueLength() > 0) {
-    event.preventDefault();
-    event.returnValue = "";
-  }
-});
+initLeaveGuard(() => state.persistencePending > 0 || window.__bdoScheduleRuntime?.pending
+  || recognitionUI.getTradeDraftCount() > 0 || recognitionUI.hasUnappliedReview()
+  || warehouseCaptureUI.getQueueLength() > 0);
 async function load({ restoreSession = false } = {}) {
   setStatus("SQLite에 저장된 영구 상태를 불러오는 중입니다.", "saving");
   content.setAttribute("aria-busy", "true");

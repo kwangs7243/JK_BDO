@@ -1,5 +1,6 @@
 import { saveSettings } from "./persistence.js";
 import { state } from "./state.js";
+import { markDraftSaved } from "./leave-guard.js";
 const { MODES, MODE_SELECT_LABELS, TUNING_FIELDS } = window.BDO_CONSTANTS;
 
 const node = (tag, cls, text) => { const item = document.createElement(tag); if (cls) item.className = cls; if (text !== undefined) item.textContent = text; return item; };
@@ -131,6 +132,7 @@ export function renderSettings(_root, setStatus, refresh) {
       state.session.config.tuning = readTuning("temp-tune");
       state.session.config.ship.speed = readNumber("temp-ship-speed", false);
       window.dispatchEvent(new CustomEvent("bdo:session-changed"));
+      markDraftSaved(document.querySelector('[data-tuning-temporary]'));
       if (state.session.schedule) {
         if (window.__bdoScheduleRuntime.generateSchedule(state, setStatus)) {
           window.renderModeColumn?.("col-speed", state.session.schedule.speed, "speed");

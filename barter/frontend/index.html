@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="/assets/css/schedule.css">
   <link rel="stylesheet" href="/assets/css/map-viewer.css" data-map-viewer>
   <link rel="stylesheet" href="/assets/css/workspace.css">
+  <link rel="stylesheet" href="/assets/css/notifications.css">
 </head>
 <body>
   <a class="skip-link" href="#app-content">작업 영역으로 이동</a>
@@ -177,6 +178,7 @@
   <dialog id="engine-diagnostics-dialog" class="app-dialog small-dialog" aria-labelledby="engine-diagnostics-title"><div class="dialog-titlebar tool-dialog-titlebar"><div class="tool-dialog-heading"><h2 id="engine-diagnostics-title">항로 결정 과정</h2><p class="tool-dialog-context">ENGINE_DEBUG · 계산 근거와 후보 선택 설명</p></div><button type="button" data-close-dialog aria-label="닫기">×</button></div><div class="dialog-body tool-dialog-content"><p class="tool-dialog-intro">계산기에 기록된 서류 점수와 후보별 선택 근거를 보여줍니다. 저장된 근거가 없는 제외 사유는 추정하지 않습니다. 타이머는 새로고침 후 초기화됩니다.</p><div id="engine-debug-content"></div><details class="tool-dialog-raw"><summary>원본 ENGINE_DEBUG JSON</summary><pre id="engine-debug-raw"></pre></details><button id="copy-engine-diagnostics-dialog" type="button">진단 정보 복사</button><p id="diagnostics-copy-status" class="tool-dialog-status" role="status" aria-live="polite"></p></div></dialog>
 
 
+  <script src="/assets/js/notifications.js"></script>
   <script src="/assets/js/domain/constants.js"></script>
   <script src="/assets/js/domain/routing.js"></script>
   <script src="/assets/js/domain/scheduler.js"></script>
