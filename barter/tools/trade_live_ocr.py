@@ -543,6 +543,18 @@ def read_name(reader, crop):
     return " ".join(text for text, score in readings), min((score for text, score in readings), default=0)
 
 
+def _catalog_name_conflict(value, variants):
+    canonical = _normalize(value or "")
+    votes = Counter(_normalize(text) for text, confidence in variants
+                    if confidence >= .9 and not text.rstrip().endswith((".", "…")))
+    for text, count in votes.items():
+        if text and canonical and count >= 2 and not canonical.startswith(text) and _distance(text, canonical) >= 2:
+            raw = next(_strip_stage(raw) for raw, confidence in variants
+                       if _normalize(raw) == text and confidence >= .9 and not raw.rstrip().endswith((".", "…")))
+            return {"readName": raw, "catalogCandidate": value, "agreeingReadings": count}
+    return None
+
+
 def read_catalog_name(reader, crop, candidates, literal_candidates=()):
     raw, score = read_name(reader, crop)
     value, review = correct_name(raw, candidates, literal_candidates)
@@ -574,10 +586,14 @@ def read_catalog_name(reader, crop, candidates, literal_candidates=()):
         if match and confidence >= .75:
             stages.append(int(match.group(1)))
     recognized_stage = stages[0] if len(stages) >= 2 and len(set(stages)) == 1 else None
+    conflict = _catalog_name_conflict(value, variants)
+    review = review or conflict is not None
     return {"rawOCR": raw, "corrected": value, "reviewRequired": review, "confidence": score,
             "masterMatch": "UNRESOLVED" if review else "RESOLVED", "valueSource": "MASTER" if not review else "OCR_CANDIDATE",
             "variants": [{"text": text, "confidence": confidence} for text, confidence in variants],
-            **({"recognizedStage": recognized_stage} if recognized_stage is not None else {})}
+            **({"recognizedStage": recognized_stage} if recognized_stage is not None else {}),
+            **({"catalogNameConflict": conflict,
+                "reviewReason": f"원문 이름 ‘{conflict['readName']}’과 마스터 후보 ‘{value}’가 다릅니다. 원본을 확인하세요."} if conflict else {})}
 
 
 def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_bank_path=None):

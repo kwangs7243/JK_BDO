@@ -367,6 +367,33 @@ class LiveListTests(unittest.TestCase):
                 result = read_catalog_name(reader, Image.new("RGB", (30, 20)), ["고대인을 형상화한 초상화"])
             self.assertTrue(result["reviewRequired"])
 
+    def test_agreeing_visible_name_cannot_be_silently_replaced_with_another_word(self):
+        raw = "[7단계] 타리프의 주술 항아리"
+        reader = Mock(); reader.read.return_value = (raw, .97)
+        with patch("barter.tools.trade_live_ocr.read_name", return_value=(raw, .96)):
+            result = read_catalog_name(reader, Image.new("RGB", (30, 20)), ["타리프의 마법 항아리"])
+        self.assertEqual(result["corrected"], "타리프의 마법 항아리")
+        self.assertTrue(result["reviewRequired"])
+        self.assertEqual(result["masterMatch"], "UNRESOLVED")
+        self.assertEqual(result["catalogNameConflict"]["readName"], "타리프의 주술 항아리")
+        self.assertEqual(result["catalogNameConflict"]["agreeingReadings"], 3)
+        self.assertEqual(result["rawOCR"], raw)
+
+    def test_single_character_ocr_correction_and_unique_prefix_remain_automatic(self):
+        for raw, name in (("오색빛 실타레", "오색빛 실타래"), ("까마귀 상단 소유의 ...", "까마귀 상단 소유의 선박")):
+            reader = Mock(); reader.read.return_value = (raw, .97)
+            with patch("barter.tools.trade_live_ocr.read_name", return_value=(raw, .96)):
+                result = read_catalog_name(reader, Image.new("RGB", (30, 20)), [name])
+            self.assertFalse(result["reviewRequired"])
+            self.assertNotIn("catalogNameConflict", result)
+
+    def test_truncated_name_is_not_evidence_of_a_different_complete_name(self):
+        raw = "솔라스 치코의 해..."
+        reader = Mock(); reader.read.return_value = (raw, .97)
+        with patch("barter.tools.trade_live_ocr.read_name", return_value=(raw, .96)):
+            result = read_catalog_name(reader, Image.new("RGB", (30, 20)), ["술라스 치코의 해적 연합"])
+        self.assertNotIn("catalogNameConflict", result)
+
     def test_known_name_conflict_remains_reviewable(self):
         reader = Mock(); reader.read.return_value = ("다른 물품", .99)
         with patch("barter.tools.trade_live_ocr.read_name", return_value=("원본물퐁", .89)):
