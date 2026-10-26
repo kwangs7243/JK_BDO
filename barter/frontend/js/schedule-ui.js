@@ -231,10 +231,22 @@ function renderScheduleSlots(setStatus) {
   const slot = () => Number(document.getElementById("selected-schedule-slot").value);
   root.append(button("저장", async () => { const current = slot(); try { await whenPersistenceIdle(); await saveScheduleSlot(current); renderScheduleSlots(setStatus); setScheduleStatus(`${current}번 회차 스케줄을 저장했습니다.`, "success"); } catch (error) { setScheduleStatus(`슬롯 저장 실패: ${error.message}`, "error"); } }, state.session.scannedTrades === null || !state.session.schedule));
   root.append(button("불러오기", async () => { const current = slot(); if (!state.scheduleSlots?.[current]) return; if (state.session.scannedTrades !== null && !window.confirm(`${current}번 슬롯 내용으로 현재 회차를 바꿀까요?`)) return; try { await loadScheduleSlot(current); syncScheduleState(); renderModeColumn("col-speed", state.session.schedule?.speed, "speed"); renderModeColumn("col-balance", state.session.schedule?.balance, "balance"); renderScheduleDiagnostics(state); renderScheduleSlots(setStatus); setScheduleStatus(`${current}번 스케줄 회차를 불러왔습니다.`, "success"); } catch (error) { setScheduleStatus(`슬롯 불러오기 실패: ${error.message}`, "error"); } }, !state.scheduleSlots?.[selected]));
-  root.append(button("삭제", async () => { const current = slot(); if (!state.scheduleSlots?.[current] || !window.confirm(`${current}번 저장 슬롯을 삭제할까요?`)) return; try { await deleteScheduleSlot(current); renderScheduleSlots(setStatus); setScheduleStatus(`${current}번 슬롯을 삭제했습니다.`, "success"); } catch (error) { setScheduleStatus(`슬롯 삭제 실패: ${error.message}`, "error"); } }, !state.scheduleSlots?.[selected]));
+  const more = document.createElement("details"); more.className = "briefing-menu briefing-slot-more";
+  const summary = document.createElement("summary"); summary.textContent = "···"; summary.setAttribute("aria-label", "스케줄 추가 작업");
+  const actions = document.createElement("div"); actions.className = "briefing-popover";
+  const remove = button("삭제", async () => { const current = slot(); if (!state.scheduleSlots?.[current] || !window.confirm(`${current}번 저장 슬롯을 삭제할까요?`)) return; try { await deleteScheduleSlot(current); renderScheduleSlots(setStatus); setScheduleStatus(`${current}번 슬롯을 삭제했습니다.`, "success"); } catch (error) { setScheduleStatus(`슬롯 삭제 실패: ${error.message}`, "error"); } }, !state.scheduleSlots?.[selected]);
+  remove.className = "danger"; actions.append(remove); more.append(summary, actions); root.append(more);
 }
 
 export function initScheduleUI(setStatus) {
+  document.addEventListener("click", event => {
+    document.querySelectorAll(".briefing-menu[open]").forEach(menu => {
+      if (!menu.contains(event.target) || event.target.closest("button")) menu.open = false;
+    });
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") document.querySelectorAll(".briefing-menu[open]").forEach(menu => { menu.open = false; });
+  });
   window.renderModeColumn = renderModeColumn;
   window.showToast = (message) => setScheduleStatus(message, "info");
   window.__bdoRenderTradeList = () => window.dispatchEvent(new CustomEvent("bdo:trade-list-changed"));

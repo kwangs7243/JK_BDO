@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>출항 브리핑 · 헤더 디자인 3안</title>
+<style>
+:root{color-scheme:dark;font-family:"Segoe UI","Malgun Gothic",system-ui,sans-serif;font-size:14px;--bg:#101318;--surface:#191e27;--raised:#222a37;--input:#141922;--line:#354050;--soft:#27313e;--text:#edf2fa;--muted:#9ba9bf;--quiet:#74849c;--blue:#93b8ff;--fill:#487bdb;--selected:#233555;--green:#98dbbc}
+*{box-sizing:border-box}body{margin:0;background:#0b0e13;color:var(--text);line-height:1.5;font-variant-numeric:tabular-nums}button,select{font:inherit;color:inherit}button,summary,select{cursor:pointer}button{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);border-radius:5px;background:var(--raised);padding:7px 11px;line-height:1.3;font-size:13px;white-space:nowrap;transition:background .15s,border-color .15s}button:hover:not(:disabled),summary:hover{background:#2b3749;border-color:#566b89}button:disabled{opacity:.35;cursor:default}button:focus-visible,summary:focus-visible,select:focus-visible{outline:2px solid var(--blue);outline-offset:3px}select{min-width:0;height:34px;padding:0 26px 0 10px;border:1px solid var(--line);border-radius:5px;background:var(--input);font-size:13px}svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}button.primary{background:var(--fill);border-color:#6695ee;color:#fff;font-weight:650;padding:9px 14px}button.primary:hover{background:#598be7}.quiet{background:transparent;border-color:transparent;color:var(--muted)}.quiet:hover{color:var(--text)}.text-action{background:transparent;color:var(--muted);border-color:var(--soft)}.chevron{width:12px;height:12px}.divider{height:21px;width:1px;background:var(--line);flex:none}.spacer{flex:1}.row{display:flex;align-items:center;gap:8px;min-width:0}.save-status{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:400;color:var(--green);white-space:nowrap}.save-status svg{width:13px;height:13px}.field-label{font-size:12px;color:var(--muted);white-space:nowrap}.mode-picker{width:198px}.slot-picker{width:152px}.heading{margin:0;font-size:23px;line-height:1.35;letter-spacing:-.7px;font-weight:700}.subtext{color:var(--muted);font-size:12px;margin:5px 0 0}.tabs{display:flex;align-items:center;gap:3px;flex:none}.tabs button{background:transparent;border-color:transparent;color:var(--muted);padding:7px 12px}.tabs button[aria-pressed="true"]{color:var(--blue);background:var(--selected);border-color:#466ba6}.menu{position:relative;flex:none}.menu>summary{display:flex;align-items:center;justify-content:center;gap:7px;list-style:none;border:1px solid var(--soft);border-radius:5px;padding:7px 10px;font-size:13px;color:var(--muted);line-height:1.3;white-space:nowrap}.menu>summary::-webkit-details-marker{display:none}.menu[open]>summary{color:var(--blue);background:var(--selected);border-color:#466ba6}.popover{position:absolute;z-index:15;right:0;top:calc(100% + 7px);width:240px;padding:7px;border:1px solid #46556d;border-radius:8px;background:#1c2431;box-shadow:0 14px 40px #0009}.popover button{justify-content:flex-start;width:100%;background:transparent;border-color:transparent;padding:9px;color:var(--text)}.popover button:hover{background:#2a3a52}.popover .danger{color:#f2a8ae}.popover select{width:100%;margin-bottom:5px}.popover hr{border:0;border-top:1px solid var(--line);margin:5px}.popover-label{display:block;padding:4px 8px 8px;color:var(--muted);font-size:11px}.icon-action{padding:7px;width:33px}.saved-inline{display:flex;align-items:center;gap:5px}.saved-inline>.slot-label{margin-right:4px;color:var(--quiet);font-size:11px}.status-live{font-size:12px;color:var(--green);min-height:18px;max-width:100%;overflow-wrap:anywhere}
+/* Comparison chrome is outside the proposed app UI. */
+.gallery-bar{position:sticky;top:0;z-index:30;background:#11161fef;backdrop-filter:blur(18px);border-bottom:1px solid #2a3443;padding:16px 30px;display:flex;align-items:center;justify-content:space-between;gap:20px}.gallery-bar h1{font-size:16px;margin:0;letter-spacing:-.3px}.gallery-bar p{font-size:11px;color:var(--quiet);margin:3px 0 0}.gallery-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.gallery-controls button{background:transparent;font-size:12px;padding:6px 10px}.gallery-controls button[aria-pressed="true"]{border-color:#4d76b1;background:#233555;color:#b9d1ff}.gallery-controls .divider{margin:0 7px}main{max-width:1560px;padding:34px 30px 60px;margin:auto}.concept{margin-bottom:44px;scroll-margin-top:100px}.concept[hidden]{display:none}.concept-caption{display:flex;align-items:baseline;gap:14px;margin-bottom:15px;padding:0 1px}.concept-caption .number{font-size:12px;color:var(--blue);font-weight:700;letter-spacing:1.1px}.concept-caption h2{font-size:17px;letter-spacing:-.4px;margin:0}.concept-caption p{font-size:12px;color:var(--muted);margin:0}.recommend{font-size:10px;line-height:1.6;padding:2px 7px;border:1px solid #3a5b87;border-radius:4px;color:#afd0ff;background:#15263e}.stage{background:var(--bg);padding:24px 26px 22px;min-width:0;border:0;border-radius:0;max-width:100%;margin:auto}.narrow .stage{max-width:960px}.narrow .concept-caption{max-width:960px;margin-inline:auto;margin-bottom:15px}
+/* A. A page header and a borderless working toolbar. */
+.a-title{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:19px}.a-title .title-with-status{display:flex;align-items:baseline;gap:15px}.a-controls{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--line)}.a-controls-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.a-controls-right{display:flex;align-items:center;gap:7px}.a-controls .tabs{padding:2px;background:#151c27;border:1px solid #2b3a50;border-radius:6px}.a-controls .tabs button{padding:6px 11px}.a-title .saved-inline button{background:transparent}
+/* B. Navigation becomes the upper edge of the schedule. */
+.b-title{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px}.b-title .row{gap:10px}.b-title .title-with-status{display:flex;align-items:baseline;gap:15px}.b-context{display:flex;align-items:center;gap:10px;padding:0 0 15px}.b-context .field-label{color:var(--quiet)}.b-navigation{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;min-height:49px;padding:0 13px;background:#171e29;border:1px solid var(--line);border-radius:7px 7px 0 0}.b-navigation .tabs{gap:6px;align-self:stretch}.b-navigation .tabs button{border-radius:0;border:0;border-bottom:2px solid transparent;padding:14px 16px 12px}.b-navigation .tabs button[aria-pressed="true"]{background:transparent;border-color:var(--blue);color:#bdd5ff}.b-tools{display:flex;align-items:center;gap:2px}.b-tools button{font-size:12px;padding:6px 9px}.variant-b .schedule-sample{margin-top:0;border-top:0;border-radius:0 0 7px 7px}.variant-b .schedule-summary{background:#151b24}
+/* C. A compact command line with secondary actions in popovers. */
+.c-command{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--line)}.c-command .heading{font-size:21px;margin-right:5px}.c-command .mode-picker{width:189px}.c-command .tabs{gap:2px}.c-command .tabs button{padding:7px 10px;border-radius:4px}.c-end{display:flex;align-items:center;gap:7px;margin-left:auto}.c-command .primary{padding:8px 13px}.c-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:9px;color:var(--quiet);font-size:11px}.c-meta .save-status{font-size:11px}.c-command .menu>summary{font-size:12px;padding:8px 9px}
+/* Identical sample content supplies the same width and alignment reference. */
+.schedule-sample{margin-top:19px;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:#141921}.schedule-summary{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 16px;border-bottom:1px solid var(--line);background:#191f29}.schedule-name{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:650;white-space:nowrap}.schedule-name .bolt{color:#edca75}.summary-stats{display:flex;gap:25px;align-items:center;flex-wrap:wrap}.summary-stat{display:grid;gap:2px}.summary-stat small{font-size:10px;color:var(--muted);font-weight:400}.summary-stat strong{font-size:12px;font-weight:650}.route-reference{padding:12px 16px 13px;opacity:.75}.sortie-heading{display:flex;align-items:center;gap:11px;color:#cdd9ec;font-size:12px}.sortie-index{font-size:21px;color:#91b6ff;font-weight:700;line-height:1.3;padding-right:10px;border-right:1px solid var(--line)}.sortie-heading .substats{margin-left:auto;display:flex;gap:19px;font-size:11px;color:var(--muted)}.cargo-reference{padding:10px 0;font-size:11px;border-bottom:1px solid var(--soft);color:var(--muted)}.cargo-reference b{color:#abc8ec;font-weight:500;margin-left:9px}.route-reference-line{display:flex;align-items:center;gap:25px;padding:12px 0 0;font-size:12px;flex-wrap:wrap}.island{width:115px;font-weight:650}.exchange{color:#99c8f1}.exchange .arrow{color:var(--quiet);margin:0 8px}.exchange .gain{color:#e6cb8b}.route-reference-line .sample-finish{margin-left:auto;color:#91b6ff;border:1px solid #3a5073;border-radius:4px;padding:4px 10px;font-size:11px}.sample-explanation{color:var(--quiet);font-size:10px;margin-top:6px;margin-left:140px}.status-live:empty{display:none}.concept-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:11px;color:var(--quiet);font-size:10px}.concept-footer .status-live{font-size:11px}
+@media(max-width:1150px){.a-title{align-items:flex-start;flex-wrap:wrap}.a-title .title-with-status{flex-wrap:wrap;gap:8px 15px}.a-controls-left{gap:9px}.summary-stats{gap:15px}.b-title .title-with-status{display:block}.b-title .save-status{margin-top:5px}.b-tools button{padding-inline:6px}.c-command{gap:10px}.c-command>.divider{display:none}.c-command .heading{flex-basis:100%}}
+@media(max-width:800px){.gallery-bar{padding:14px 16px;align-items:flex-start;flex-direction:column;gap:12px}main{padding:22px 14px}.concept-caption{flex-wrap:wrap;gap:5px 10px}.concept-caption p{flex-basis:100%}.stage{padding:19px 15px}.a-controls-right{width:100%;justify-content:flex-end}.a-title .saved-inline{flex-wrap:wrap}.a-title .title-with-status{display:block}.a-title .save-status{margin-top:5px}.saved-inline>.slot-label{display:none}.b-title{align-items:flex-start;flex-wrap:wrap}.b-navigation{gap:4px;padding:0 9px}.b-tools{flex-wrap:wrap;padding-bottom:6px}.b-navigation .tabs button{padding-inline:12px}.c-end{margin-left:0}.c-meta>span:last-child{display:none}.schedule-summary{align-items:flex-start;flex-wrap:wrap;gap:12px}.summary-stats{gap:16px}.sortie-heading .substats{display:none}.sample-explanation{margin-left:0}.route-reference-line{gap:9px}.island{width:auto;flex-basis:100%}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+
+:root{--accent:#93b8ff;--success:#98dbbc;--warning:#f2cb83;--danger:#f89c9c}
+.notification-demo{padding:22px 0;border-top:1px solid var(--line);display:flex;gap:12px;align-items:center;flex-wrap:wrap}.notification-demo h2{font-size:16px;margin:0 12px 0 0}.notification-demo p{color:var(--muted);font-size:12px;margin:0}
+.app-notices {
+  position:fixed; inset:18px 18px auto auto; margin:0; padding:0;
+  width:min(460px, calc(100vw - 36px)); max-height:calc(100vh - 36px);
+  overflow:auto; border:0; background:transparent; color:var(--text);
+  pointer-events:none;
+}
+.app-notice {
+  --notice-color:var(--warning); display:grid; grid-template-columns:25px minmax(0,1fr) 26px;
+  gap:11px; padding:16px; margin-bottom:10px; pointer-events:auto;
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  border-left:3px solid var(--notice-color); box-shadow:0 12px 36px #0006;
+}
+.app-notice[data-kind="info"] { --notice-color:var(--accent); }
+.app-notice[data-kind="success"] { --notice-color:var(--success); }
+.app-notice[data-kind="error"] { --notice-color:var(--danger); }
+.app-notice-symbol {
+  display:grid; place-items:center; width:23px; height:23px; border:1px solid currentColor;
+  border-radius:50%; color:var(--notice-color); font-size:13px; font-weight:700;
+}
+.app-notice strong { display:block; font-size:.9rem; margin:1px 0 7px; }
+.app-notice p { margin:0; font-size:.84rem; line-height:1.65; white-space:pre-wrap; overflow-wrap:anywhere; color:var(--muted); }
+.app-notice-close { padding:0; width:26px; height:26px; border-color:transparent; background:transparent; color:var(--muted); font-size:20px; box-shadow:none; }
+
+</style>
+</head>
+<body>
+<header class="gallery-bar"><div><h1>출항 브리핑 · 헤더 디자인 3안</h1><p>디자인 비교용 독립 화면 · 예시 스케줄 · 실제 앱과 연결되지 않습니다.</p></div><nav class="gallery-controls" aria-label="시안 비교"><button data-show="all" aria-pressed="true">3안 비교</button><button data-show="a" aria-pressed="false">A</button><button data-show="b" aria-pressed="false">B</button><button data-show="c" aria-pressed="false">C</button><span class="divider"></span><button data-width="wide" aria-pressed="true">넓게</button><button data-width="narrow" aria-pressed="false">좁게</button></nav></header>
+<main id="concepts"></main>
+<script>
+const paths={bolt:'m13 2-8 11h6l-1 9 9-12h-6l1-8',balance:'M12 3v17M5 20h14M3 7h18M6 7 2 14h8L6 7Zm12 0-4 7h8l-4-7Z',chevron:'m6 9 6 6 6-6',save:'M5 3h12l4 4v14H3V3h2Zm2 0v7h10V3M7 21v-7h10v7',folder:'M3 6h7l2 3h9v11H3V6Z',map:'m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2V5Zm6-2v16m6-14v16',sliders:'M4 3v8m0 4v6M12 3v2m0 4v12M20 3v12m0 4v2M1 11h6m2-6h6m2 10h6',more:'M5 12h.01M12 12h.01M19 12h.01',check:'m5 12 4 4L19 6',refresh:'M20 7v5h-5M4 17v-5h5M19 11a7 7 0 0 0-12-5L4 9m1 4a7 7 0 0 0 12 5l3-3',trash:'M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7',compare:'M4 5h6v14H4V5Zm10 0h6v14h-6V5Z'};
+const icon=(name,cls='')=>`<svg viewBox="0 0 24 24" aria-hidden="true" class="${cls}"><path d="${paths[name]||paths.more}"/></svg>`;
+const btn=(text,name,cls='',action='')=>`<button type="button" class="${cls}" ${action?`data-action="${action}"`:''}>${name?icon(name):''}${text}</button>`;
+const selectMode=()=>`<select class="mode-picker" aria-label="교역 모드"><option>일반 (까주 미포함)</option><option>내해 까마귀주화 포함</option><option>7단 교역</option></select>`;
+const selectSlot=()=>`<select class="slot-picker" aria-label="저장 스케줄 슬롯">${[1,2,3,4,5].map(n=>`<option value="${n}">${n}번 · 비어 있음</option>`).join('')}</select>`;
+const tabs=(style='')=>`<div class="tabs ${style}" aria-label="항로 보기">${[['speed','쾌속','bolt'],['balance','균형','balance'],['both','비교','compare']].map(([mode,text,name])=>`<button type="button" data-mode="${mode}" aria-pressed="${mode==='speed'}">${icon(name)}${text}</button>`).join('')}</div>`;
+const status=()=>`<span class="save-status">${icon('check')}현재 회차 저장됨</span>`;
+const toolMenu=(label='보조 도구')=>`<details class="menu"><summary>${icon('sliders')}${label}${icon('chevron','chevron')}</summary><div class="popover"><span class="popover-label">계산 · 경로 도구</span>${btn('계산 튜닝','sliders','','계산 튜닝')}${btn('쾌속 지도','map','','쾌속 지도')}${btn('균형 지도','map','','균형 지도')}${btn('결정 과정 보기','more','','결정 과정 보기')}</div></details>`;
+const mapMenu=()=>`<details class="menu"><summary>${icon('map')}지도${icon('chevron','chevron')}</summary><div class="popover">${btn('쾌속 항로 지도','bolt','','쾌속 지도')}${btn('균형 항로 지도','balance','','균형 지도')}</div></details>`;
+const savedMenu=(label='저장 스케줄')=>`<details class="menu"><summary>${icon('folder')}${label}${icon('chevron','chevron')}</summary><div class="popover"><span class="popover-label">현재 회차를 슬롯에 저장하거나 불러오기</span>${selectSlot()}${btn('현재 스케줄 저장','save','','save')}${btn('선택한 스케줄 불러오기','folder','','load')}<hr>${btn('선택한 스케줄 삭제','trash','danger','delete')}</div></details>`;
+const savedInline=()=>`<div class="saved-inline"><span class="slot-label">저장 스케줄</span>${selectSlot()}${btn('저장','save','quiet','save')}${btn('불러오기','','quiet','load')}<details class="menu"><summary aria-label="스케줄 추가 작업">${icon('more')}</summary><div class="popover">${btn('선택한 스케줄 삭제','trash','danger','delete')}</div></details></div>`;
+const sample=()=>`<div class="schedule-sample"><div class="schedule-summary"><div class="schedule-name"><span class="bolt">${icon('bolt')}</span><span data-schedule-name>쾌속 모드</span></div><div class="summary-stats">${[['출항','1회'],['총 소요시간','0시간 16분 47초'],['교섭력','152,205'],['까마귀주화 총획득','0개']].map(([k,v])=>`<span class="summary-stat"><small>${k}</small><strong>${v}</strong></span>`).join('')}</div></div><div class="route-reference"><div class="sortie-heading"><span class="sortie-index">01</span><strong>1차 출항</strong><span class="substats"><span>예상 시간 16분 47초</span><span>출항 무게 8,015 LT</span></span></div><div class="cargo-reference">출항 적재 <b>3단 반달 조리용 칼 ×8</b></div><div class="route-reference-line"><span class="island">알마이 섬</span><span class="exchange">3단 반달 조리용 칼<span class="arrow">→</span><span class="gain">4단 청록빛 소금덩어리</span></span><span class="sample-finish">✓ 완료</span></div><div class="sample-explanation">교환 후 21,900 LT · 도착 구간 +3분 · 쾌속</div></div></div>`;
+const designs=[
+ {id:'a',name:'박스 없는 작업 헤더',desc:'설정과 작업은 바로 보이고, 보조 도구만 접습니다.',recommended:true,markup:`<div class="a-title"><div class="title-with-status"><h2 class="heading">출항 브리핑</h2>${status()}</div>${savedInline()}</div><div class="a-controls"><div class="a-controls-left"><span class="field-label">교역 모드</span>${selectMode()}<span class="divider"></span>${tabs()}</div><div class="a-controls-right">${mapMenu()}${toolMenu()}${btn('스케줄 생성 / 다시 계산','refresh','primary','calculate')}</div></div>`},
+ {id:'b',name:'스케줄과 이어지는 탭',desc:'항로 선택을 아래 스케줄의 시작점으로 붙입니다.',markup:`<div class="b-title"><div class="title-with-status"><h2 class="heading">출항 브리핑</h2>${status()}</div><div class="row">${savedMenu()}${btn('스케줄 생성 / 다시 계산','refresh','primary','calculate')}</div></div><div class="b-context"><span class="field-label">교역 모드</span>${selectMode()}</div><div class="b-navigation">${tabs()}<div class="b-tools">${btn('계산 튜닝','sliders','quiet','계산 튜닝')}${btn('쾌속 지도','map','quiet','쾌속 지도')}${btn('균형 지도','map','quiet','균형 지도')}${btn('결정 과정','more','quiet','결정 과정 보기')}</div></div>`},
+ {id:'c',name:'한 줄 명령바',desc:'상단을 압축해 항로와 교환 목록에 공간을 더 줍니다.',markup:`<div class="c-command"><h2 class="heading">출항 브리핑</h2><span class="divider"></span>${selectMode()}${tabs()}<div class="c-end">${savedMenu('저장·불러오기')}${toolMenu('도구')}${btn('다시 계산','refresh','primary','calculate')}</div></div><div class="c-meta">${status()}<span>교역 모드와 보기 설정은 현재 회차 기준</span></div>`}
+];
+document.getElementById('concepts').innerHTML=designs.map(d=>`<section class="concept variant-${d.id}" data-concept="${d.id}"><div class="concept-caption"><span class="number">${d.id.toUpperCase()} / 0${designs.indexOf(d)+1}</span><h2>${d.name}</h2>${d.recommended?'<span class="recommend">추천</span>':''}<p>${d.desc}</p></div><div class="stage">${d.markup}${sample()}<div class="concept-footer"><span class="status-live" role="status" aria-live="polite"></span><span>아래 스케줄은 폭과 정렬 비교용 공통 예시입니다.</span></div></div></section>`).join('');
+const notify=(concept,text)=>{concept.querySelector('.status-live').textContent=text;};
+document.addEventListener('click',event=>{
+  const show=event.target.closest('[data-show]');if(show){document.querySelectorAll('[data-show]').forEach(n=>n.setAttribute('aria-pressed',String(n===show)));document.querySelectorAll('.concept').forEach(n=>n.hidden=show.dataset.show!=='all'&&n.dataset.concept!==show.dataset.show);return;}
+  const width=event.target.closest('[data-width]');if(width){document.body.classList.toggle('narrow',width.dataset.width==='narrow');document.querySelectorAll('[data-width]').forEach(n=>n.setAttribute('aria-pressed',String(n===width)));return;}
+  const concept=event.target.closest('.concept');if(!concept)return;
+  const mode=event.target.closest('[data-mode]');if(mode){concept.querySelectorAll('[data-mode]').forEach(n=>n.setAttribute('aria-pressed',String(n===mode)));concept.querySelector('[data-schedule-name]').textContent={speed:'쾌속 모드',balance:'균형 모드',both:'쾌속 · 균형 비교'}[mode.dataset.mode];return;}
+  const action=event.target.closest('[data-action]');if(!action)return;
+  const slot=concept.querySelector('.slot-picker');const number=slot?.value||'1';
+  if(action.dataset.action==='save'){slot.options[slot.selectedIndex].textContent=`${number}번 · 저장됨`;notify(concept,`${number}번 슬롯에 저장한 상태의 예시입니다.`);}
+  else if(action.dataset.action==='load')notify(concept,`${number}번 슬롯을 불러온 상태의 예시입니다.`);
+  else if(action.dataset.action==='delete'){slot.options[slot.selectedIndex].textContent=`${number}번 · 비어 있음`;notify(concept,`${number}번 슬롯이 비워진 상태의 예시입니다.`);}
+  else if(action.dataset.action==='calculate')notify(concept,'스케줄 계산 후 상태 표시 위치입니다.');
+  else notify(concept,`${action.dataset.action} 진입 위치입니다.`);
+  concept.querySelectorAll('details[open]').forEach(n=>n.open=false);
+});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')document.querySelectorAll('details[open]').forEach(n=>n.open=false);});
+document.addEventListener('pointerdown',event=>{document.querySelectorAll('details[open]').forEach(n=>{if(!n.contains(event.target))n.open=false;});});
+const requested=new URLSearchParams(location.search).get('view');if(['a','b','c'].includes(requested))document.querySelector(`[data-show="${requested}"]`).click();
+</script>
+<script>
+(() => {
+  let host;
+  const labels = { info: "안내", success: "완료", warning: "확인이 필요합니다", error: "처리하지 못했습니다" };
+  function showHost() {
+    const parent = document.activeElement?.closest("dialog:modal")
+      || [...document.querySelectorAll("dialog:modal")].at(-1) || document.body;
+    if (host.parentElement !== parent) {
+      host.hidePopover();
+      parent.append(host);
+    }
+    if (!host.matches(":popover-open")) host.showPopover();
+  }
+  new MutationObserver(() => {
+    if (host?.childElementCount) showHost();
+  }).observe(document.documentElement, { subtree: true, attributes: true, attributeFilter: ["open"] });
+  function notice(message, kind = "warning") {
+    if (!host?.isConnected) {
+      host = document.createElement("section");
+      host.className = "app-notices";
+      host.setAttribute("aria-label", "작업 알림");
+      host.setAttribute("popover", "manual");
+      document.body.append(host);
+    }
+    // Attach inside the active modal so its inert background cannot disable the close button.
+    showHost();
+    const card = document.createElement("article");
+    card.className = "app-notice";
+    card.dataset.kind = kind;
+    card.setAttribute("role", kind === "error" || kind === "warning" ? "alert" : "status");
+    const symbol = document.createElement("span");
+    symbol.className = "app-notice-symbol";
+    symbol.setAttribute("aria-hidden", "true");
+    symbol.textContent = kind === "success" ? "✓" : kind === "info" ? "i" : "!";
+    const copy = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = labels[kind] || labels.info;
+    const body = document.createElement("p");
+    body.textContent = String(message);
+    copy.append(title, body);
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "app-notice-close";
+    close.setAttribute("aria-label", "알림 닫기");
+    close.textContent = "×";
+    const dismiss = () => {
+      card.remove();
+      if (!host.childElementCount) host.hidePopover();
+    };
+    close.addEventListener("click", dismiss);
+    card.append(symbol, copy, close);
+    host.append(card);
+    return dismiss;
+  }
+  window.BDONotifications = { notice };
+})();
+
+</script>
+<script>
+document.querySelector('main').insertAdjacentHTML('beforeend','<section class="notification-demo"><h2>앱 알림 미리보기</h2><button id="preview-notice" type="button">새 알림 띄우기</button><p>작업을 막지 않는 알림 · ×로 닫기 · 이 화면의 입력은 저장하지 않습니다.</p></section>');
+document.querySelector('#preview-notice').addEventListener('click',()=>window.BDONotifications.notice('현재 교섭력이 부족합니다.\n선박·교섭력 설정에서 보유 교섭력을 확인해 주세요.','warning'));
+</script>
+</body>
+</html>

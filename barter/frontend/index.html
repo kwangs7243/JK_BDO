@@ -60,24 +60,28 @@
       <details class="tier-rule-details"><summary>단계 규칙</summary><div id="tier-rules-root"></div></details>
     </section>
   <section id="briefing-panel" class="panel briefing-panel" hidden aria-labelledby="briefing-title">
-    <div class="panel-heading briefing-heading"><div class="tool-dialog-heading"><h2 id="briefing-title">출항 브리핑</h2><p class="tool-dialog-context">현재 회차 경로와 저장된 스케줄을 확인합니다.</p></div><div class="dialog-actions tool-dialog-actions"><button id="generate-schedule" class="primary" type="button">스케줄 생성 / 다시 계산</button></div></div>
-    <div class="briefing-body">
-      <div class="briefing-toolbar tool-dialog-toolbar">
-        <section class="tool-dialog-group briefing-calculation" aria-label="계산 설정">
-          <label class="brief-config-mode" for="brief-session-mode">현재 회차 교역 모드<select id="brief-session-mode"></select></label>
-          <div class="brief-mode-tabs" role="tablist" aria-label="브리핑 보기"><button type="button" role="tab" aria-selected="false" data-brief-mode="speed">⚡ 쾌속</button><button type="button" role="tab" aria-selected="false" data-brief-mode="balance">⚖️ 균형</button><button type="button" role="tab" aria-selected="true" data-brief-mode="both">둘 다</button></div>
-          <p id="schedule-status" class="status-note tool-dialog-status" role="status" aria-live="polite"></p>
-        </section>
-        <section class="tool-dialog-group briefing-saved-schedule" aria-label="저장된 스케줄">
-          <span class="tool-dialog-group-label">저장된 스케줄</span>
+    <header class="briefing-command">
+      <div class="briefing-heading">
+        <div class="briefing-title-status"><h2 id="briefing-title">출항 브리핑</h2><p id="schedule-status" class="status-note" role="status" aria-live="polite"></p></div>
+        <section class="briefing-saved-schedule" aria-label="저장된 스케줄">
+          <span class="briefing-control-label">저장 스케줄</span>
           <div id="schedule-slot-controls" class="schedule-slot-controls" aria-label="스케줄 저장 슬롯"></div>
           <button id="retry-completion-save" type="button" hidden>완료 저장 재시도</button>
         </section>
-        <section class="tool-dialog-group tool-dialog-secondary briefing-secondary-tools" aria-label="보조 도구">
-          <span class="tool-dialog-group-label">보조 도구</span>
-          <button id="brief-open-tuning" type="button">계산 튜닝</button><button id="brief-map-speed" type="button">쾌속 지도</button><button id="brief-map-balance" type="button">균형 지도</button><button id="open-engine-diagnostics" type="button">결정 과정 보기</button>
+      </div>
+      <div class="briefing-toolbar">
+        <section class="briefing-calculation" aria-label="계산 설정">
+          <label class="brief-config-mode" for="brief-session-mode">교역 모드<select id="brief-session-mode"></select></label>
+          <div class="brief-mode-tabs" role="tablist" aria-label="브리핑 보기"><button type="button" role="tab" aria-selected="false" data-brief-mode="speed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 2-8 11h6l-1 9 9-12h-6l1-8"/></svg>쾌속</button><button type="button" role="tab" aria-selected="false" data-brief-mode="balance"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17M5 20h14M3 7h18M6 7 2 14h8L6 7Zm12 0-4 7h8l-4-7Z"/></svg>균형</button><button type="button" role="tab" aria-selected="true" data-brief-mode="both"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h6v14H4V5Zm10 0h6v14h-6V5Z"/></svg>비교</button></div>
+        </section>
+        <section class="briefing-secondary-tools" aria-label="보조 도구">
+          <details class="briefing-menu"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2V5Zm6-2v16m6-14v16"/></svg>지도<span aria-hidden="true">⌄</span></summary><div class="briefing-popover"><button id="brief-map-speed" type="button">쾌속 지도</button><button id="brief-map-balance" type="button">균형 지도</button></div></details>
+          <details class="briefing-menu"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v8m0 4v6M12 3v2m0 4v12M20 3v12m0 4v2M1 11h6m2-6h6m2 10h6"/></svg>보조 도구<span aria-hidden="true">⌄</span></summary><div class="briefing-popover"><button id="brief-open-tuning" type="button">계산 튜닝</button><button id="open-engine-diagnostics" type="button">결정 과정 보기</button></div></details>
+          <button id="generate-schedule" class="primary" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M19 11a7 7 0 0 0-12-5L4 9m1 4a7 7 0 0 0 12 5l3-3"/></svg>스케줄 생성 / 다시 계산</button>
         </section>
       </div>
+    </header>
+    <div class="briefing-body">
       <div id="schedule-columns" class="schedule-columns" data-mode="both"><section><h3 id="header-speed">⚡ 쾌속 모드</h3><div id="summary-speed" class="mode-settlement" aria-live="polite"></div><div id="col-speed" class="schedule-column"></div></section><section><h3 id="header-balance">⚖️ 균형 모드</h3><div id="summary-balance" class="mode-settlement" aria-live="polite"></div><div id="col-balance" class="schedule-column"></div></section></div>
       <details class="briefing-free-route"><summary>자유 항로 · 추가 경유지</summary><div id="free-route-root"></div></details>
       <details class="schedule-diagnostics"><summary>계산 진단 데이터</summary><pre id="schedule-diagnostics">아직 계산하지 않았습니다.</pre><button id="copy-engine-diagnostics" type="button">진단 복사</button></details>
