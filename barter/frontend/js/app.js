@@ -1,6 +1,6 @@
 import { refreshPersistentState } from "./persistence.js";
 import { state } from "./state.js";
-import { renderInventory } from "./inventory-ui.js";
+import { renderInventory, loadInventoryIcons } from "./inventory-ui.js";
 import { renderSettings } from "./settings-ui.js";
 import { applyViewerState, renderFreeRoute, renderMap, renderViewer } from "./map-ui.js";
 import { initWarehouseScanUI } from "./warehouse-scan-ui.js";
@@ -57,7 +57,7 @@ async function load({ restoreSession = false } = {}) {
   setStatus("SQLite에 저장된 영구 상태를 불러오는 중입니다.", "saving");
   content.setAttribute("aria-busy", "true");
   try {
-    const snapshot = await refreshPersistentState({ restoreSession });
+    const [snapshot] = await Promise.all([refreshPersistentState({ restoreSession }), loadInventoryIcons()]);
     await initTradeSessionUI(setStatus);
     window.__bdoScheduleRuntime.syncLegacyState(state);
     renderAll();

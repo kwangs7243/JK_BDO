@@ -5,6 +5,14 @@ import { applyInventoryFilters } from "./workspace-ui.js";
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; };
 const numberInput = (value, label, integer = true) => { const input = document.createElement("input"); input.type = "number"; input.min = "0"; input.step = integer ? "1" : "any"; input.value = value ?? ""; input.setAttribute("aria-label", label); return input; };
 const tierNames = (tier) => state.inventory.filter((item) => item.tier === tier).map((item) => item.programName);
+let inventoryIcons = {};
+let iconsRequest;
+export function loadInventoryIcons() {
+  return iconsRequest ??= fetch('/assets/data/inventory-icons.json', {credentials:'same-origin'})
+    .then(response => response.ok ? response.json() : {})
+    .then(icons => { inventoryIcons = icons; })
+    .catch(() => {});
+}
 export const inventoryDisplayOrder = () => Object.fromEntries([1,2,3,4,5].map((tier) => {
   const canonical = tierNames(tier);
   const saved = state.order[String(tier)] ?? [];
@@ -16,7 +24,7 @@ export function renderInventory(root, setStatus) {
   const order = inventoryDisplayOrder();
   for (let tier = 1; tier <= 5; tier += 1) {
     const section = el("section", "tier-section"); section.dataset.tier = String(tier);
-    const heading = el("div", "tier-heading"); heading.append(el("h3", "", String(tier) + "단 (" + order[String(tier)].length + "종)")); section.append(heading);
+    const heading = el("div", "tier-heading"); heading.append(el("h3", "", String(tier) + "단 창고"), el("span", "tier-item-count", order[String(tier)].length + "종")); section.append(heading);
     const bulk = el("div", "inline-field tier-bulk-tools");
     const bulkLabel = el("label", "", "이 단계 목표 일괄 적용");
     const bulkInput = numberInput("", `${tier}단 일괄 목표`);
@@ -26,21 +34,24 @@ export function renderInventory(root, setStatus) {
       const items = Object.fromEntries(order[String(tier)].map((name) => [name, { target: Number(bulkInput.value) }]));
       await saveAndRefresh(items, root, setStatus, `${tier}단 목표 재고`);
     });
-    bulk.append(bulkLabel, bulkInput, bulkButton); section.append(bulk);
-
-    const wrap = el("div", "table-wrap"); const table = document.createElement("table");
-    const head = document.createElement("thead"); const headRow = document.createElement("tr");
-    for (const label of ["품목", "현재 재고", "목표", "상태"]) headRow.append(el("th", "", label));
-    head.append(headRow); table.append(head); const body = document.createElement("tbody");
+    bulk.append(bulkLabel, bulkInput, bulkButton); heading.append(bulk);
+    const slots = el("div", "inventory-slots");
     for (const name of order[String(tier)]) {
       const item = state.inventory.find((candidate) => candidate.programName === name);
       if (!item) continue;
-      const row = el("tr", "inventory-row"); row.draggable = true; row.dataset.name = name; row.dataset.tier = String(tier);
-      const nameCell = el("td", "item-name"); const nameLabel = el("span", "inventory-item-label", name); nameCell.append(nameLabel); nameCell.title = "같은 단계 안에서 드래그하여 순서를 변경";
-      const stockCell = document.createElement("td");
+      const row = el("article", "inventory-row"); row.draggable = true; row.dataset.name = name; row.dataset.tier = String(tier); row.setAttribute("aria-label", name);
+      const nameCell = el("div", "item-name");
+      const icon = el("span", "inventory-slot-icon");
+      if (inventoryIcons[name]) {
+        const image = document.createElement("img"); image.src = inventoryIcons[name]; image.alt = "";
+        image.width = 44; image.height = 44; image.loading = "lazy"; image.decoding = "async"; image.draggable = false;
+        image.addEventListener("error", () => { icon.hidden = true; }); icon.append(image);
+      } else icon.hidden = true;
+      const nameLabel = el("span", "inventory-item-label", name); nameCell.append(icon, nameLabel); nameCell.title = "같은 단계 안에서 드래그하여 순서를 변경";
+      const stockCell = el("div", "inventory-stock"); stockCell.append(el("span", "inventory-field-label", "현재"));
       const stockControls = el("div", "inventory-quantity-controls");
       const stockMinus = el("button", "quantity-step", "−"); stockMinus.type = "button"; stockMinus.title = "재고 1 감소"; stockMinus.setAttribute("aria-label", `${name} 재고 1 감소`);
-      const stockInput = numberInput(item.stock, `${name} 현재 재고`); stockInput.dataset.value = "stock";
+      const stockInput = numberInput(item.stock, `${name} 현재 재고`); stockInput.dataset.value = "stock"; stockInput.placeholder = "미확인";
       const stockPlus = el("button", "quantity-step", "+"); stockPlus.type = "button"; stockPlus.title = "재고 1 증가"; stockPlus.setAttribute("aria-label", `${name} 재고 1 증가`);
       const adjust = async (delta) => {
         if (item.stock === null && delta < 0) { setStatus(`${name}은 미확인 재고입니다. 먼저 수량을 입력하세요.`, "info"); return; }
@@ -49,12 +60,13 @@ export function renderInventory(root, setStatus) {
       };
       stockMinus.addEventListener("click", () => adjust(-1)); stockPlus.addEventListener("click", () => adjust(1));
       stockControls.append(stockMinus, stockInput, stockPlus); stockCell.append(stockControls);
-      const targetCell = document.createElement("td"); const targetInput = numberInput(item.target, `${name} 목표 재고`); targetInput.dataset.value = "target"; targetCell.append(targetInput);
-      const balance = el("td", "stock-balance");
+      const targetCell = el("label", "inventory-target"); const targetInput = numberInput(item.target, `${name} 목표 재고`); targetInput.dataset.value = "target"; targetCell.append(el("span", "inventory-field-label", "목표"), targetInput);
+      const balance = el("span", "stock-balance");
       const known = item.stock !== null && item.target !== null;
       balance.dataset.kind = !known ? "unknown" : item.stock < item.target ? "short" : "ready";
       balance.textContent = !known ? "미확인" : item.stock < item.target ? `${item.target - item.stock} 부족` : "충족";
-      row.append(nameCell, stockCell, targetCell, balance); body.append(row);
+      const footer = el("div", "inventory-slot-footer"); footer.append(targetCell, balance);
+      row.append(nameCell, stockCell, footer); slots.append(row);
       for (const [field, input] of [["stock", stockInput], ["target", targetInput]]) {
         input.addEventListener("change", async () => {
           if (input.value === "") {
@@ -84,7 +96,7 @@ export function renderInventory(root, setStatus) {
         catch (error) { setStatus(`순서를 저장하지 못했습니다: ${error.message}`, "error"); renderInventory(root, setStatus); }
       });
     }
-    table.append(body); wrap.append(table); section.append(wrap); root.append(section);
+    section.append(slots); root.append(section);
   }
   const empty = el("p", "empty", "조건에 맞는 품목이 없습니다. 검색어나 재고 상태를 바꿔 보세요.");
   empty.id = "inventory-filter-empty"; root.append(empty);

@@ -230,7 +230,6 @@ input[type="file"] { padding:.4rem; }
 .tier-section[data-tier="5"] h3 { color:var(--tier-5); }
 @media(max-width:1500px) {
   #inventory-root { grid-template-columns:minmax(0,1fr); }
-  .inventory-row .item-name { width:50%; }
 }
 @media(max-width:1100px) {
   .capture-workspace { grid-template-columns:minmax(0,1fr); overflow:auto; }

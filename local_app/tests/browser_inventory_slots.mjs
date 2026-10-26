@@ -1,0 +1,89 @@
+import assert from 'node:assert/strict';
+import {spawn} from 'node:child_process';
+import {mkdtemp,mkdir,rm,writeFile,access} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join,resolve,dirname,basename,sep} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createRequire} from 'node:module';
+const require=createRequire(import.meta.url);
+const {chromium}=require(process.env.BDO_NODE_MODULES?require.resolve('playwright',{paths:[process.env.BDO_NODE_MODULES]}):'playwright');
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
+const temp=await mkdtemp(join(tmpdir(),'bdo-inventory-slots-'));
+const output=process.env.UI_AUDIT_DIR||join(temp,'screenshots');
+const external=process.env.BDO_EXTERNAL_APP==='1';
+if(external) {
+  assert.ok(process.env.BDO_TEST_URL&&process.env.BDO_ISOLATED_APPDATA,'external test requires an isolated package environment');
+  const dataRoot=resolve(process.env.BDO_ISOLATED_APPDATA);
+  assert.ok(dataRoot.startsWith(resolve(tmpdir())+sep)&&basename(dataRoot).startsWith('bdo-warehouse-package-'),'refusing operational AppData');
+  await access(join(dataRoot,'BDOBarter/data/bdo.sqlite3'));
+}
+const server=external?null:spawn(process.env.PYTHON||'python',['-B','-c',`from local_app.backend.app import create_app; from werkzeug.serving import make_server; s=make_server('127.0.0.1',0,create_app(r'${join(temp,'test.sqlite3')}',testing=True),threaded=True); print(s.server_port,flush=True); s.serve_forever()`],{cwd:root,windowsHide:true,env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'},stdio:['ignore','pipe','pipe']});
+let browser;
+try {
+  const port=external?null:await new Promise((ok,fail)=>{let out='',err='';const timer=setTimeout(()=>fail(Error(err||'server timeout')),15000);server.stdout.on('data',d=>{out+=d;if(/^\d+\r?\n/.test(out)){clearTimeout(timer);ok(Number(out.trim()));}});server.stderr.on('data',d=>err+=d);});
+  const base=external?process.env.BDO_TEST_URL.replace(/\/$/,''):`http://127.0.0.1:${port}`;
+  browser=await chromium.launch({executablePath:process.env.BDO_CHROME||'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
+  const page=await browser.newPage({viewport:{width:1920,height:1080}});
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(base+'/barter/');await page.waitForFunction(()=>document.querySelector('#app-content')?.getAttribute('aria-busy')==='false');
+  await page.locator('[data-workspace-view="inventory"]').click();
+  assert.equal(await page.locator('article.inventory-row').count(),70);
+  assert.equal(await page.locator('.inventory-slot-icon img').count(),70);
+  await page.locator('.inventory-slot-icon img').evaluateAll(async images=>{for(const image of images)image.loading='eager';await Promise.all(images.map(image=>image.decode()));});
+  const first=page.locator('.inventory-row').first();
+  const name=await first.getAttribute('data-name');
+  assert.equal(await first.locator('input[data-value="stock"]').inputValue(),'');
+  const initial=await fetch(base+'/api/bootstrap').then(r=>r.json());
+  await first.getByRole('button',{name:`${name} 재고 1 감소`,exact:true}).click();
+  assert.deepEqual(await fetch(base+'/api/bootstrap').then(r=>r.json()),initial,'unknown minus must not become zero');
+  const idle=()=>page.evaluate(async()=>{await(await import('/assets/js/persistence.js')).whenPersistenceIdle();});
+  await first.locator('input[data-value="stock"]').fill('0');await first.locator('input[data-value="stock"]').press('Tab');await idle();
+  assert.equal(await first.locator('input[data-value="stock"]').inputValue(),'0');
+  await first.getByRole('button',{name:`${name} 재고 1 증가`,exact:true}).click();await idle();
+  assert.equal(await first.locator('input[data-value="stock"]').inputValue(),'1');
+  await first.locator('input[data-value="target"]').fill('40');await first.locator('input[data-value="target"]').press('Tab');await idle();
+  assert.equal(await first.locator('.stock-balance').textContent(),'39 부족');
+  await page.locator('#inventory-search').fill('씨앗');assert.equal(await page.locator('.inventory-row:visible').count(),3);
+  await page.locator('#inventory-stock-filter').selectOption('short');assert.equal(await page.locator('.inventory-row:visible').count(),1);
+  await page.locator('#inventory-search').fill('');await page.locator('#inventory-stock-filter').selectOption('all');
+  await page.locator('[data-inventory-tier="5"]').click();assert.equal(await page.locator('.inventory-row:visible').count(),14);
+  await page.locator('[data-inventory-tier="all"]').click();
+  const tier=page.locator('.tier-section[data-tier="1"]');
+  await tier.getByRole('spinbutton',{name:'1단 일괄 목표',exact:true}).fill('90');await tier.getByRole('button',{name:'전체에 적용',exact:true}).click();await idle();
+  assert.ok((await tier.locator('input[data-value="target"]').evaluateAll(ns=>ns.map(n=>n.value))).every(v=>v==='90'));
+  const names=await tier.locator('.inventory-row').evaluateAll(ns=>ns.map(n=>n.dataset.name));
+  await tier.locator('.inventory-row').nth(0).locator('.item-name').dragTo(tier.locator('.inventory-row').nth(2).locator('.item-name'));await idle();
+  const reordered=await tier.locator('.inventory-row').evaluateAll(ns=>ns.map(n=>n.dataset.name));
+  assert.deepEqual(reordered,[names[1],names[0],...names.slice(2)]);
+  await page.reload();await page.waitForFunction(()=>document.querySelector('#app-content')?.getAttribute('aria-busy')==='false');
+  await page.locator('[data-workspace-view="inventory"]').click();
+  assert.deepEqual(await tier.locator('.inventory-row').evaluateAll(ns=>ns.map(n=>n.dataset.name)),reordered);
+  await page.evaluate(async()=>{const {state}=await import('/assets/js/state.js');const p=await import('/assets/js/persistence.js');await p.saveInventory(Object.fromEntries(state.inventory.filter((_,i)=>i%11!==0).map((item,i)=>[item.programName,{stock:i%4===0?0:(i*17)%130}])));window.__bdoRenderAll();});
+  await mkdir(output,{recursive:true});
+  for(const width of [1920,1440,1024]) {
+    await page.setViewportSize({width,height:1000});
+    const overflow=await page.locator('#inventory-root').evaluate(root=>({root:root.scrollWidth>root.clientWidth+1,cards:[...root.querySelectorAll('.inventory-row')].filter(n=>!n.hidden).some(n=>n.scrollWidth>n.clientWidth+1)}));
+    assert.deepEqual(overflow,{root:false,cards:false},`warehouse overflow at ${width}`);
+    await page.screenshot({path:join(output,`warehouse-${width}.png`)});
+  }
+  await page.evaluate(async()=>{const {state}=await import('/assets/js/state.js');const p=await import('/assets/js/persistence.js');await p.saveInventory({'갈퀴 꽃 씨앗 주머니':{stock:100},'괴생물 촉수':{stock:0}});state.session.scannedTrades=[{island:'베이루와 섬',fromItem:'갈퀴 꽃 씨앗 주머니',toItem:'괴생물 촉수',reqAmount:1,count:3,yield:3}];state.session.remainingParley=1500000;});
+  await page.locator('[data-workspace-view="briefing"]').click();await page.locator('#generate-schedule').click();await idle();
+  for(const width of [1920,1440,1024]) {
+    await page.setViewportSize({width,height:1000});
+    for(const mode of ['speed','balance','both']) {
+      await page.locator(`[data-brief-mode="${mode}"]`).click();await idle();
+      const clipped=await page.locator('.schedule-columns h3:visible').evaluateAll(headings=>headings.some(h=>{const b=h.getBoundingClientRect();return [...h.querySelectorAll('.mode-stat')].some(s=>{const r=s.getBoundingClientRect();return r.right>b.right-1||r.left<b.left+1;});}));
+      assert.equal(clipped,false,`${mode} summary clipped at ${width}`);
+      assert.equal(await page.locator('#schedule-columns').evaluate(n=>n.scrollWidth>n.clientWidth+1),false,`${mode} container overflows at ${width}`);
+      if(mode==='speed')await page.screenshot({path:join(output,`briefing-${width}.png`)});
+    }
+  }
+  const withoutIcons=await browser.newPage();
+  await withoutIcons.route('**/assets/data/inventory-icons.json',route=>route.fulfill({status:503,body:'unavailable'}));
+  await withoutIcons.goto(base+'/barter/');await withoutIcons.waitForFunction(()=>document.querySelector('#app-content')?.getAttribute('aria-busy')==='false');
+  assert.equal(await withoutIcons.locator('.inventory-row').count(),70,'an icon service failure must not block inventory');
+  await withoutIcons.close();
+  assert.deepEqual(errors,[]);
+  await writeFile(join(output,'slots-result.json'),JSON.stringify({ok:true,icons:70,editAndBulk:true,unknownAndZero:true,filters:true,reorderAndReload:true,summaryModes:3,widths:[1920,1440,1024]},null,2));
+  console.log(JSON.stringify({ok:true,icons:70,warehouseControls:true,summaryNotClipped:true,output}));
+} finally {await browser?.close();server?.kill();await new Promise(r=>setTimeout(r,400));if(dirname(temp)!==resolve(tmpdir()))throw Error('unsafe temporary path');await rm(temp,{recursive:true,force:true,maxRetries:10,retryDelay:300});}
