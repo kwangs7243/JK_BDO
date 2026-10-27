@@ -41,43 +41,35 @@ class WarehousePackageAssetsTests(unittest.TestCase):
         exec(compile(source, str(SPEC), 'exec'), namespace)
         return namespace
 
-    def calibrated(self, *, verified_rows=1):
-        path = self.root / 'calibrated.npz'
-        with np.load(BASE, allow_pickle=False) as archive:
-            data = {key: archive[key] for key in archive.files}
-        data.update(feedback_slots=np.zeros((1, 43, 43, 3), dtype=np.uint8),
-                    feedback_values=np.array([17]), feedback_item_names=np.array(['checked item']),
-                    feedback_provenance_json=np.asarray(json.dumps({'verifiedRows': verified_rows})))
-        np.savez_compressed(path, **data)
+    def icon_bank(self, *, names=1):
+        path = self.root / 'custom-icons.npz'
+        np.savez_compressed(path, icons=np.zeros((1, 43, 43, 3), dtype=np.uint8), names=np.array(['checked item'] * names))
         return path
 
-    def test_worktree_missing_calibration_cannot_fall_back_to_base(self):
+    def test_missing_icon_bank_cannot_fall_back_to_legacy_digits(self):
         base = self.root / 'tools/warehouse_patch/quantity_templates.npz'
         base.parent.mkdir(parents=True)
         shutil.copyfile(BASE, base)
-        with self.assertRaisesRegex(RuntimeError, 'Verified warehouse feedback templates are required'):
+        with self.assertRaisesRegex(RuntimeError, 'Verified warehouse icon references are required'):
             self.load_assets()
 
-    def test_explicit_base_templates_are_rejected(self):
+    def test_legacy_digit_templates_are_rejected(self):
         os.environ['BDO_PACKAGE_WAREHOUSE_TEMPLATES'] = str(BASE)
-        with self.assertRaisesRegex(RuntimeError, 'base templates are insufficient'):
+        with self.assertRaisesRegex(RuntimeError, 'icon-only reference bank'):
             self.load_assets()
 
-    def test_explicit_calibration_is_included_in_installed_resource_path(self):
-        calibrated = self.calibrated()
-        os.environ['BDO_PACKAGE_WAREHOUSE_TEMPLATES'] = str(calibrated)
+    def test_custom_named_icon_bank_uses_the_runtime_filename(self):
+        bank = self.icon_bank()
+        os.environ['BDO_PACKAGE_WAREHOUSE_TEMPLATES'] = str(bank)
         assets = self.load_assets()
         for resource in ('local_app/frontend', 'barter/frontend', 'alchemy/frontend'):
             self.assertIn((str(self.root / resource), resource), assets['datas'])
-        self.assertIn((str(calibrated), 'tools/warehouse_patch'), assets['datas'])
-        self.assertIn((str(self.root / 'barter/recognition_data/trade-templates.json'),
-                       'barter/recognition_data'), assets['datas'])
+        self.assertIn((str(bank), 'barter/recognition_data'), assets['datas'])
         self.assertEqual(assets['canonicalize_warehouse_data']([
-            ('tools/warehouse_patch/calibrated.npz', str(calibrated), 'DATA')]), [
-            ('tools/warehouse_patch/quantity_templates.npz', str(calibrated), 'DATA')])
-        self.assertEqual(assets['verified_rows'], 1)
+            ('barter/recognition_data/custom-icons.npz', str(bank), 'DATA')]), [
+            ('barter/recognition_data/warehouse-icons.npz', str(bank), 'DATA')])
 
-    def test_mismatched_verified_row_provenance_is_rejected(self):
-        os.environ['BDO_PACKAGE_WAREHOUSE_TEMPLATES'] = str(self.calibrated(verified_rows=2))
-        with self.assertRaisesRegex(RuntimeError, 'verified-row provenance do not agree'):
+    def test_mismatched_icon_label_counts_are_rejected(self):
+        os.environ['BDO_PACKAGE_WAREHOUSE_TEMPLATES'] = str(self.icon_bank(names=2))
+        with self.assertRaisesRegex(RuntimeError, 'icon-only reference bank'):
             self.load_assets()

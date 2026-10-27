@@ -27,6 +27,7 @@ def warehouse_scan():
             files[0], store.catalog,
             temporary_directory=current_app.config.get("WAREHOUSE_SCAN_TEMP_DIR"),
             record_scan=store.record_warehouse_scan,
+            recognize=current_app.extensions["trade_batch_runtime"].recognize_warehouse,
         )
     except WarehouseScanError as error:
         return jsonify({"ok": False, "error": {"code": error.code, "message": str(error)}}), error.status

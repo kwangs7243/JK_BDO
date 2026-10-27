@@ -9,7 +9,7 @@ import numpy as np
 from PIL import Image
 
 VERSION = "trade-field-binary-exact-v1"
-BANK_SHA256 = "a0a789746a21a7821045f6ec0eb227d6d5764b10439dfc14b1f81cefc81d444c"
+BANK_SHA256 = "75e605f71e2ee8f2ef7affe2568d502feeb91447f1a45477beb3c1b573568f51"
 
 def _canonical(value):
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -164,7 +164,7 @@ class TemplateReader:
 
     def configure(self, image, metadata):
         fidelity = metadata.get("fidelity", {})
-        self.enabled = (self.bank is not None and image.size == (987, 456)
+        self.enabled = (self.bank is not None and self.bank.get("referenceCount", 0) > 0 and image.size == (987, 456)
                         and metadata.get("sourceType") == "native-screen"
                         and fidelity.get("rescaled") is False
                         and fidelity.get("evidence") == "native-pixels")

@@ -490,13 +490,18 @@ class QuantityReader:
         }
 
 
-def convert(image_path: Path, reference_json: Path, templates_path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+def convert(image_path: Path, reference_json: Path, templates_path: Path | None, *, quantity_ocr=None, icon_reader=None) -> tuple[dict[str, Any], dict[str, Any]]:
     image = Image.open(image_path).convert("RGB")
     xgrid, ygrid, validation = detect_grid(image)
     items, references = load_reference(reference_json)
-    quantity_reader = QuantityReader(templates_path)
+    quantity_reader = icon_reader if icon_reader is not None else QuantityReader(templates_path)
+    slots = crop_inner_slots(image, xgrid, ygrid)
+    quantities = None
+    if quantity_ocr is not None:
+        inputs = [Image.fromarray(np.rint(slot["rgb"] * 255).astype(np.uint8)) for slot in slots]
+        quantities = quantity_ocr.read_many(inputs, warehouse=True)
     slot_results: list[dict[str, Any]] = []
-    for slot_info in crop_inner_slots(image, xgrid, ygrid):
+    for slot_index, slot_info in enumerate(slots):
         slot = slot_info.pop("rgb")
         source_size = slot_info.pop("source_size")
         result: dict[str, Any] = dict(slot_info)
@@ -511,7 +516,7 @@ def convert(image_path: Path, reference_json: Path, templates_path: Path) -> tup
         best, runner_up = items[first], items[second]
         best_score, second_score = float(scores[first]), float(scores[second])
         gap = second_score - best_score
-        quantity = quantity_reader.read(slot, source_size)
+        quantity = quantities[slot_index] if quantities is not None else quantity_reader.read(slot, source_size)
         result.update(
             {
                 "bestCandidate": best["programName"],
@@ -591,6 +596,11 @@ def convert(image_path: Path, reference_json: Path, templates_path: Path) -> tup
         "slots": slot_results,
         "patch": patch,
     }
+    if quantity_ocr is not None:
+        report["thresholds"] = {"iconScoreMax": ICON_SCORE_MAX, "iconGapMin": ICON_GAP_MIN,
+                                "numericConsensusMin": 2, "numericConfidenceMin": .85, "numericConflictConfidence": .97}
+        report["quantityMethod"] = {"method": "whole-number-onnx-consensus", "externalApi": False,
+                                    "fixedDigitCells": False, "modelCalls": quantity_ocr.reader.model_calls}
     return patch, report
 
 

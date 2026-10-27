@@ -87,6 +87,41 @@ class LocalReader:
             self.cache.popitem(last=False)
         return result
 
+    def read_many(self, images, batch_size=8, *, compact=True):
+        """Recognize short fields in bounded width buckets on the same CPU session."""
+        import cv2
+        pending, results = {}, [None] * len(images)
+        for index, image in enumerate(images):
+            rgb = np.asarray(image.convert("RGB"))[:, :, ::-1]
+            digest = hashlib.sha256(rgb.tobytes()).digest()
+            key = ("compact", image.size, digest) if compact else (image.size, False, None, digest)
+            if key in self.cache:
+                results[index] = self.cache[key]
+                continue
+            width = min(3200, max(1, math.ceil(48 * image.width / image.height)))
+            bucket = max(64, math.ceil(width / 32) * 32) if compact else max(320, width)
+            resized = cv2.resize(rgb, (width, 48)).astype(np.float32)
+            pending.setdefault(bucket, []).append((index, key, resized))
+        for width, group in pending.items():
+            for offset in range(0, len(group), batch_size):
+                batch = group[offset:offset + batch_size]
+                tensor = np.zeros((len(batch), 3, 48, width), dtype=np.float32)
+                for i, (_, _, rgb) in enumerate(batch):
+                    tensor[i, :, :, :rgb.shape[1]] = (rgb.transpose(2, 0, 1) / 255 - .5) / .5
+                self.model_calls += 1
+                output = self.session.run(None, {self.input_name: tensor})[0]
+                for (index, key, _), probabilities in zip(batch, output):
+                    text, scores, previous = [], [], -1
+                    for position, label in enumerate(probabilities.argmax(axis=1)):
+                        if label and label != previous:
+                            text.append(self.characters[label]); scores.append(float(probabilities[position, label]))
+                        previous = label
+                    result = (unicodedata.normalize("NFC", "".join(text)).strip(), statistics.mean(scores) if scores else 0)
+                    self.cache[key] = result; results[index] = result
+        while len(self.cache) > 2048:
+            self.cache.popitem(last=False)
+        return results
+
 
 def detect_live_rows(image: Image.Image):
     profile = _edge_profile(np.asarray(image.convert("RGB")), 12)
@@ -524,11 +559,11 @@ def read_yield(reader, row, allowed_values=None, destination=None):
             "reviewRequired": conflict or len({value["corrected"] for value in certain}) > 1}, token, allowed_values)
 
 
-def read_name(reader, crop):
+def _name_images(crop):
     mask = _ink(crop)
     occupied = np.flatnonzero(mask.sum(axis=1) >= 2)
     if not len(occupied):
-        return "", 0
+        return []
     groups = np.split(occupied, np.where(np.diff(occupied) > 2)[0] + 1)
     readings = []
     for group in groups:
@@ -539,7 +574,12 @@ def read_name(reader, crop):
         clean = Image.fromarray(np.where(line_mask, 0, 255).astype(np.uint8)).convert("RGB")
         tight = _tight(clean, line_mask)
         if tight:
-            readings.append(reader.read(tight))
+            readings.append(tight)
+    return readings
+
+
+def read_name(reader, crop):
+    readings = [reader.read(image) for image in _name_images(crop)]
     return " ".join(text for text, score in readings), min((score for text, score in readings), default=0)
 
 
@@ -591,9 +631,17 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
                 pass
 
     from barter.tools.trade_template_reader import TemplateReader
+    from barter.tools.item_icon_reader import ItemIconReader
+    from barter.tools.numeric_ocr import NumericOCR
     templates = TemplateReader(template_bank_path or Path(__file__).resolve().parents[1] /
                                "recognition_data/trade-templates.json", ink=_ink, crop=_crop)
     reader = LocalReader(model_dir)
+    try:
+        icons = ItemIconReader()
+    except (OSError, ValueError, KeyError, TypeError):
+        icons = None
+    numeric = NumericOCR(reader)
+    icon_hits = 0
 
     def name(crop, candidates, literal_candidates=(), *, kind="item"):
         return (templates.match(kind, crop, allowed=set(candidates) | set(literal_candidates))
@@ -602,12 +650,23 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
     def count(crop):
         return templates.match("count", crop) or read_count(reader, crop)
 
-    def quantity(row, field, allowed=None, destination=None):
-        return (templates.match("quantity", _requirement_crop(row) if field == "reqAmount" else
-                                _crop(row, (.663, .55, .724, .95)), row=row, field=field,
-                                allowed=set(allowed) if allowed else None)
-                or (read_requirement(reader, row) if field == "reqAmount" else
-                    read_yield(reader, row, allowed, destination)))
+    def quantity(row, field, allowed=None, destination=None, fast=None):
+        if field == "reqAmount" or allowed is not None:
+            try:
+                isolated = _outlined_quantity_image(row, field)
+            except Exception:
+                isolated = None
+            if isolated is not None:
+                result = fast if fast is not None else numeric.read_many([isolated[0]], minimum=1)[0]
+                value = result["value"]
+                if value is not None and len(str(value)) == isolated[1] and (allowed is None or value in allowed):
+                    return {"rawOCR": result["rawOCR"], "corrected": value, "reviewRequired": False,
+                            "confidence": result["confidence"], "variants": result["variants"],
+                            "valueSource": "NUMERIC_OCR_CONSENSUS", **({"allowedValues": list(allowed)} if allowed else {})}
+        # Trade overlays need their artwork/context guard; the warehouse's glyph isolation is unsuitable here.
+        result = read_requirement(reader, row) if field == "reqAmount" else read_yield(reader, row, allowed, destination)
+        result.setdefault("valueSource", "NUMERIC_OCR_CONTEXT")
+        return result
 
     try:
         catalog = json.loads((Path(__file__).resolve().parents[1] / "frontend/data/trade-catalog.json").read_text(encoding="utf-8"))
@@ -630,10 +689,49 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
         offset = fixed_layout_offset(image, capture.get("metadata", {}))
         aligned = image.crop((offset, 0, image.width + offset, image.height)) if offset else image
         report("recognizing", capture_index, 0, len(boxes))
+        prepared_rows = [image.crop((0, top, image.width, bottom)) for top, bottom in boxes]
+        icon_results, prewarm, fast_keys, fast_images = {}, [], [], []
+        for ordinal, row in enumerate(prepared_rows):
+            preliminary = {key: {} for key in ("fromItem", "toItem", "reqAmount", "yield")}
+            for field in ("fromItem", "toItem"):
+                try:
+                    hit = icons.match_trade(row, field, set(items)) if icons is not None else None
+                except Exception:
+                    hit = None
+                if hit:
+                    icon_results[ordinal, field] = hit
+                    preliminary[field] = hit
+                else:
+                    try:
+                        prewarm.extend(_name_images(_crop(row, bounds[field])))
+                    except Exception:
+                        pass
+            for field in ("island", "count"):
+                try:
+                    prewarm.extend(_name_images(_crop(row, bounds[field])))
+                except Exception:
+                    pass
+            apply_trade_rules(preliminary, item_stages)
+            source, destination = trade_stages(preliminary, item_stages)
+            for field in ("reqAmount", "yield"):
+                if preliminary[field].get("valueSource") == "TRADE_RULE" or field == "yield" and (source, destination) not in {(1, 2), (2, 3)}:
+                    continue
+                try:
+                    isolated = _outlined_quantity_image(row, field)
+                except Exception:
+                    isolated = None
+                if isolated is not None:
+                    fast_keys.append((ordinal, field)); fast_images.append(isolated[0])
+        # Acceleration failures fall back to the guarded per-field path below.
+        try:
+            reader.read_many(prewarm, compact=False)
+            fast_results = dict(zip(fast_keys, numeric.read_many(fast_images, minimum=1)))
+        except Exception:
+            fast_results = {}
         capture_results.append({"captureId": capture["captureId"], "rows": len(boxes),
                                 "width": image.width, "height": image.height})
         for ordinal, (top, bottom) in enumerate(boxes):
-            row = image.crop((0, top, image.width, bottom))
+            row = prepared_rows[ordinal]
             field_offsets = {}
             fields = {key: {"rawOCR": "", "corrected": None, "reviewRequired": True, "confidence": None} for key in NUMERIC}
             for field in ("island", "fromItem", "toItem", "count", "reqAmount", "yield"):
@@ -649,11 +747,14 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
                             continue
                         source, destination = trade_stages(fields, item_stages)
                         allowed = (2, 3) if field == "yield" and (source, destination) in {(1, 2), (2, 3)} else None
-                        fields[field] = quantity(row, field, allowed, destination)
+                        fields[field] = quantity(row, field, allowed, destination, fast_results.get((ordinal, field)))
                     else:
-                        fields[field] = name(crop, islands if field == "island" else items,
+                        hit = icon_results.get((ordinal, field))
+                        fields[field] = hit or name(crop, islands if field == "island" else items,
                                              land_items if field == "fromItem" else (),
                                              kind="island" if field == "island" else "item")
+                        if hit:
+                            icon_hits += 1
                         if field == "toItem" and (item_stages.get(fields[field].get("corrected")) or fields[field].get("recognizedStage")) == 1:
                             fields["fromItem"] = name(_crop(row, bounds["fromItem"]), land_items, land_items)
                 except Exception as error:
@@ -696,5 +797,5 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
         report("recognizing", capture_index + 1)
     report("finalizing", len(captures))
     return {"version": 3, "batchId": batch_id, "rows": rows, "captures": capture_results,
-            "templateMetrics": {**templates.stats, "modelCalls": reader.model_calls},
+            "templateMetrics": {**templates.stats, "modelCalls": reader.model_calls, "iconHits": icon_hits},
             "engine": "korean_PP-OCRv5_mobile_rec/ONNX-CPU", "rowDetector": "measured-separator-spacing-v1"}

@@ -14,6 +14,14 @@ FIXTURES = Path(__file__).resolve().parents[1] / "fixtures/trade-recognition"
 
 
 class LiveListTests(unittest.TestCase):
+    def setUp(self):
+        # These isolate the established text/context rules; real neural/icon integration is exercised separately.
+        for target, options in [
+            ("barter.tools.item_icon_reader.ItemIconReader.match_trade", {"return_value": None}),
+            ("barter.tools.numeric_ocr.NumericOCR.read_many", {"side_effect": lambda images, **kwargs: [{"value": None} for _ in images]}),
+        ]:
+            patcher = patch(target, **options); patcher.start(); self.addCleanup(patcher.stop)
+
     def test_fixed_region_translation_requires_two_agreeing_edges_and_native_size(self):
         image=Image.new("RGB",(987,456),(30,30,30))
         ImageDraw.Draw(image).rectangle((7,0,271,455),fill=(100,100,100))

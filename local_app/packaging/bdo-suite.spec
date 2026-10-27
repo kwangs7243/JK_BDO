@@ -10,20 +10,13 @@ trade_model = Path(os.environ.get("BDO_PACKAGE_TRADE_MODEL_DIR", ROOT / ".local/
 if not all((trade_model / name).is_file() for name in ("inference.onnx", "inference.yml")):
     raise RuntimeError("The verified local trade OCR model is required for packaging.")
 warehouse_templates = Path(os.environ.get("BDO_PACKAGE_WAREHOUSE_TEMPLATES",
-    ROOT / "barter" / "recognition_data" / "warehouse-templates.npz"))
+    ROOT / "barter" / "recognition_data" / "warehouse-icons.npz"))
 if not warehouse_templates.is_file():
-    raise RuntimeError("Verified warehouse feedback templates are required for packaging. "
-                       "Set BDO_PACKAGE_WAREHOUSE_TEMPLATES to the calibrated quantity_templates.npz.")
+    raise RuntimeError("Verified warehouse icon references are required for packaging. "
+                       "Set BDO_PACKAGE_WAREHOUSE_TEMPLATES to warehouse-icons.npz.")
 with np.load(warehouse_templates, allow_pickle=False) as warehouse_data:
-    feedback_keys = {"feedback_slots", "feedback_values", "feedback_item_names", "feedback_provenance_json"}
-    if not feedback_keys.issubset(warehouse_data.files):
-        raise RuntimeError("Warehouse packaging requires calibrated feedback; base templates are insufficient.")
-    verified_rows = len(warehouse_data["feedback_slots"])
-    provenance = json.loads(str(warehouse_data["feedback_provenance_json"]))
-    if (verified_rows < 1 or provenance.get("verifiedRows") != verified_rows
-            or len(warehouse_data["feedback_values"]) != verified_rows
-            or len(warehouse_data["feedback_item_names"]) != verified_rows):
-        raise RuntimeError("Warehouse feedback templates and their verified-row provenance do not agree.")
+    if set(warehouse_data.files) != {"icons", "names"} or len(warehouse_data["icons"]) != len(warehouse_data["names"]):
+        raise RuntimeError("Warehouse package requires the icon-only reference bank.")
 trade_templates = os.environ.get("BDO_PACKAGE_TRADE_TEMPLATES", str(ROOT / "barter/recognition_data/trade-templates.json"))
 if trade_templates:
     import hashlib
@@ -46,7 +39,7 @@ datas = [
     (str(ROOT / "reference" / "barter_items.json"), "reference"),
     (str(ROOT / "reference" / "icons"), "reference/icons"),
     (str(ROOT / "tools" / "warehouse_patch" / "warehouse_patch.py"), "tools/warehouse_patch"),
-    (str(warehouse_templates), "tools/warehouse_patch"),
+    (str(warehouse_templates), "barter/recognition_data"),
 ]
 if trade_templates:
     datas.append((str(trade_templates), "barter/recognition_data"))
@@ -55,6 +48,8 @@ hiddenimports = [
     "barter.tools.trade_template_reader",
     "barter.tools.trade_batch_worker",
     "barter.tools.trade_live_ocr",
+    "barter.tools.numeric_ocr",
+    "barter.tools.item_icon_reader",
     "onnxruntime",
     "cv2",
     "yaml",
@@ -73,7 +68,7 @@ hiddenimports = [
 
 
 def canonicalize_warehouse_data(entries):
-    return [("tools/warehouse_patch/quantity_templates.npz", source, kind)
+    return [("barter/recognition_data/warehouse-icons.npz", source, kind)
             if Path(source).resolve() == warehouse_templates.resolve() else (destination, source, kind)
             for destination, source, kind in entries]
 

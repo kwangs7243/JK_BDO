@@ -38,6 +38,7 @@ class WarehouseScanApiTests(unittest.TestCase):
         self.app = create_app(self.database, testing=True)
         self.app.config["WAREHOUSE_SCAN_TEMP_DIR"] = str(self.upload_dir)
         self.client = self.app.test_client()
+        self.app.extensions["trade_batch_runtime"].recognize_warehouse = lambda path: warehouse_scan.convert(path, REFERENCE, TEMPLATES)
         self.catalog, _ = load_catalog()
 
     def tearDown(self):

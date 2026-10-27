@@ -17,7 +17,7 @@ class TradeTemplateReaderTests(unittest.TestCase):
         path = Path(__file__).resolve().parents[3] / 'barter/recognition_data/trade-templates.json'
         reader = templates.TemplateReader(path, ink=_ink, crop=_crop)
         self.assertTrue(reader.stats['available'], 'fresh source checkout must include its verified bank')
-        self.assertGreater(reader.stats['referenceCount'], 0)
+        self.assertEqual(reader.stats['referenceCount'], 0, 'legacy font references are archived, not active')
 
     def test_whole_field_does_not_match_substring_or_clipped_edge(self):
         glyph = np.zeros((20, 40, 3), dtype=np.uint8)
@@ -34,7 +34,7 @@ class TradeTemplateReaderTests(unittest.TestCase):
         self.assertIsNone(templates.lookup(bank, 'item', other, groups))
         self.assertIsNone(templates.text_mask(image.crop((5, 0, 40, 20)), extractor))
 
-    def test_verified_visible_names_resolve_to_master_without_review(self):
+    def test_retired_font_crops_do_not_auto_match_the_active_bank(self):
         root = Path(__file__).resolve().parents[3]
         reader = templates.TemplateReader(root / 'barter/recognition_data/trade-templates.json', ink=_ink, crop=_crop)
         reader.configure(Image.new('RGB', (987, 456)), {'sourceType': 'native-screen',
@@ -43,13 +43,7 @@ class TradeTemplateReaderTests(unittest.TestCase):
                                           ('tariff-master-name.png', 'item', '타리프의 마법 항아리')]:
             with self.subTest(fixture=fixture), Image.open(root / 'local_app/tests/fixtures/trade-recognition' / fixture) as crop:
                 result = reader.match(kind, crop, allowed={canonical})
-            self.assertIsNotNone(result)
-            self.assertEqual(result['corrected'], canonical)
-            self.assertFalse(result['reviewRequired'])
-            self.assertEqual(result['valueSource'], 'VERIFIED_TEMPLATE')
-            self.assertEqual(result['masterMatch'], 'RESOLVED')
-            self.assertEqual(result['rawOCR'], '')
-            self.assertTrue(result['templateEvidence']['references'])
+            self.assertIsNone(result)
 
     def test_ambiguous_or_disallowed_labels_and_partial_number_abstain(self):
         refs = [{'value': 12, 'referenceId': 'a'}]

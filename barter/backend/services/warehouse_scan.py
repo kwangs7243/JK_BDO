@@ -10,6 +10,7 @@ from PIL import Image, UnidentifiedImageError
 from werkzeug.datastructures import FileStorage
 
 from tools.warehouse_patch.warehouse_patch import GridDetectionError, convert
+from .trade_batch_runtime import TradeBatchRuntimeError
 
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024
 MAX_IMAGE_PIXELS = 32_000_000
@@ -107,6 +108,7 @@ def process_warehouse_upload(
     *,
     temporary_directory: str | Path | None = None,
     record_scan=None,
+    recognize=None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """Run the local converter with one validated temporary PNG."""
     if not upload.filename or Path(upload.filename).suffix.lower() != ".png":
@@ -130,16 +132,20 @@ def process_warehouse_upload(
             templates_path = root / "recognition-local" / "models" / "warehouse" / "quantity_templates.npz"
         if not templates_path.is_file():
             templates_path = root / "tools" / "warehouse_patch" / "quantity_templates.npz"
-        patch, report = convert(temp_path, reference_json, templates_path)
+        patch, report = recognize(temp_path) if recognize is not None else convert(temp_path, reference_json, templates_path)
         _validate_scanner_patch(patch, report, catalog)
         safe = _safe_report(report)
         if record_scan is not None:
             from hashlib import sha256
-            sources = [reference_json, templates_path, root / "tools" / "warehouse_patch" / "warehouse_patch.py"]
+            sources = [reference_json, root / "tools" / "warehouse_patch" / "warehouse_patch.py"]
+            sources += ([root / "barter/recognition_data/warehouse-icons.npz", root / "barter/tools/numeric_ocr.py"]
+                        if recognize is not None else [templates_path])
             sources.extend(sorted((root / "reference" / "icons").glob("*.webp")))
-            provenance = {"formatVersion": 1, "engine": "local-template-matching", "sourceHashes": {str(source.relative_to(root)).replace("\\", "/"): sha256(source.read_bytes()).hexdigest() for source in sources}}
+            provenance = {"formatVersion": 1, "engine": "icon-and-neural-number-ocr" if recognize else "local-template-matching", "sourceHashes": {str(source.relative_to(root)).replace("\\", "/"): sha256(source.read_bytes()).hexdigest() for source in sources}}
             safe["scanId"] = record_scan(temp_path.read_bytes(), safe, provenance)
         return patch, safe
+    except TradeBatchRuntimeError as error:
+        raise WarehouseScanError(error.code, str(error), error.status) from error
     except GridDetectionError as error:
         raise WarehouseScanError("SLOT_GRID_DETECTION_FAILED", "창고 칸의 테두리를 찾지 못했습니다. 칸이 가려지거나 잘리지 않도록 창고 영역을 캡처해 주세요.", 422) from error
     except WarehouseScanError:

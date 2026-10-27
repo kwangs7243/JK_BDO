@@ -20,6 +20,21 @@ def main() -> int:
         if _sha256(args.model_dir / name) != digest:
             raise ValueError('model integrity verification failed')
     manifest = json.loads(args.request.read_text(encoding='utf-8'))
+    if manifest.get('task') == 'warehouse':
+        from tools.warehouse_patch.warehouse_patch import convert, GridDetectionError
+        from barter.tools.trade_live_ocr import LocalReader
+        from barter.tools.numeric_ocr import NumericOCR
+        from barter.tools.item_icon_reader import ItemIconReader
+        if manifest.get('version') != 1 or manifest.get('batchId') != 'warehouse' or manifest.get('imagePath') != 'capture-0001.png':
+            raise ValueError('invalid warehouse image reference')
+        try:
+            patch, report = convert(args.request.resolve().parent / 'capture-0001.png', ROOT / 'reference/barter_items.json', None,
+                                    quantity_ocr=NumericOCR(LocalReader(args.model_dir)), icon_reader=ItemIconReader(ROOT))
+            result = {'patch': patch, 'report': report}
+        except GridDetectionError:
+            result = {'error': 'SLOT_GRID_DETECTION_FAILED'}
+        args.out.write_text(json.dumps(result, ensure_ascii=False, allow_nan=False), encoding='utf-8')
+        return 0
     if manifest.get('version') != 1 or not isinstance(manifest.get('batchId'), str):
         raise ValueError('invalid worker manifest')
     captures = manifest.get('captures')

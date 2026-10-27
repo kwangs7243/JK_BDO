@@ -15,7 +15,7 @@ from typing import Any, Callable
 
 
 ROOT = Path(__file__).resolve().parents[3]
-WORKER_VERSION = "trade-live-worker-v15"
+WORKER_VERSION = "trade-live-worker-v16"
 ENGINE_ID = "paddle-korean-ppocrv5-mobile-onnx-cpu-v1"
 MODEL_ONNX_SHA256 = "92f0b7785e64fc9090106a241cf4c1eb97472824558272751b88a2a4476d3a08"
 MODEL_CONFIG_SHA256 = "f757fa1c40e99edcf27e9cce879b93eb2a51fa46f5ef39095689b8c37dd75998"
@@ -222,3 +222,40 @@ class TradeBatchRuntime:
                         and (type(corrected) is not int or corrected < (0 if field == "count" else 1))
                         or field not in ("reqAmount", "count", "yield") and not isinstance(corrected, str)):
                     raise TradeBatchRuntimeError("recognition_worker_failed", "Local recognition returned an invalid live list.", 502)
+
+    def recognize_warehouse(self, image_path: Path):
+        reason, _ = self._integrity()
+        if reason:
+            raise TradeBatchRuntimeError(reason, "창고 숫자 OCR 모델을 사용할 수 없습니다.", 503)
+        if not self._worker_lock.acquire(blocking=False):
+            raise TradeBatchRuntimeError("engine_busy", "다른 인식이 진행 중입니다. 완료 후 다시 시도하세요.", 409, retryable=True)
+        try:
+            with tempfile.TemporaryDirectory(prefix="bdo-warehouse-ocr-", dir=self.temp_root) as temporary:
+                work = Path(temporary)
+                (work / "capture-0001.png").write_bytes(Path(image_path).read_bytes())
+                request, output = work / "request.json", work / "result.json"
+                request.write_text(json.dumps({"version": 1, "batchId": "warehouse", "task": "warehouse",
+                                               "imagePath": "capture-0001.png"}), encoding="utf-8")
+                prefix = [str(self.python_path), "--trade-ocr-worker"] if self.packaged_worker else [str(self.python_path), "-B", str(self.worker_path)]
+                environment = {key: os.environ[key] for key in ("PATH", "SYSTEMROOT", "WINDIR", "TEMP", "TMP", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "PROGRAMDATA") if key in os.environ}
+                environment.update(PYTHONDONTWRITEBYTECODE="1", HF_HUB_OFFLINE="1", PYTHONUTF8="1",
+                                   PYTHONIOENCODING="utf-8", PYINSTALLER_RESET_ENVIRONMENT="1",
+                                   OMP_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1", MKL_NUM_THREADS="1")
+                try:
+                    result = self.runner([*prefix, "--request", str(request), "--out", str(output), "--model-dir", str(self.model_dir)],
+                                         cwd=str(ROOT), shell=False, timeout=self.timeout, capture_output=True, text=True,
+                                         env=environment, creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
+                except subprocess.TimeoutExpired:
+                    raise TradeBatchRuntimeError("recognition_timeout", "창고 숫자 인식 시간이 초과됐습니다.", 504) from None
+                if result.returncode != 0 or not output.is_file() or output.stat().st_size > MAX_BATCH_BYTES:
+                    raise TradeBatchRuntimeError("recognition_worker_failed", "창고 숫자 OCR을 완료하지 못했습니다.", 502)
+                payload = json.loads(output.read_text(encoding="utf-8"))
+                if not isinstance(payload, dict):
+                    raise TradeBatchRuntimeError("recognition_worker_failed", "창고 OCR 결과 형식이 올바르지 않습니다.", 502)
+                if payload.get("error") == "SLOT_GRID_DETECTION_FAILED":
+                    raise TradeBatchRuntimeError("SLOT_GRID_DETECTION_FAILED", "창고 칸의 테두리를 찾지 못했습니다.", 422)
+                if set(payload) != {"patch", "report"}:
+                    raise TradeBatchRuntimeError("recognition_worker_failed", "창고 OCR 결과 형식이 올바르지 않습니다.", 502)
+                return payload["patch"], payload["report"]
+        finally:
+            self._worker_lock.release()

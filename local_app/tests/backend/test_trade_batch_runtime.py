@@ -36,6 +36,35 @@ def fake_worker(command, **kwargs):
 class LiveRuntimeTests(unittest.TestCase):
     capture = {"captureId": "10000000-0000-4000-8000-000000000001", "metadata": {"batchId": None}, "imageBytes": b"png"}
 
+    def test_warehouse_worker_manifest_and_failure_release_the_shared_lock(self):
+        with tempfile.TemporaryDirectory() as folder:
+            image = Path(folder) / "source.png"; image.write_bytes(b"png")
+            def worker(command, **kwargs):
+                manifest = json.loads(Path(command[command.index("--request") + 1]).read_text())
+                self.assertEqual(manifest["task"], "warehouse")
+                self.assertEqual(manifest["imagePath"], "capture-0001.png")
+                self.assertEqual(kwargs["env"]["OMP_NUM_THREADS"], "1")
+                Path(command[command.index("--out") + 1]).write_text(json.dumps({"patch": {}, "report": {}}))
+                return SimpleNamespace(returncode=0)
+            runtime = ReadyRuntime(temp_root=folder, runner=worker)
+            self.assertEqual(runtime.recognize_warehouse(image), ({}, {}))
+            runtime.runner = lambda *args, **kwargs: SimpleNamespace(returncode=1)
+            with self.assertRaises(TradeBatchRuntimeError): runtime.recognize_warehouse(image)
+            runtime.runner = worker
+            self.assertEqual(runtime.recognize_warehouse(image), ({}, {}))
+            self.assertEqual(list(Path(folder).iterdir()), [image])
+
+    def test_warehouse_never_bypasses_a_busy_or_missing_model_with_templates(self):
+        runtime = ReadyRuntime()
+        runtime._worker_lock.acquire()
+        try:
+            with self.assertRaises(TradeBatchRuntimeError) as error: runtime.recognize_warehouse(Path("unused"))
+            self.assertEqual(error.exception.code, "engine_busy")
+        finally: runtime._worker_lock.release()
+        with patch.object(runtime, "_integrity", return_value=("model_missing", {})):
+            with self.assertRaises(TradeBatchRuntimeError) as error: runtime.recognize_warehouse(Path("unused"))
+            self.assertEqual(error.exception.status, 503)
+
     def test_live_worker_manifest_and_cleanup(self):
         with tempfile.TemporaryDirectory() as folder:
             def inspect(command, **kwargs):
