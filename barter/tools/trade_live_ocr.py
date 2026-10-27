@@ -36,6 +36,8 @@ FIELDS = ("island", "fromItem", "reqAmount", "toItem", "count", "yield")
 NUMERIC = {"reqAmount", "count", "yield"}
 FIXED_TRADE_SIZE = (987, 456)
 FIXED_TRADE_ANCHORS = (6, 271)
+NAME_BOUNDS = {"island": (.063, .05, .241, .48), "fromItem": (.340, .10, .558, .47),
+               "toItem": (.714, .10, .931, .87)}
 
 
 class LocalReader:
@@ -678,8 +680,7 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
     except (OSError, ValueError, KeyError, TypeError):
         items, islands, item_stages = [], [], {}
         land_items = []
-    bounds = {"island": (.063, .05, .241, .48), "fromItem": (.340, .10, .558, .47),
-              "toItem": (.714, .10, .931, .87), "count": (.064, .47, .233, .83),
+    bounds = {**NAME_BOUNDS, "count": (.064, .47, .233, .83),
               "reqAmount": (.287, .55, .340, .93), "yield": (.663, .55, .724, .95)}
     rows, capture_results = [], []
     for capture_index, capture in enumerate(captures):
@@ -690,7 +691,7 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
         aligned = image.crop((offset, 0, image.width + offset, image.height)) if offset else image
         report("recognizing", capture_index, 0, len(boxes))
         prepared_rows = [image.crop((0, top, image.width, bottom)) for top, bottom in boxes]
-        icon_results, prewarm, fast_keys, fast_images = {}, [], [], []
+        icon_results, name_results, prewarm, fast_keys, fast_images = {}, {}, [], [], []
         for ordinal, row in enumerate(prepared_rows):
             preliminary = {key: {} for key in ("fromItem", "toItem", "reqAmount", "yield")}
             for field in ("fromItem", "toItem"):
@@ -703,12 +704,22 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
                     preliminary[field] = hit
                 else:
                     try:
-                        prewarm.extend(_name_images(_crop(row, bounds[field])))
+                        crop = _crop(row, bounds[field])
+                        cached = templates.match("item", crop, allowed=set(items))
+                        if cached:
+                            name_results[ordinal, field] = cached
+                        else:
+                            prewarm.extend(_name_images(crop))
                     except Exception:
                         pass
             for field in ("island", "count"):
                 try:
-                    prewarm.extend(_name_images(_crop(row, bounds[field])))
+                    crop = _crop(row, bounds[field])
+                    cached = templates.match("island", crop, allowed=set(islands)) if field == "island" else None
+                    if cached:
+                        name_results[ordinal, field] = cached
+                    else:
+                        prewarm.extend(_name_images(crop))
                 except Exception:
                     pass
             apply_trade_rules(preliminary, item_stages)
@@ -750,7 +761,7 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
                         fields[field] = quantity(row, field, allowed, destination, fast_results.get((ordinal, field)))
                     else:
                         hit = icon_results.get((ordinal, field))
-                        fields[field] = hit or name(crop, islands if field == "island" else items,
+                        fields[field] = hit or name_results.get((ordinal, field)) or name(crop, islands if field == "island" else items,
                                              land_items if field == "fromItem" else (),
                                              kind="island" if field == "island" else "item")
                         if hit:

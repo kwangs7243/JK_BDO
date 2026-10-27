@@ -17,7 +17,13 @@ class TradeTemplateReaderTests(unittest.TestCase):
         path = Path(__file__).resolve().parents[3] / 'barter/recognition_data/trade-templates.json'
         reader = templates.TemplateReader(path, ink=_ink, crop=_crop)
         self.assertTrue(reader.stats['available'], 'fresh source checkout must include its verified bank')
-        self.assertEqual(reader.stats['referenceCount'], 0, 'legacy font references are archived, not active')
+        self.assertEqual(reader.bank['fontPolicy'], 'OCR_PRIMARY_20261027')
+        references = {r['referenceId'] for refs in reader.bank['lookup'].values() for r in refs}
+        self.assertEqual(reader.stats['referenceCount'], len(references))
+        for key, refs in reader.bank['lookup'].items():
+            self.assertTrue(key.startswith(('item|native|', 'item|scaled|', 'island|native|', 'island|scaled|')))
+            for reference in refs:
+                self.assertEqual(reference['source']['fontPolicy'], 'OCR_PRIMARY_20261027')
 
     def test_whole_field_does_not_match_substring_or_clipped_edge(self):
         glyph = np.zeros((20, 40, 3), dtype=np.uint8)
