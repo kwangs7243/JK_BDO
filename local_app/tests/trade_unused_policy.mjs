@@ -14,6 +14,7 @@ const makeRow = (toItem, island = "나르보 섬") => ({captureId:"capture", ord
 }).map(([key, value]) => [key, field(value)]))});
 const prepare = (rows) => prepareLiveTradeRows({rows}, catalog, {policy});
 assert.ok(policy.excludedOutputs.includes("순수한 진주 결정"));
+assert.ok(policy.excludedOutputs.includes("빛나는 코발트 주괴"));
 
 for (const name of policy.excludedOutputs) {
   const row = makeRow(name), baseline=structuredClone(row);

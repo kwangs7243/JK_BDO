@@ -8,6 +8,11 @@ import { createAutocomplete } from "./autocomplete.js";
 const escape = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 const scheduleStatus = document.querySelector("#schedule-status");
 function setScheduleStatus(message, kind = "info") { scheduleStatus.textContent = message; scheduleStatus.dataset.kind = kind; }
+function syncTradeModeControl() {
+  const select = document.getElementById("brief-session-mode");
+  select.value = state.session.config?.ship?.mode ?? state.settings.ship?.mode ?? "inner";
+  select.disabled = state.session.scannedTrades === null;
+}
 const minutes = (value) => window.formatTimeExact?.(value) ?? `${Math.floor(value || 0)}분`;
 const itemTone = (tier) => tier === "coin" ? "tone-coin" : tier === "mat" ? "tone-special" : !tier ? "tone-land" : `tone-tier-${tier}`;
 const itemTierLabel = (tier) => tier === "coin" ? "까마귀" : tier === "mat" ? "특수" : !tier ? "육지" : String(tier) + "단";
@@ -312,8 +317,9 @@ export function initScheduleUI(setStatus) {
   document.getElementById("copy-engine-diagnostics-dialog").addEventListener("click", copyDiagnostics);
   window.__bdoRenderScheduleDiagnostics = renderScheduleDiagnostics;
   window.__bdoAppState = state;
-  window.addEventListener("bdo:session-changed", () => { if (state.session.scannedTrades === null) renderScheduleSlots(setStatus); });
+  window.addEventListener("bdo:session-changed", () => { syncTradeModeControl(); if (state.session.scannedTrades === null) renderScheduleSlots(setStatus); });
   window.addEventListener("bdo:trade-list-changed", () => {
+    syncTradeModeControl();
     if (state.session.schedule === null) {
       document.getElementById("col-speed").replaceChildren();
       document.getElementById("col-balance").replaceChildren();
@@ -327,8 +333,7 @@ export function syncScheduleState() {
   const mode = state.session.selection?.briefMode ?? "both";
   document.getElementById("schedule-columns").dataset.mode = mode;
   document.querySelectorAll("[data-brief-mode]").forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.briefMode === mode)));
-  const modeSelect = document.getElementById("brief-session-mode");
-  if (modeSelect) { modeSelect.value = state.session.config?.ship?.mode ?? state.settings.ship?.mode ?? "inner"; modeSelect.disabled = state.session.scannedTrades === null; }
+  syncTradeModeControl();
   if (state.session.schedule) {
     renderModeColumn("col-speed", state.session.schedule.speed, "speed");
     renderModeColumn("col-balance", state.session.schedule.balance, "balance");
