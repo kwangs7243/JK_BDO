@@ -82,7 +82,7 @@ class FeedbackV2Tests(unittest.TestCase):
     def test_export_preserves_capture_and_each_slot_dimensions(self):
         image = io.BytesIO()
         Image.new("RGB", (10, 10), (40, 60, 80)).save(image, format="PNG")
-        slot = {**self.slots[0], "width": 7, "height": 9}
+        slot = {**self.slots[0], "width": 7, "height": 9, "decision": "ICON_MATCH_UNKNOWN"}
         report = {"slots": [slot], "grid": {"slotWidth": 10}}
         scan_id = self.app.extensions["bdo_storage"].record_warehouse_scan(image.getvalue(), report, {})
         response = self.client.get("/api/warehouse-dataset")

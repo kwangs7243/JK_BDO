@@ -184,7 +184,7 @@ function render() {
   const footer = make("footer", "patch-review-footer");
   const cancel = make("button", "", "취소"); cancel.type = "button"; cancel.dataset.action = "cancel";
   const apply = make("button", "primary", "모두 적용"); apply.type = "button"; apply.dataset.action = "apply";
-  footer.append(make("small", "", "원본 이미지·판독 결과는 로컬 DB에 보존됩니다. 사용자 확인값은 재고 적용 시 함께 저장됩니다."), cancel, apply);
+  footer.append(make("small", "", "검수·수정이 필요한 원본만 로컬 DB에 보존합니다. 정상 판독 이미지는 저장하지 않습니다."), cancel, apply);
   dialog.replaceChildren(header, body, footer);
   for (const slot of slots) {
     const correction = ensureCorrection(slot);
@@ -258,6 +258,17 @@ async function applyPatch(event) {
         return { slot: slot.slot, name: value.excluded ? null : value.name, quantity: value.excluded ? null : Number(value.quantity), excluded: value.excluded, agreement: value.excluded ? "unchecked" : value.agreement };
       }),
     } : undefined;
+    if (feedback && context.report.imageRetained === false && context.imageFile && feedback.rows.some(row => {
+      const slot = applicableSlots().find(slot => slot.slot === row.slot);
+      return row.excluded || row.name !== originalName(slot) || row.quantity !== originalQuantity(slot);
+    })) {
+      feedback.sourceImagePng = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(context.imageFile);
+      });
+    }
     await saveWarehouseInventory(items, feedback);
     const setStatus = context.setStatus;
     const onApplied = context.onApplied;

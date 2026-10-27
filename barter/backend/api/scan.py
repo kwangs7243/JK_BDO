@@ -55,7 +55,7 @@ def warehouse_dataset():
         store = current_app.extensions["bdo_storage"]
         with closing(store.connect()) as connection, zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
             connection.execute("BEGIN")
-            for record in connection.execute("SELECT * FROM warehouse_scan ORDER BY created_at, scan_id"):
+            for record in connection.execute("SELECT * FROM warehouse_scan WHERE length(image_png) > 0 ORDER BY created_at, scan_id"):
                 count += 1
                 scan_id = record["scan_id"]
                 base = f"scans/{scan_id}"

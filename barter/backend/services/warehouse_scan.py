@@ -136,6 +136,8 @@ def process_warehouse_upload(
         _validate_scanner_patch(patch, report, catalog)
         safe = _safe_report(report)
         if record_scan is not None:
+            from ..warehouse_feedback import warehouse_requires_image
+            safe["imageRetained"] = warehouse_requires_image(safe)
             from hashlib import sha256
             sources = [reference_json, root / "tools" / "warehouse_patch" / "warehouse_patch.py"]
             sources += ([root / "barter/recognition_data/warehouse-icons.npz", root / "barter/tools/numeric_ocr.py"]

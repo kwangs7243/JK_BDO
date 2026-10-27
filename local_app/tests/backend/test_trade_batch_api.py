@@ -92,7 +92,7 @@ class LiveApiTests(unittest.TestCase):
         batch = self.batch()
         batch["captures"].append({"captureId": metadata["captureId"], "metadata": metadata})
         batch, result = self.covered_result(batch)
-        result["rows"][1]["fields"]["count"].update(valueSource="OCR", rawOCR="2")
+        result["rows"][1]["fields"]["island"].update(valueSource="MASTER", rawOCR="섬")
         response = self.post_result(batch, result, copies=2)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json()["result"], result)
@@ -102,11 +102,11 @@ class LiveApiTests(unittest.TestCase):
         self.assertEqual(rows[0][4], self.image)
         details = json.loads(rows[0][5])
         self.assertEqual(details["snapshot"]["rows"], [result["rows"][1]])
-        self.assertEqual(details["collection"]["missingFields"], [{"ordinal": 0, "field": "count", "reason": "OCR_FALLBACK"}])
+        self.assertEqual(details["collection"]["missingFields"], [{"ordinal": 0, "field": "island", "reason": "MISSING_NAME_TEMPLATE"}])
 
     def test_identical_missing_evidence_is_not_saved_again_after_review_or_restart(self):
         batch, result = self.covered_result()
-        result["rows"][0]["fields"]["count"].update(valueSource="OCR")
+        result["rows"][0]["fields"]["island"].update(valueSource="MASTER")
         self.assertEqual(self.post_result(batch, result).status_code, 200)
         original = self.records(include_automatic=True)
         self.assertEqual(len(original), 1)
@@ -122,18 +122,18 @@ class LiveApiTests(unittest.TestCase):
 
     def test_same_image_with_new_upload_ids_is_deduplicated(self):
         batch, result = self.covered_result()
-        result["rows"][0]["fields"]["count"].update(valueSource="OCR")
+        result["rows"][0]["fields"]["island"].update(valueSource="MASTER")
         self.assertEqual(self.post_result(batch, result).status_code, 200)
         self.metadata["captureId"] = str(uuid4())
         self.capture["captureId"] = self.metadata["captureId"]
         batch, result = self.covered_result()
-        result["rows"][0]["fields"]["count"].update(valueSource="OCR")
+        result["rows"][0]["fields"]["island"].update(valueSource="MASTER")
         self.assertEqual(self.post_result(batch, result).status_code, 200)
         self.assertEqual(len(self.records(include_automatic=True)), 1)
 
     def test_changed_evidence_and_template_bank_are_not_hidden_as_duplicates(self):
         batch, result = self.covered_result()
-        result["rows"][0]["fields"]["count"].update(valueSource="OCR")
+        result["rows"][0]["fields"]["island"].update(valueSource="MASTER")
         self.assertEqual(self.post_result(batch, result).status_code, 200)
         result["rows"][0]["fields"]["count"]["corrected"] = 3
         self.assertEqual(self.post_result(batch, result).status_code, 200)
@@ -152,6 +152,29 @@ class LiveApiTests(unittest.TestCase):
         details = json.loads(self.records()[0][5])
         self.assertEqual(details["snapshot"]["rows"], result["rows"])
         self.assertEqual(details["collection"]["missingFields"][0]["reason"], "USER_FEEDBACK")
+
+    def test_icon_names_and_accepted_numeric_ocr_do_not_collect_images(self):
+        batch, result = self.covered_result()
+        fields = result["rows"][0]["fields"]
+        for name in ("fromItem", "toItem"):
+            fields[name].update(valueSource="VERIFIED_ICON", iconEvidence={"distance": .1, "gap": .1})
+        for name in ("reqAmount", "count", "yield"):
+            fields[name].update(valueSource="NUMERIC_OCR_CONSENSUS")
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        self.assertEqual(self.records(include_automatic=True), [])
+        fields["count"].update(valueSource="NUMERIC_OCR_CONTEXT", corrected=3)
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        self.assertEqual(self.records(include_automatic=True), [])
+        fields["count"].update(corrected=None, reviewRequired=True)
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        self.assertEqual(len(self.records(include_automatic=True)), 1)
+
+    def test_excluded_unused_row_does_not_collect_name_candidates(self):
+        batch, result = self.covered_result()
+        result["rows"][0]["excluded"] = True
+        result["rows"][0]["fields"]["toItem"].update(valueSource="OCR", reviewRequired=False)
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        self.assertEqual(self.records(include_automatic=True), [])
 
     def test_unresolved_and_empty_results_are_retained_for_diagnosis(self):
         batch, result = self.covered_result()

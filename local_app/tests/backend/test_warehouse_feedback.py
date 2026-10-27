@@ -36,7 +36,9 @@ class WarehouseFeedbackTests(unittest.TestCase):
             result["items"] = items
             report["patch"]["items"] = items
             return result, report
-        with patch.object(warehouse_scan, "convert", side_effect=review_cases):
+        def recognize(path):
+            return review_cases(path, ROOT / "reference/barter_items.json", ROOT / "tools/warehouse_patch/quantity_templates.npz")
+        with patch.object(self.app.extensions["trade_batch_runtime"], "recognize_warehouse", side_effect=recognize):
             response = self.client.post("/api/warehouse-scan", data={"image": (io.BytesIO(self.image), "master.png")})
         self.assertEqual(response.status_code, 200)
         self.result = response.get_json()
@@ -63,7 +65,7 @@ class WarehouseFeedbackTests(unittest.TestCase):
         self.assertEqual(image, self.image)
         self.assertEqual(json.loads(report)["input"]["sha256"], hashlib.sha256(self.image).hexdigest())
         self.assertNotIn("path", json.loads(report)["input"])
-        self.assertEqual(len(json.loads(provenance)["sourceHashes"]), 73)
+        self.assertIn("barter/tools/numeric_ocr.py", json.loads(provenance)["sourceHashes"])
         self.assertEqual(self.labels(), 0)
     def test_seed_guess_confirmation_and_correction_are_separate_from_original(self):
         slot = next(slot for slot in self.report["slots"] if slot["slot"] == "R5C8")

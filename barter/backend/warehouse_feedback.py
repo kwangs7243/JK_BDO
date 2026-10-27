@@ -6,9 +6,39 @@ AGREEMENTS = {"item_only": (True, False), "quantity_only": (False, True),
               "both_match": (True, True), "both_different": (False, False)}
 
 
+def warehouse_requires_image(report):
+    slots = report.get("slots", [])
+    return not slots or any(slot.get("decision") not in {"MATCH", "EMPTY", "TIER5_IGNORE"} for slot in slots)
+
+
+def retain_feedback_image(connection, feedback, corrected):
+    record = connection.execute("SELECT image_png, provenance_json FROM warehouse_scan WHERE scan_id = ?", (feedback["scanId"],)).fetchone()
+    if record["image_png"] or not corrected["rows"]:
+        return
+    import base64
+    import binascii
+    import hashlib
+    provenance = json.loads(record["provenance_json"])
+    source = feedback.get("sourceImagePng")
+    if not isinstance(source, str) or len(source) > 28 * 1024 * 1024:
+        raise ContractError("수정한 판독의 원본 이미지가 필요합니다. 이미지를 다시 판독하세요.")
+    try:
+        image = base64.b64decode(source, validate=True)
+    except (ValueError, binascii.Error):
+        raise ContractError("수정한 판독의 원본 이미지 형식이 올바르지 않습니다.") from None
+    collection = provenance.get("collection", {})
+    if (not image.startswith(b"\x89PNG\r\n\x1a\n") or len(image) > 20 * 1024 * 1024
+            or hashlib.sha256(image).hexdigest() != collection.get("imageSha256")):
+        raise ContractError("수정한 판독의 이미지가 원본과 일치하지 않습니다.")
+    collection.update(imageRetained=True, retainedFor="USER_FEEDBACK")
+    connection.execute("UPDATE warehouse_scan SET image_png = ?, provenance_json = ? WHERE scan_id = ?",
+                       (image, json.dumps(provenance, ensure_ascii=False), feedback["scanId"]))
+
+
 def validate_feedback(connection, feedback, updates, catalog):
     feedback = require_object(feedback, "feedback")
-    if (set(feedback) != {"scanId", "rows", "version"} or type(feedback["version"]) is not int
+    if (not {"scanId", "rows", "version"} <= set(feedback)
+            or set(feedback) - {"scanId", "rows", "version", "sourceImagePng"} or type(feedback["version"]) is not int
             or feedback["version"] != 2 or not isinstance(feedback["scanId"], str)
             or not isinstance(feedback["rows"], list)):
         raise ContractError("판독 기록 형식이 올바르지 않습니다.")

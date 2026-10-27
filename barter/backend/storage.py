@@ -87,8 +87,9 @@ def _trade_sample_collection(capture, details):
                 reason = "USER_FEEDBACK"
             elif field.get("reviewRequired") or field.get("corrected") is None:
                 reason = "REVIEW_REQUIRED"
-            elif field.get("valueSource") not in {"VERIFIED_TEMPLATE", "TRADE_RULE"}:
-                reason = "OCR_FALLBACK"
+            elif (not row.get("excluded") and name in {"island", "fromItem", "toItem"}
+                  and field.get("valueSource") not in {"VERIFIED_TEMPLATE", "VERIFIED_ICON"}):
+                reason = "MISSING_NAME_TEMPLATE"
             else:
                 continue
             missing.append({"ordinal": row["ordinal"], "field": name, "reason": reason})
@@ -109,7 +110,7 @@ def _trade_sample_collection(capture, details):
                                 for correction in details["corrections"]]}
     fingerprint = hashlib.sha256(json.dumps(evidence, ensure_ascii=False, sort_keys=True,
                                            separators=(",", ":"), allow_nan=False).encode("utf-8")).hexdigest()
-    return {"policyVersion": 1, "imageSha256": image_hash, "fingerprint": fingerprint,
+    return {"policyVersion": 2, "imageSha256": image_hash, "fingerprint": fingerprint,
             "missingFields": missing, "reason": "MISSING_OR_REVIEWED_FIELDS" if rows else "NO_ROWS_OR_LEGACY_FEEDBACK"}
 
 
@@ -186,6 +187,8 @@ class Storage:
                 )""")
                 connection.execute("""CREATE UNIQUE INDEX IF NOT EXISTS trade_correction_collection_fingerprint
                     ON trade_correction(json_extract(details_json, '$.collection.fingerprint'))""")
+                connection.execute("""CREATE UNIQUE INDEX IF NOT EXISTS warehouse_scan_collection_fingerprint
+                    ON warehouse_scan(json_extract(provenance_json, '$.collection.fingerprint'))""")
                 connection.execute(
                     "INSERT OR IGNORE INTO app_meta (id, schema_version, revision, last_mutation_id, last_mutation_hash) VALUES (1, ?, 0, NULL, NULL)",
                     (SCHEMA_VERSION,),
@@ -303,9 +306,11 @@ class Storage:
     def update_inventory(self, updates: dict[str, dict[str, int]], mutation_id: str, base_revision: int, request_hash: str, feedback: dict | None = None) -> tuple[int, bool]:
         def apply(connection: sqlite3.Connection) -> None:
             if feedback is not None:
-                from .warehouse_feedback import validate_feedback
+                from .warehouse_feedback import retain_feedback_image, validate_feedback
                 corrected_feedback = validate_feedback(connection, feedback, updates, self.catalog)
-                connection.execute("INSERT INTO warehouse_feedback VALUES (?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now'), ?, ?)", (mutation_id, feedback["scanId"], json.dumps(corrected_feedback, ensure_ascii=False), json.dumps(updates, ensure_ascii=False)))
+                if corrected_feedback["rows"]:
+                    retain_feedback_image(connection, feedback, corrected_feedback)
+                    connection.execute("INSERT INTO warehouse_feedback VALUES (?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now'), ?, ?)", (mutation_id, feedback["scanId"], json.dumps(corrected_feedback, ensure_ascii=False), json.dumps(updates, ensure_ascii=False)))
             for name, fields in updates.items():
                 assignments = ", ".join(f"{column} = ?" for column in fields)
                 values = list(fields.values()) + [name]
@@ -366,12 +371,25 @@ class Storage:
         return self.mutate(mutation_id, base_revision, request_hash, apply)
 
     def record_warehouse_scan(self, image: bytes, report: dict, provenance: dict) -> str:
-        """Preserve scanner input/output without changing inventory or its revision."""
+        """Keep review images, and only metadata for fully resolved scans."""
+        import hashlib
+        from .warehouse_feedback import warehouse_requires_image
         from uuid import uuid4
+        image_hash = hashlib.sha256(image).hexdigest()
+        fingerprint = hashlib.sha256(json.dumps({"imageSha256": image_hash, "report": report, "provenance": provenance},
+                                                ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        retain = warehouse_requires_image(report)
+        provenance = {**provenance, "collection": {"policyVersion": 2, "imageSha256": image_hash,
+                                                  "fingerprint": fingerprint, "imageRetained": retain}}
         scan_id = str(uuid4())
         with closing(self.connect()) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            previous = connection.execute("SELECT scan_id FROM warehouse_scan WHERE json_extract(provenance_json, '$.collection.fingerprint') = ?", (fingerprint,)).fetchone()
+            if previous:
+                return previous["scan_id"]
             connection.execute("INSERT INTO warehouse_scan VALUES (?, strftime('%Y-%m-%dT%H:%M:%fZ','now'), ?, ?, ?)",
-                               (scan_id, image, json.dumps(report, ensure_ascii=False, allow_nan=False), json.dumps(provenance, ensure_ascii=False)))
+                               (scan_id, image if retain else b"", json.dumps(report, ensure_ascii=False, allow_nan=False), json.dumps(provenance, ensure_ascii=False)))
+            connection.commit()
         return scan_id
 
     def record_trade_corrections(self, feedback, captures):
