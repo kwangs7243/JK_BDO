@@ -1,4 +1,5 @@
 import json
+import io
 import os
 import shutil
 import tempfile
@@ -7,6 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import numpy as np
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[3]
 SPEC = ROOT / 'local_app/packaging/bdo-suite.spec'
@@ -73,3 +75,38 @@ class WarehousePackageAssetsTests(unittest.TestCase):
         os.environ['BDO_PACKAGE_WAREHOUSE_TEMPLATES'] = str(self.icon_bank(names=2))
         with self.assertRaisesRegex(RuntimeError, 'icon-only reference bank'):
             self.load_assets()
+
+    def test_physical_package_assets_support_post_ocr_scan_recording(self):
+        from local_app.backend.app import create_app
+        from barter.backend.services import warehouse_scan
+        from werkzeug.datastructures import FileStorage
+        os.environ['BDO_PACKAGE_WAREHOUSE_TEMPLATES'] = str(self.icon_bank())
+        assets = self.load_assets()
+        package = self.root / 'physical-package'
+        destinations = {'reference', 'reference/icons', 'tools/warehouse_patch', 'barter/tools', 'barter/recognition_data'}
+        for source, destination in assets['datas']:
+            if destination not in destinations:
+                continue
+            source = Path(source)
+            if not source.exists():
+                source = ROOT / source.relative_to(self.root)
+            target = package / destination
+            target.mkdir(parents=True, exist_ok=True)
+            if source.is_dir():
+                shutil.copytree(source, target, dirs_exist_ok=True)
+            else:
+                filename = 'warehouse-icons.npz' if source.name == 'custom-icons.npz' else source.name
+                shutil.copyfile(source, target / filename)
+        app = create_app(self.root / 'scan.sqlite3', testing=True)
+        store = app.extensions['bdo_storage']
+        name = next(name for name, tier in store.catalog.items() if tier == 1)
+        image = io.BytesIO(); Image.new('RGB', (70, 70)).save(image, format='PNG')
+        result = {'type': 'master_inventory_patch', 'version': 1, 'items': {name: 5}}
+        report = {'slots': [{'slot': 'R1C1', 'decision': 'MATCH', 'finalItem': name,
+                              'quantity': {'status': 'QUANTITY_MATCH', 'value': 5}}]}
+        with patch.object(warehouse_scan, '__file__', str(package / 'barter/backend/services/warehouse_scan.py')):
+            patch_value, saved = warehouse_scan.process_warehouse_upload(
+                FileStorage(stream=io.BytesIO(image.getvalue()), filename='capture.png'), store.catalog,
+                record_scan=store.record_warehouse_scan, recognize=lambda path: (result, report))
+        self.assertEqual(patch_value, result)
+        self.assertTrue(saved['scanId'])

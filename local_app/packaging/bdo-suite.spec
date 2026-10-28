@@ -35,6 +35,7 @@ datas = [
     (str(trade_model / "inference.yml"), "barter/recognition_data/trade-model"),
     (str(ROOT / "barter" / "tools" / "trade_live_ocr.py"), "barter/tools"),
     (str(ROOT / "barter" / "tools" / "trade_batch_worker.py"), "barter/tools"),
+    (str(ROOT / "barter" / "tools" / "numeric_ocr.py"), "barter/tools"),
     (str(ROOT / "barter" / "frontend"), "barter/frontend"),
     (str(ROOT / "reference" / "barter_items.json"), "reference"),
     (str(ROOT / "reference" / "icons"), "reference/icons"),
