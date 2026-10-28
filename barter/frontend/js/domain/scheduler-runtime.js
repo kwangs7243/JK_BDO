@@ -26,6 +26,7 @@ function renderTrades() { window.dispatchEvent(new CustomEvent("bdo:trade-list-c
 function syncLegacyState(appState) {
   const session = appState.session;
   window.applyBdoPersistentConfig({ ...appState.settings, ...(session.config || {}) });
+  window.APP_CONFIG.EXCLUDED_OUTPUTS = appState.settings.tradePolicy?.excludedOutputs || [];
   inventory = Object.fromEntries(appState.inventory.map((item) => [item.programName, { ...item }]));
   tierRules = Object.fromEntries(Object.entries(appState.settings.tierRules || {}).map(([key, value]) => [Number(key), value]));
   scannedTrades = session.scannedTrades || [];
@@ -45,7 +46,7 @@ function findUnknownStockTrades(trades) {
   const known = new Map(Object.values(inventory).map((item) => [item.programName, item.stock]));
   const unknown = new Set();
   for (const trade of trades || []) {
-    if (trade.deleted || trade.disabled || (Number.parseInt(trade.count, 10) || 0) <= 0) continue;
+    if (trade.deleted || trade.disabled || isPolicyExcludedTrade(trade) || (Number.parseInt(trade.count, 10) || 0) <= 0) continue;
     for (const name of [trade.fromItem, trade.toItem]) {
       const clean = String(name || "").replace(/\[.*?\]\s*/g, "").replace(/\s*x\s*\d+/gi, "").trim();
       if (known.has(clean) && known.get(clean) === null) unknown.add(clean);

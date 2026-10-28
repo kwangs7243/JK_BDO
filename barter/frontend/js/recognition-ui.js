@@ -128,7 +128,7 @@ export function initRecognitionUI({ warehouseCaptureUI }) {
   const liveListUI = createTradeLiveListUI({
     elements: { liveListSection, tradeRecognitionStatus, tradeRecognitionRegion, tradeRecognitionResultRegion, recognitionDiagnostics },
     getCatalog: () => tradeCatalog,
-    getUnusedPolicy: () => tradeUnusedPolicy,
+    getUnusedPolicy: () => ({ ...tradeUnusedPolicy, ...state.settings.tradePolicy }),
     getPending: () => tradeRecognitionPending,
     setPending: (pending) => { tradeRecognitionPending = pending; updateRecognitionControls(); renderTradeQueue(); },
     onResult: (result) => { liveListResult = result; },

@@ -7,7 +7,7 @@ from typing import Any
 
 MAX_SAFE_INTEGER = 9_007_199_254_740_991
 VALID_KINDS = {"warehouse", "manual", "completion"}
-VALID_SECTIONS = {"inventoryOrder", "tierRules", "ship", "parley", "shipPresets", "tuning", "navigation", "mapSlots", "mapBase", "viewer"}
+VALID_SECTIONS = {"inventoryOrder", "tierRules", "ship", "parley", "shipPresets", "tuning", "navigation", "mapSlots", "mapBase", "viewer", "tradePolicy"}
 TIERS = {"1", "2", "3", "4", "5"}
 MODES = {"none", "inner", "ocean", "t7_2region", "t7_2region_south", "t7_2region_arehazaX", "t7_3region"}
 TUNING_FIELDS = {"specialMatPriority", "crowCoinPriority", "pathEfficiencyBonus", "smallTradePenalty", "chainMaxDistance", "chainBonusScore", "distancePenaltyWeight", "overloadPenalty", "efficiencyThreshold", "iliyaPitstopRadius", "overloadTimeWeight", "deficitRatioBonus", "emergencyBonus", "preservationBonus", "westBias", "useClustering", "tierPriority", "excludeSurplus"}
@@ -160,7 +160,14 @@ def validate_setting_section(section: str, value: Any, catalog: dict[str, int]) 
         return value
     obj = require_object(value, f"settings.{section}")
     validate_json_tree(obj, f"settings.{section}")
-    if section == "inventoryOrder":
+    if section == "tradePolicy":
+        _exact_keys(obj, {"excludedOutputs", "autoExcludeUnregisteredOutputs"}, section)
+        names = obj["excludedOutputs"]
+        if (not isinstance(names, list) or len(names) > 1000
+                or any(not isinstance(name, str) or not name.strip() or len(name) > 128 for name in names)
+                or len(names) != len(set(names)) or type(obj["autoExcludeUnregisteredOutputs"]) is not bool):
+            raise ContractError("tradePolicy requires unique item names and a Boolean unregistered-output setting")
+    elif section == "inventoryOrder":
         _exact_keys(obj, TIERS, section)
         for tier, names in obj.items():
             if not isinstance(names, list) or any(not isinstance(name, str) or catalog.get(name) != int(tier) for name in names) or len(names) != len(set(names)):

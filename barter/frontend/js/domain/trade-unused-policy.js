@@ -12,6 +12,9 @@ export function validateUnusedTradePolicy(policy, catalog) {
 function confirmedName(field) {
   if (!field || field.reviewRequired || !field.corrected || field.reviewDraft !== undefined) return false;
   if (["USER_REVIEW", "USER_EDIT"].includes(field.valueSource)) return true;
+  if (field.valueSource === "VERIFIED_ICON" && field.iconEvidence) return true;
+  if (field.valueSource === "MASTER" && field.masterMatch === "RESOLVED"
+      && field.masterEvidence?.method === "MASTER_VIEW_AGREEMENT") return true;
   if (field.valueSource === "VERIFIED_TEMPLATE" && field.templateEvidence?.references?.length) return true;
   const expected = normalized(field.corrected);
   const readings = [{text:field.rawOCR, confidence:field.confidence}, ...(field.variants ?? [])];

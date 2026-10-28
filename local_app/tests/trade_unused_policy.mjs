@@ -15,6 +15,16 @@ const makeRow = (toItem, island = "나르보 섬") => ({captureId:"capture", ord
 const prepare = (rows) => prepareLiveTradeRows({rows}, catalog, {policy});
 assert.ok(policy.excludedOutputs.includes("순수한 진주 결정"));
 assert.ok(policy.excludedOutputs.includes("빛나는 코발트 주괴"));
+for (const source of ["MASTER", "VERIFIED_ICON"]) {
+  const row = makeRow(policy.excludedOutputs[0]);
+  Object.assign(row.fields.toItem, { rawOCR: "오염된 원문", confidence: .4, valueSource: source,
+    masterMatch: "RESOLVED", masterEvidence: {method: "MASTER_VIEW_AGREEMENT"}, iconEvidence: { distance: 0 } });
+  prepare([row]);
+  assert.equal(row.excluded, true, "confirmed canonical names do not need literal OCR agreement again");
+  row.fields.toItem.reviewRequired = true;
+  applyUnusedTradePolicy([row], policy);
+  assert.equal(row.excluded, false, "unresolved conflicts remain protected");
+}
 
 for (const name of policy.excludedOutputs) {
   const row = makeRow(name), baseline=structuredClone(row);

@@ -3,10 +3,11 @@ import vm from 'node:vm';
 import {environment,audit} from './scheduler_departure_causality.mjs';
 
 function ordinaryCandidate({distancePenalty = 0, pathBonus = 0, t1Priority = 0, landOutput = false,
-  tier1Reserve = 20, sourceStock = 40} = {}) {
+  tier1Reserve = 20, sourceStock = 40, excludedOutputs = []} = {}) {
   const {ctx,elements} = environment();
   vm.runInContext(`
     APP_CONFIG.ALLOW_OCEAN='inner';
+    APP_CONFIG.EXCLUDED_OUTPUTS=${JSON.stringify(excludedOutputs)};
     APP_CONFIG.DISTANCE_PENALTY_WEIGHT=${distancePenalty};
     APP_CONFIG.PATH_EFFICIENCY_BONUS=${pathBonus};
     APP_CONFIG.tunePenW=9000;
@@ -29,6 +30,12 @@ function ordinaryCandidate({distancePenalty = 0, pathBonus = 0, t1Priority = 0, 
   `, ctx);
   return ctx.p1Measure;
 }
+
+assert.ok(ordinaryCandidate().executions > 0);
+assert.equal(ordinaryCandidate({excludedOutputs:["[2단계] 괴생물 촉수"]}).executions,0,
+  "a user-excluded output cannot enter a generated schedule");
+assert.ok(ordinaryCandidate({excludedOutputs:["까마귀 주화"]}).executions > 0,
+  "excluding a different output does not block normal inventory trades");
 
 // P1-1: a split trade is decremented once even when `picked` aliases `remaining`.
 {

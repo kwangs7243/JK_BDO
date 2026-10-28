@@ -11,6 +11,11 @@ function schedulerNumberOrDefault(value, fallback) {
     return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function isPolicyExcludedTrade(trade) {
+    const clean = value => String(value || '').replace(/\[.*?\]\s*/g, '').replace(/\s+/g, '');
+    return (window.APP_CONFIG?.EXCLUDED_OUTPUTS || []).some(name => clean(name) === clean(trade.toItem));
+}
+
 function runAlgorithmAllModes(silent = false) {
     const syncVars = [
         {id: 'crow', val: APP_CONFIG.CROW_COIN_PRIORITY}, {id: 'spec', val: APP_CONFIG.SPECIAL_MAT_PRIORITY},
@@ -33,8 +38,8 @@ function runAlgorithmAllModes(silent = false) {
     }
 
     // ⭐ [신규] !t.disabled 조건을 추가하여 OFF된 항목은 스케줄 엔진에 아예 들어가지 못하게 차단!
-    const invalidYieldTrades = scannedTrades.filter(t => !t.deleted && !t.disabled && (parseInt(t.count) || 0) > 0 && (!Number.isInteger(t.yield) || t.yield <= 0));
-    const activeTrades = scannedTrades.map((t, i) => ({ ...t, originalIndex: i })).filter(t => (parseInt(t.count) || 0) > 0 && !t.deleted && !t.disabled && t.fromItem && t.toItem && t.island && Number.isInteger(t.yield) && t.yield > 0);
+    const invalidYieldTrades = scannedTrades.filter(t => !t.deleted && !t.disabled && !isPolicyExcludedTrade(t) && (parseInt(t.count) || 0) > 0 && (!Number.isInteger(t.yield) || t.yield <= 0));
+    const activeTrades = scannedTrades.map((t, i) => ({ ...t, originalIndex: i })).filter(t => (parseInt(t.count) || 0) > 0 && !t.deleted && !t.disabled && !isPolicyExcludedTrade(t) && t.fromItem && t.toItem && t.island && Number.isInteger(t.yield) && t.yield > 0);
     const missingWeights = activeTrades.filter(t => [t.fromItem, t.toItem].some(name => !Number.isFinite(getItemWeight(getItemTier(name), name))));
     const vTrades = activeTrades.filter(t => !missingWeights.includes(t));
     if (missingWeights.length && !silent) showSchedulerNotice(`개당 무게가 등록되지 않은 교환 ${missingWeights.length}건은 스케줄에서 보류했습니다.\n${missingWeights.map(t => t.fromItem + ' → ' + t.toItem).join('\n')}`);

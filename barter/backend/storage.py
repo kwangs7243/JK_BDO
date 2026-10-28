@@ -10,7 +10,7 @@ from typing import Any, Callable
 
 SCHEMA_VERSION = 4
 MAX_SAFE_INTEGER = 9_007_199_254_740_991
-SETTINGS_SECTIONS = ("inventoryOrder", "tierRules", "ship", "parley", "shipPresets", "tuning", "navigation", "mapSlots", "mapBase", "viewer")
+SETTINGS_SECTIONS = ("inventoryOrder", "tierRules", "ship", "parley", "shipPresets", "tuning", "navigation", "mapSlots", "mapBase", "viewer", "tradePolicy")
 
 
 class RevisionConflict(Exception):
@@ -52,7 +52,9 @@ def load_catalog(reference_path: Path | None = None) -> tuple[dict[str, int], di
 
 
 def _default_settings(order: dict[str, list[str]]) -> dict[str, Any]:
+    policy = json.loads((repository_root() / "barter/frontend/data/trade-unused-policy.json").read_text(encoding="utf-8"))
     return {
+        "tradePolicy": {key: policy[key] for key in ("excludedOutputs", "autoExcludeUnregisteredOutputs")},
         "inventoryOrder": order,
         "tierRules": {"1": 20, "2": 20, "3": 20, "4": 20, "5": 2},
         "ship": {"normalWeight": 14379, "maxWeight": 24445, "speed": 170, "mode": "inner"},

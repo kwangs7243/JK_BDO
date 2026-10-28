@@ -27,6 +27,22 @@ try {
   socket.addEventListener("message",({data})=>{const value=JSON.parse(data);if(pending.has(value.id)){const task=pending.get(value.id);pending.delete(value.id);clearTimeout(task.timer);value.error?task.fail(Error(value.error.message)):task.ok(value.result);}});
   const evaluate=async expression=>{const value=await send("Runtime.evaluate",{expression,awaitPromise:true,returnByValue:true});if(value.exceptionDetails)throw Error(value.exceptionDetails.exception?.description ?? value.exceptionDetails.text);return value.result.value;};
   await waitFor(()=>evaluate("document.querySelector('#app-content')?.getAttribute('aria-busy')==='false'"));
+  await evaluate("document.querySelector('#open-trade-policy').click()");
+  await waitFor(()=>evaluate("document.querySelector('#trade-policy-dialog').open"));
+  assert.equal(await evaluate("document.querySelectorAll('[data-policy-items] input:checked').length"),4);
+  await send("Emulation.setDeviceMetricsOverride", {width:1440,height:900,deviceScaleFactor:1,mobile:false});
+  await evaluate("Promise.all(document.getAnimations().map(animation=>animation.finished.catch(()=>{})))");
+  await mkdir(output,{recursive:true});
+  await writeFile(join(output,"trade-policy-settings.png"),Buffer.from((await send("Page.captureScreenshot",{format:"png"})).data,"base64"));
+  await evaluate("document.querySelector('[data-policy-items] input:checked').click();document.querySelector('[data-policy-unknown]').click();document.querySelector('[data-policy-save]').click()");
+  await waitFor(()=>evaluate("!document.querySelector('#trade-policy-dialog').open"));
+  const customPolicy=await (await fetch(base+'api/bootstrap')).json();
+  assert.equal(customPolicy.settings.tradePolicy.excludedOutputs.length,3);
+  assert.equal(customPolicy.settings.tradePolicy.autoExcludeUnregisteredOutputs,false);
+  await evaluate("document.querySelector('#open-trade-policy').click()");
+  await waitFor(()=>evaluate("document.querySelector('#trade-policy-dialog').open"));
+  assert.equal(await evaluate("document.querySelectorAll('[data-policy-items] input:checked').length"),3);
+  await evaluate("document.querySelector('#trade-policy-dialog [data-close-dialog]').click()");
   const report=await evaluate(`(async()=>{
     const {createTradeLiveListUI}=await import('/assets/js/trade-live-list-ui.js');
     const catalog=await fetch('/assets/data/trade-catalog.json').then(r=>r.json());
@@ -77,7 +93,10 @@ try {
     const result={autoUnusedRows:4,purePearlCrystalExcluded:true,uncertainIdentityReviewed:true,otherSpecialsPreserved:true,allOceanCoinsPreserved:true,unregisteredOutputsAutomatic:true,restoreRequiresReview:true,overrideSurvivesRerender:true,nextBatchAutomatic:true,allUnusedCannotApplyEmpty:true,originalUnknownsPreserved:true};
     ui.dispose();host.remove();dialog.close();return result;
   })()`);
-  assert.deepEqual(await (await fetch(base+"api/bootstrap")).json(),before,"UI classification must not mutate inventory or working session");
+  const after = await (await fetch(base+"api/bootstrap")).json();
+  assert.deepEqual(after,customPolicy,"UI classification must not mutate inventory or working session");
+  assert.deepEqual(after.inventory,before.inventory);
+  assert.deepEqual(after.workingSession,before.workingSession);
   await mkdir(output,{recursive:true});
   await writeFile(join(output,"unused-trade-ui.json"),JSON.stringify({ok:true,isolatedDatabase:true,...report},null,2));
   console.log(JSON.stringify({ok:true,...report}));

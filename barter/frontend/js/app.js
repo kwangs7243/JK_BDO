@@ -10,6 +10,7 @@ import { initTradeSessionUI, renderTradeList } from "./trade-ui.js";
 import { initScheduleUI, syncScheduleState } from "./schedule-ui.js";
 import { initWorkspaceUI } from "./workspace-ui.js";
 import { initLeaveGuard } from "./leave-guard.js";
+import { initTradePolicyUI } from "./trade-policy-ui.js";
 
 const status = document.querySelector("#runtime-status");
 const content = document.querySelector("#app-content");
@@ -34,6 +35,7 @@ const warehouseCaptureUI = initWarehouseScanUI({ setStatus, onPatch: (patch, rep
 const recognitionUI = initRecognitionUI({ warehouseCaptureUI });
 initScheduleUI(setStatus);
 initWorkspaceUI();
+initTradePolicyUI(setStatus);
 window.__bdoRenderTradeList = renderTradeList;
 window.__bdoRenderAll = renderAll;
 window.addEventListener("bdo:trade-list-changed", renderTradeList);

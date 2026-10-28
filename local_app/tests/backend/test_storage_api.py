@@ -24,6 +24,25 @@ ITEM_B = "해적선 돛대"
 
 
 class StorageApiTests(unittest.TestCase):
+    def test_trade_policy_persists_without_changing_inventory_or_session(self):
+        before = self.bootstrap()
+        policy = {"excludedOutputs": ["까마귀 주화"], "autoExcludeUnregisteredOutputs": False}
+        response = self.client.patch("/api/settings", base_url=self.local,
+            headers={"Origin": self.local}, json={"mutationId": "policy-save", "baseRevision": before["revision"], "settings": {"tradePolicy": policy}})
+        self.assertEqual(response.status_code, 200)
+        after = self.bootstrap()
+        self.assertEqual(after["settings"]["tradePolicy"], policy)
+        self.assertEqual(before["inventory"], after["inventory"])
+        self.assertEqual(before["workingSession"], after["workingSession"])
+        catalog, order = load_catalog()
+        Storage(self.database, catalog, order).initialize()
+        self.assertEqual(self.bootstrap()["settings"]["tradePolicy"], policy)
+        for invalid in ({"excludedOutputs": ["x", "x"], "autoExcludeUnregisteredOutputs": True},
+                        {"excludedOutputs": [], "autoExcludeUnregisteredOutputs": 1}):
+            response = self.client.patch("/api/settings", base_url=self.local, headers={"Origin": self.local},
+                json={"mutationId": "invalid-policy", "baseRevision": after["revision"], "settings": {"tradePolicy": invalid}})
+            self.assertEqual(response.status_code, 422)
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(prefix="bdo-spec001-")
         self.database = Path(self.temporary.name) / "isolated-test.sqlite3"
