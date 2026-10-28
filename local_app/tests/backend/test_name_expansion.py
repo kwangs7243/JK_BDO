@@ -56,7 +56,10 @@ class NameExpansionTests(unittest.TestCase):
         self.assertEqual(first["newReferences"], 1)
         self.assertEqual(first, second)
         bank = json.loads((self.root / "first/candidate-bank.json").read_text(encoding="utf-8"))
-        self.assertTrue(all(key.startswith("item|") for key in bank["lookup"]))
+        base = json.loads((ROOT / "barter/recognition_data/trade-templates.json").read_text(encoding="utf-8"))["lookup"]
+        self.assertTrue(all(key.startswith("item|") for key in bank["lookup"] if key not in base))
+        for key, references in base.items():
+            self.assertEqual(bank["lookup"][key], references)
         self.assertEqual((self.root / "first/candidate-bank.json").read_bytes(), (self.root / "second/candidate-bank.json").read_bytes())
         self.assertEqual(hashlib.sha256(self.db.read_bytes()).hexdigest(), before)
 
