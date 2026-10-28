@@ -98,7 +98,7 @@ def _trade_sample_collection(capture, details):
     image_hash = hashlib.sha256(capture["imageBytes"]).hexdigest()
     # Ignore upload IDs, review phase and presentation-only fields when deduplicating evidence.
     evidence_keys = {"rawOCR", "corrected", "reviewRequired", "confidence", "valueSource", "box",
-                     "variants", "recognizedStage", "templateEvidence", "iconEvidence", "error", "reviewReason"}
+                     "variants", "recognizedStage", "templateEvidence", "iconEvidence", "masterEvidence", "error", "reviewReason"}
     evidence_rows = [{"ordinal": row["ordinal"], "rowBox": row["rowBox"],
                       "excluded": row.get("excluded", False),
                       "fields": {name: {key: value for key, value in field.items() if key in evidence_keys}

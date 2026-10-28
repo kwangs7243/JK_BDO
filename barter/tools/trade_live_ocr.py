@@ -454,6 +454,7 @@ def apply_trade_rules(fields, item_stages):
 
 def _strip_stage(text):
     text = re.sub(r"^\s*[\[|]\s*[1-7SIil/?>]\s*[가-힣]{1,3}\s*[\]|!]\s*", "", text.strip())
+    text = re.sub(r"^\s*[\[|]?[가-힣]{1,3}[계게제]\s*[\]|!]\s*", "", text)
     return re.sub(r"^\s*[\[|]?\s*[1-7SIil/?>]\s*[단딘난뒤]\s*[계제]\s*[\]|]?\s*", "", text)
 
 
@@ -472,13 +473,13 @@ def _distance(left, right):
     return previous[-1]
 
 
-def correct_name(raw, candidates, literal_candidates=()):
+def _master_name_match(raw, candidates, literal_candidates=()):
     target = _normalize(raw)
     if not target:
-        return None, True
+        return {"value": None, "candidate": None, "review": True, "similarity": 0, "margin": 0}
     for name in literal_candidates:
         if _normalize(name) == target:
-            return name, False
+            return {"value": name, "candidate": name, "review": False, "similarity": 1, "margin": 1}
     ranked = []
     for name in candidates:
         normalized = _normalize(name)
@@ -487,11 +488,18 @@ def correct_name(raw, candidates, literal_candidates=()):
             similarity = 1
         ranked.append((similarity, name))
     ranked.sort(reverse=True)
+    similarity = ranked[0][0] if ranked else 0
+    margin = similarity - (ranked[1][0] if len(ranked) > 1 else 0)
     if ranked and ranked[0][0] >= .65:
-        ambiguous = len(ranked) > 1 and ranked[0][0] - ranked[1][0] < .10
-        normalized = _normalize(ranked[0][1])
-        return ranked[0][1], ambiguous or ranked[0][0] < .75
-    return _strip_stage(raw), True
+        return {"value": ranked[0][1], "candidate": ranked[0][1], "review": margin < .10 or similarity < .75,
+                "similarity": similarity, "margin": margin}
+    return {"value": _strip_stage(raw), "candidate": ranked[0][1] if ranked else None,
+            "review": True, "similarity": similarity, "margin": margin}
+
+
+def correct_name(raw, candidates, literal_candidates=()):
+    match = _master_name_match(raw, candidates, literal_candidates)
+    return match["value"], match["review"]
 
 
 def read_count(reader, crop):
@@ -586,9 +594,16 @@ def read_name(reader, crop):
 
 
 def read_catalog_name(reader, crop, candidates, literal_candidates=()):
+    matches = {}
+    def match(text):
+        if text not in matches:
+            matches[text] = _master_name_match(text, candidates, literal_candidates)
+        return matches[text]
     raw, score = read_name(reader, crop)
-    value, review = correct_name(raw, candidates, literal_candidates)
+    primary = match(raw)
+    value, review = primary["value"], primary["review"]
     variants = [(raw, score)]
+    view_conflict = False
     if review or score < .9 or _normalize(raw) != _normalize(value or ""):
         for image in (crop, ImageOps.grayscale(crop)):
             try:
@@ -596,20 +611,44 @@ def read_catalog_name(reader, crop, candidates, literal_candidates=()):
                 variants.append((text, confidence))
             except Exception:
                 continue
-        alternatives = [(correct_name(text, candidates, literal_candidates), confidence)
+        alternatives = [((match(text)["value"], match(text)["review"]), confidence)
                         for text, confidence in variants[1:]]
         if (len(alternatives) == 2 and alternatives[0][0][0] == alternatives[1][0][0]
                 and all(not decision[1] and confidence >= .75 for decision, confidence in alternatives)):
             selected = alternatives[0][0][0]
-            conflict = not review and value != selected
-            value, score, review = selected, min(confidence for _, confidence in alternatives), conflict
+            view_conflict = not review and value != selected
+            value, score, review = selected, min(confidence for _, confidence in alternatives), view_conflict
         elif review:
             known = set(candidates) | set(literal_candidates)
-            suggestions = [(correct_name(text, candidates, literal_candidates)[0], confidence)
+            suggestions = [(match(text)["value"], confidence)
                            for text, confidence in variants]
             suggestions = [(name, confidence) for name, confidence in suggestions if name in known]
             if suggestions:
                 value, score = max(suggestions, key=lambda entry: entry[1])
+    evidence = None
+    known = set(candidates) | set(literal_candidates)
+    strong = {match(text)["candidate"] for text, confidence in variants
+              if confidence >= .60 and match(text)["candidate"] in known
+              and (not match(text)["review"] or match(text)["similarity"] >= .65 and match(text)["margin"] >= .20)}
+    conflict = view_conflict or len(strong) > 1
+    if conflict:
+        review = True
+    elif review:
+        supporters = [(match(text), confidence) for text, confidence in variants
+                      if confidence >= .60 and match(text)["candidate"] in known
+                      and match(text)["similarity"] >= .60 and match(text)["margin"] >= .10]
+        supported = {entry["candidate"] for entry, _ in supporters}
+        clear = [entry for entry, _ in supporters if entry["similarity"] >= .65 and entry["margin"] >= .20]
+        if len(supporters) >= 2 and len(supported) == 1 and clear and not (strong - supported):
+            value = supporters[0][0]["candidate"]
+            score = min(confidence for _, confidence in supporters)
+            review = False
+            evidence = {"method": "MASTER_VIEW_AGREEMENT", "value": value, "supportCount": len(supporters),
+                        "minimumSimilarity": min(entry["similarity"] for entry, _ in supporters),
+                        "maximumMargin": max(entry["margin"] for entry, _ in supporters)}
+        conflict = len(supported) > 1
+    ambiguous = any(confidence >= .60 and match(text)["similarity"] >= .65 and match(text)["margin"] < .10
+                    for text, confidence in variants)
     stages = []
     for text, confidence in variants:
         match = re.match(r"^\s*[\[|]?\s*([1-7])\s*(?:단계|[가-힣]{1,3}[\]|!])", text)
@@ -619,6 +658,9 @@ def read_catalog_name(reader, crop, candidates, literal_candidates=()):
     return {"rawOCR": raw, "corrected": value, "reviewRequired": review, "confidence": score,
             "masterMatch": "UNRESOLVED" if review else "RESOLVED", "valueSource": "MASTER" if not review else "OCR_CANDIDATE",
             "variants": [{"text": text, "confidence": confidence} for text, confidence in variants],
+            **({"masterEvidence": evidence} if evidence else {}),
+            **({"reviewReason": "마스터 후보가 서로 가깝거나 판독 결과가 다른 이름을 지지합니다. 원본 이름을 확인하세요." if conflict or ambiguous
+                else "마스터 후보를 하나로 확정할 판독 근거가 부족합니다. 원본 이름을 확인하세요."} if review else {}),
             **({"recognizedStage": recognized_stage} if recognized_stage is not None else {})}
 
 

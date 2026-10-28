@@ -409,6 +409,60 @@ class LiveListTests(unittest.TestCase):
         self.assertEqual(result["corrected"], "다른 물품")
         self.assertTrue(result["reviewRequired"])
 
+    def test_clear_master_agreement_resolves_new_font_suffix_errors(self):
+        candidates = ["앙쥬 섬", "발베쥬 섬", "오리샤 섬", "일리야 섬"]
+        reader = Mock(); reader.read.side_effect = [("앙쥬 검", .73), ("앙쥬 검", .66)]
+        with patch("barter.tools.trade_live_ocr.read_name", return_value=("앙쥬낌", .73)):
+            result = read_catalog_name(reader, Image.new("RGB", (30, 20)), candidates)
+        self.assertFalse(result["reviewRequired"])
+        self.assertEqual(result["corrected"], "앙쥬 섬")
+        self.assertEqual(result["rawOCR"], "앙쥬낌")
+        self.assertEqual(result["valueSource"], "MASTER")
+        self.assertEqual(result["masterEvidence"]["supportCount"], 3)
+
+    def test_same_master_wins_despite_different_ocr_spelling_and_low_original_similarity(self):
+        reader = Mock(); reader.read.side_effect = [("[4단계] 백사공의 수련새", .87), ("[4단계] 백사공의 수련개", .88)]
+        with patch("barter.tools.trade_live_ocr.read_name", return_value=("[4단 계]벗사공의 수련개", .87)):
+            result = read_catalog_name(reader, Image.new("RGB", (30, 20)), ["뱃사공의 수련서", "황금 사막의 모래반지"])
+        self.assertFalse(result["reviewRequired"])
+        self.assertEqual(result["corrected"], "뱃사공의 수련서")
+
+    def test_shared_nearest_master_without_margin_stays_in_review(self):
+        reader = Mock(); reader.read.return_value = ("오리야검", .85)
+        with patch("barter.tools.trade_live_ocr.read_name", return_value=("오리야섬", .90)):
+            result = read_catalog_name(reader, Image.new("RGB", (30, 20)), ["일리야 섬", "오리샤 섬"])
+        self.assertTrue(result["reviewRequired"])
+        self.assertIn("후보", result["reviewReason"])
+
+    def test_weak_similarity_low_confidence_and_single_support_do_not_confirm_names(self):
+        for raw, confidence, alternatives in [
+                ("파릭스컴", .95, [("파릭스캠", .95)] * 2),
+                ("앙쥬낌", .40, [("앙쥬검", .40)] * 2),
+                ("앙쥬낌", .95, [("인식실패", .95)] * 2)]:
+            reader = Mock(); reader.read.side_effect = alternatives
+            with self.subTest(raw=raw, confidence=confidence), patch("barter.tools.trade_live_ocr.read_name", return_value=(raw, confidence)):
+                result = read_catalog_name(reader, Image.new("RGB", (30, 20)), ["앙쥬 섬", "파딕스 섬"])
+            self.assertTrue(result["reviewRequired"])
+
+    def test_conflicting_master_views_are_not_overridden_by_majority(self):
+        for raw, confidence in (("원본물퐁", .89), ("원본 물품", .40)):
+            reader = Mock(); reader.read.return_value = ("다른 물품", .99)
+            with self.subTest(raw=raw), patch("barter.tools.trade_live_ocr.read_name", return_value=(raw, confidence)):
+                result = read_catalog_name(reader, Image.new("RGB", (30, 20)), ["원본 물품", "다른 물품"])
+            self.assertTrue(result["reviewRequired"])
+            self.assertIn("다른 이름", result["reviewReason"])
+
+    def test_clear_but_imperfect_primary_master_cannot_be_overridden_by_other_views(self):
+        reader = Mock(); reader.read.return_value = ("보아 섬", .99)
+        with patch("barter.tools.trade_live_ocr.read_name", return_value=("앙쥬낌", .90)):
+            result = read_catalog_name(reader, Image.new("RGB", (30, 20)), ["앙쥬 섬", "보아 섬"])
+        self.assertTrue(result["reviewRequired"])
+        self.assertIn("다른 이름", result["reviewReason"])
+
+    def test_corrupted_stage_prefix_does_not_become_part_of_the_name(self):
+        self.assertEqual(correct_name("읽답계] 발레노스 항해사의 망원경", ["발레노스 항해사의 망원경"]),
+                         ("발레노스 항해사의 망원경", False))
+
     def test_unresolved_name_keeps_independently_recognized_stage_for_fixed_ratio(self):
         reader = Mock(); reader.read.return_value = ("[4단계] 금주화가 담긴 낡은", .96)
         with patch("barter.tools.trade_live_ocr.read_name", return_value=("[4단계] 금주화가 담긴 낡은", .96)):
