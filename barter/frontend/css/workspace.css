@@ -356,3 +356,46 @@ body.barter-final:before{background-image:linear-gradient(90deg,#061723c2,#061c3
 @media(max-width:760px){.concept-switch{flex-wrap:wrap}.concept-switch a{padding:6px 9px}.craft-final .topbar{height:auto;min-height:68px;gap:12px;flex-wrap:wrap;padding:12px 18px}.craft-final .library{height:auto;position:relative}.craft-final .desk{padding:20px 18px}.craft-final #detail{padding:18px 14px}}
 .craft-final .topbar .concept-switch>a:last-child{border:1px solid #e8d1a1;padding:8px 13px;color:#282217;background:linear-gradient(#dfc58e,#b58e4d)}
 .concept-switch a[aria-current="page"]{cursor:default}
+
+
+/* Consistent app navigation at the foot of each workspace sidebar. */
+.suite-dock{display:grid;gap:8px;padding-top:14px;border-top:1px solid #b79d6652;flex:none;min-width:0}
+.suite-dock-label{font:500 11px/1.5 Pretendard,sans-serif;letter-spacing:.06em;color:#b1b8ae}
+.suite-dock .concept-switch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.suite-dock .concept-switch a{display:block;padding:8px 2px;min-height:34px;font:500 11px/1.5 Pretendard,sans-serif;text-align:center;border-radius:6px;text-decoration:none;white-space:nowrap;box-shadow:inset 0 1px #fff1}
+.suite-dock .concept-switch a:first-child{grid-column:auto}
+.suite-dock .concept-switch a.active{color:#282217;background:linear-gradient(#e2cc9b,#b4945b);border-color:#e8d1a1;box-shadow:inset 0 1px #fff6,0 2px 6px #0003}
+.suite-dock .suite-home{display:block;padding:3px 0;color:#bcc1b7;font:400 11px/1.6 Pretendard,sans-serif;text-decoration:none}
+.suite-dock .suite-home:hover{color:#efdab1}
+
+.barter-final .sidebar-footer>.suite-dock{order:3}
+.barter-final .app-sidebar{background:linear-gradient(165deg,#102c39f5,#071b27f2);border-right:1px solid #a58c554d}
+.barter-final .brand{padding-bottom:1.4rem;border-bottom:1px solid #78979c33;margin-bottom:1rem}
+.barter-final .brand-mark{color:#dbbf88}
+.barter-final .workspace-nav{gap:6px}
+.barter-final .workspace-nav button{border-radius:7px;padding:11px 10px}
+.barter-final .workspace-nav button[aria-current="page"]{background:linear-gradient(110deg,#355664,#1b3644);border-color:#728c9166;color:#f0e4c8;box-shadow:inset 3px 0 #d4b780,0 3px 8px #0002}
+.barter-final .workspace-nav button:hover:not([aria-current="page"]){background:#53738025;border-color:#82999555}
+.barter-final .session-heading{padding-bottom:16px;border-bottom:1px solid #9cacaa42;align-items:center}
+.barter-final .session-heading h2{font-size:25px;color:#e9ece4}
+.barter-final .session-heading h2:before{background:#d4b780}
+.barter-final .session-input-actions{gap:7px;align-items:center}
+.barter-final .session-toolbar{background:linear-gradient(115deg,#244551f5,#142d39f2);border-color:#7c929766;box-shadow:inset 0 1px #fff1,0 4px 14px #0002;margin-top:18px;border-radius:9px}
+.barter-final .session-budget input{background:#102631;border-color:#81989780;color:#f3ddb2;font-weight:650}
+.barter-final .trade-list-scroll{border-color:#7b939966;border-radius:10px;background:linear-gradient(140deg,#16313eea,#0c2230ed)}
+.barter-final .session-empty-state{position:relative;padding-block:3rem;min-height:22rem}
+.barter-final .session-empty-state:before{content:'';width:68px;height:68px;margin-bottom:14px;border:1px solid #bea57570;border-radius:50%;background:radial-gradient(circle,transparent 34%,#bda47445 35%,transparent 37%),conic-gradient(from 45deg,transparent 0deg 88deg,#d3b57b70 89deg 91deg,transparent 92deg 178deg,#d3b57b70 179deg 181deg,transparent 182deg 268deg,#d3b57b70 269deg 271deg,transparent 272deg);box-shadow:0 0 0 7px #c7ac7610,inset 0 0 24px #0003}
+.barter-final .session-empty-state h3{font-size:25px;font-weight:600;color:#efdfbd}
+/* One scroll surface for the entire warehouse, including filters and tier rules. */
+.barter-final .inventory-panel{overflow:auto;scrollbar-gutter:stable;padding-right:10px;gap:0}
+.barter-final .inventory-panel>*{flex-shrink:0}
+.barter-final #inventory-root{overflow:visible;flex:none;min-height:auto;padding:0;gap:22px}
+.barter-final .tier-section{overflow:clip;border-color:#849c9b55;box-shadow:0 5px 16px #0002}
+.barter-final .inventory-panel>.panel-heading{padding-bottom:18px}
+.barter-final .inventory-panel .inventory-toolbar{border:1px solid #71898e55;border-bottom:0;border-radius:9px 9px 0 0;padding:14px}
+.barter-final .inventory-panel .inventory-tier-tabs{flex-wrap:wrap;padding:0 14px 12px}
+.barter-final .inventory-panel .inventory-null-hint{padding:0 14px 14px;margin-bottom:22px}
+.barter-final .inventory-panel .tier-rule-details{overflow:visible;max-height:none;margin-top:22px;padding:12px 0}
+.barter-final .inventory-panel .inventory-row{box-shadow:inset 0 2px color-mix(in srgb,var(--inventory-tier) 55%,transparent),0 2px 7px #0002}
+.barter-final .inventory-panel .inventory-row:hover{border-color:#c0ad7b99;background:linear-gradient(130deg,#294956,#1b3442)}
+@media(max-width:1100px){.barter-final .session-heading{gap:12px}.barter-final .session-input-actions{flex-wrap:wrap}.barter-final .suite-dock .concept-switch{gap:2px}.barter-final .suite-dock .concept-switch a{font-size:10px}}

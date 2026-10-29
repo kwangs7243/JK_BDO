@@ -109,3 +109,19 @@ body.barter-final:before{background-image:linear-gradient(90deg,#061723c2,#061c3
 @media(max-width:760px){.concept-switch{flex-wrap:wrap}.concept-switch a{padding:6px 9px}.craft-final .topbar{height:auto;min-height:68px;gap:12px;flex-wrap:wrap;padding:12px 18px}.craft-final .library{height:auto;position:relative}.craft-final .desk{padding:20px 18px}.craft-final #detail{padding:18px 14px}}
 .craft-final .topbar .concept-switch>a:last-child{border:1px solid #e8d1a1;padding:8px 13px;color:#282217;background:linear-gradient(#dfc58e,#b58e4d)}
 .concept-switch a[aria-current="page"]{cursor:default}
+
+
+/* Consistent app navigation at the foot of each workspace sidebar. */
+.suite-dock{display:grid;gap:8px;padding-top:14px;border-top:1px solid #b79d6652;flex:none;min-width:0}
+.suite-dock-label{font:500 11px/1.5 Pretendard,sans-serif;letter-spacing:.06em;color:#b1b8ae}
+.suite-dock .concept-switch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.suite-dock .concept-switch a{display:block;padding:8px 2px;min-height:34px;font:500 11px/1.5 Pretendard,sans-serif;text-align:center;border-radius:6px;text-decoration:none;white-space:nowrap;box-shadow:inset 0 1px #fff1}
+.suite-dock .concept-switch a:first-child{grid-column:auto}
+.suite-dock .concept-switch a.active{color:#282217;background:linear-gradient(#e2cc9b,#b4945b);border-color:#e8d1a1;box-shadow:inset 0 1px #fff6,0 2px 6px #0003}
+.suite-dock .suite-home{display:block;padding:3px 0;color:#bcc1b7;font:400 11px/1.6 Pretendard,sans-serif;text-decoration:none}
+.suite-dock .suite-home:hover{color:#efdab1}
+
+.craft-final .library>.suite-dock{margin-top:14px}
+.craft-final .suite-dock-label,.craft-final .suite-dock .suite-home{color:#c5b18c}
+.craft-final .topbar>.brand{padding:0;color:#f4e4c4}
+.craft-final .library .item-list{min-height:60px}

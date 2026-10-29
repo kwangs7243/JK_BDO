@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>제작노트 · BDO Suite</title><link rel="stylesheet" href="/craft/assets/style.css"><link rel="icon" href="/portal-assets/bdo.svg"></head>
 <body class="craft-final">
-  <header class="topbar"><a href="/" class="brand"><span class="brand-mark">✳</span> BDO <span>CRAFT NOTE</span></a><nav class="concept-switch" aria-label="앱 이동"><a href="/">통합 메인 ↗</a><a href="/barter/">물교 ↗</a><a href="/alchemy/">연금 ↗</a><a href="/craft/" class="active" aria-current="page">제작노트</a></nav></header>
+  <header class="topbar"><a href="/" class="brand"><span class="brand-mark">✳</span> BDO <span>CRAFT NOTE</span></a></header>
   <main class="workspace">
     <aside class="library"><div class="library-head"><span class="eyebrow">RECIPE LIBRARY</span><h1>품목 목록</h1></div>
       <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="어떤 아이템을 만들까요?" aria-label="품목 검색"><kbd>/</kbd></label>
@@ -9,6 +9,7 @@
       <div class="list-heading"><span id="result-count">품목을 불러오는 중</span><button id="favorites-only" aria-pressed="false">☆ 즐겨찾기</button></div>
       <div id="items" class="item-list" aria-label="품목 목록"></div><div class="list-heading"><button id="previous" class="load-more" disabled>← 이전</button><button id="more" class="load-more" hidden>다음 →</button></div>
       <footer class="library-footer"><span class="status-dot"></span><span>공유 재고 · 계산은 독립적으로</span><button id="refresh-stock" aria-label="공유 재고 새로고침">↻</button></footer>
+      <div class="suite-dock"><span class="suite-dock-label">앱 이동</span><nav class="concept-switch" aria-label="앱 이동"><a href="/barter/">물교</a><a href="/alchemy/">연금</a><a href="/craft/" class="active" aria-current="page">제작노트</a></nav><a class="suite-home" href="/">통합 메인 ↗</a></div>
     </aside>
     <section class="desk" aria-label="제작 계산">
       <div id="status" role="status" aria-live="polite"></div>
