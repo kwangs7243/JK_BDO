@@ -9,14 +9,14 @@
 :root {
   color-scheme: dark;
   --font-family: "Pretendard", "Malgun Gothic", "맑은 고딕", sans-serif;
-  --bg: #0b0e12;
-  --card: #141922;
-  --elevated: #1c2330;
-  --line: #29303a;
-  --gold: #c8a75a;
-  --light: #e6d09a;
-  --text: #e8e4dc;
-  --muted: #9ca3ad;
+  --bg: #141414;
+  --card: #1d1d1b;
+  --elevated: #282721;
+  --line: #39372f;
+  --gold: #d0b478;
+  --light: #e2cc9e;
+  --text: #ebe6db;
+  --muted: #aaa598;
   --green: #82b6a0;
   --red: #ee9b92;
   --blue: #99b7d6;
@@ -122,7 +122,7 @@ summary:focus-visible {
   width: 248px;
   flex: none;
   padding: 30px 19px 20px;
-  background: #10141b;
+  background: #171715;
   border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
@@ -1126,3 +1126,13 @@ pre.backup-preview {
     grid-template-columns: 1fr;
   }
 }
+/* A1 · matte charcoal and restrained gold. */
+body{background:#141414}
+.sidebar{background:#171715;border-right-color:var(--line)}
+.sidebar nav a[aria-current="page"]{background:#373023;color:var(--light);box-shadow:inset 2px 0 var(--gold)}
+.app-header{border-bottom-color:var(--line)}
+.workspace-label{letter-spacing:.18em}
+.panel{background:#1d1d1b;border-color:var(--line);border-radius:10px}
+button{background:#262620;border-color:var(--line)}
+button:hover:not(:disabled){background:#302d23;border-color:var(--gold)}
+input,select,textarea{background:#171715;border-color:var(--line)}

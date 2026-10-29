@@ -124,3 +124,17 @@
   .schedule-columns:not([data-mode="both"]) .route-heading { grid-row:1/4; padding-top:.15rem; }
   .schedule-columns:not([data-mode="both"]) .route-trade-info,.schedule-columns:not([data-mode="both"]) .route-explanation { grid-column:2; }
 }
+/* B1 · quiet maritime finish for the existing route and controls. */
+.app-sidebar{background:#111b25;border-right-color:var(--line)}
+.app-header{background:#101820;border-bottom-color:var(--line)}
+.workspace-nav button[aria-current="page"]{background:#223b4d;color:#c9e1f0;border-color:#32536a;box-shadow:inset 2px 0 var(--accent)}
+.briefing-heading h2{font-size:1.8rem;letter-spacing:-.045em}
+.briefing-command{border-bottom:1px solid var(--line)}
+.briefing-panel .briefing-toolbar{border-bottom-color:var(--line)}
+.schedule-columns h3{background:#17222d;border-color:var(--line)}
+.sortie-card{background:#17222d;border-radius:10px;box-shadow:none}
+.sortie-heading{background:#1d2c3a;border-radius:10px 10px 0 0;box-shadow:none}
+.sortie-index{font:italic 1.85rem/1 Georgia,serif;color:var(--accent)}
+.route-step-number{border-radius:50%;background:#223b4d;border-color:#32536a}
+.route-card{border-bottom-color:var(--line)}
+.mode-settlement{background:#111c26}

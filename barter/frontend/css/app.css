@@ -1,16 +1,17 @@
+@font-face { font-family:"Pretendard"; src:url("/portal-assets/fonts/PretendardVariable.woff2") format("woff2"); font-weight:100 900; font-display:swap; }
 :root {
   color-scheme: dark;
-  font-family: "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
+  font-family: "Pretendard", "Malgun Gothic", system-ui, sans-serif;
   font-size: 15px;
-  --bg:#111318; --surface:#1a1e26; --surface-raised:#252b36; --surface-input:#151820;
-  --line:#3b4352; --line-soft:#2d3440; --text:#f1f3f8; --muted:#a9b3c4;
-  --accent:#91b6ff; --accent-fill:#4c79d4; --accent-soft:#243454;
-  --primary:#477bdf; --primary-hover:#5c8ced; --surface-hover:#2c3544;
+  --bg:#101820; --surface:#17222d; --surface-raised:#1c2b38; --surface-input:#111c26;
+  --line:#2b3a47; --line-soft:#263541; --text:#e3ebf2; --muted:#95a8b8;
+  --accent:#88b9d8; --accent-fill:#6a9ebb; --accent-soft:#223b4d;
+  --primary:#74a9c9; --primary-hover:#8bbbd5; --surface-hover:#253746;
   --success:#94dbb2; --warning:#f2cb83; --danger:#f89c9c;
   --radius:6px; --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px;
-  --surface-chrome:#171b23; --surface-header:#222936; --surface-selected:#202e46;
+  --surface-chrome:#111b25; --surface-header:#1d2c3a; --surface-selected:#223b4d;
   --surface-warning:#2c2822; --line-highlight:#505f77; --line-warning:#8d744a;
-  --text-quiet:#8794aa; --warning-soft:#3a3225; --danger-soft:#38272a;
+  --text-quiet:#95a8b8; --warning-soft:#3a3225; --danger-soft:#38272a;
   --shadow-panel:0 8px 24px #0002; --shadow-dialog:0 24px 80px #0008;
   --highlight:inset 0 1px 0 #ffffff06; --radius-dialog:10px; --motion-fast:140ms;
   --sea-line:var(--line); --sea-muted:var(--muted); --sea-text:var(--text); --sea-900:var(--surface);
@@ -27,7 +28,7 @@ button { background:var(--surface-raised); padding:.48rem .8rem; line-height:1.3
 button:hover:not(:disabled) { background:var(--surface-hover); border-color:var(--line-highlight); }
 button:active:not(:disabled) { transform:translateY(1px); }
 button:disabled { opacity:.45; cursor:not-allowed; }
-button.primary { color:#fff; background:var(--primary); border-color:var(--primary-hover); box-shadow:inset 0 1px 0 #ffffff18,0 2px 5px #0003; }
+button.primary { color:#102330; background:var(--primary); border-color:var(--primary-hover); box-shadow:inset 0 1px 0 #ffffff18,0 2px 5px #0003; }
 button.primary:hover:not(:disabled) { background:var(--primary-hover); border-color:var(--primary-hover); }
 button.danger { color:var(--danger); border-color:#744e51; background:#38272a; }
 button[aria-pressed="true"],button[aria-selected="true"] { color:var(--accent); background:var(--accent-soft); border-color:var(--accent-fill); }

@@ -11,3 +11,25 @@
 @media(max-width:680px){.topbar{height:58px;padding:0 18px}.workspace{display:block}.library{height:auto;position:relative;border-right:0;padding:24px 18px 10px}.library-head p{margin-bottom:16px}.library-head h1{font-size:24px}.library-head .eyebrow{display:none}#categories{margin:14px 0;flex-wrap:nowrap;overflow:auto;padding-bottom:5px}#categories button{flex:none}.item-list{max-height:240px}.library-footer{display:none}.desk{padding:20px 18px}.welcome{min-height:480px}.item-hero h2{font-size:28px}.detail-topline{margin-bottom:22px}.hero-icon{width:65px;height:65px}.hero-icon img{width:46px;height:46px}.counter-panel{padding:23px}.material{padding:17px}.section-heading>span{display:none}}
 @media(prefers-reduced-motion:no-preference){.material,.item-hero{animation:rise .25s ease both}@keyframes rise{from{opacity:.2;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}}
 
+/* C1 · paper and vermilion design, preserving the existing notebook controls. */
+:root{color:#332f29;background:#f5f1e7;--green:#9d493a;--line:#dcd3c3;--muted:#797065;--paper:#fcf9f1}
+.topbar{background:#332f29;color:#fcf9f1;border-bottom:1px solid #554b3d}.brand-mark{color:#d7a399}.brand>span:last-child{color:#d8cfc2}
+.workspace{grid-template-columns:275px minmax(0,1fr)}.library{background:#eae6db;border-right-color:var(--line)}
+.library-head h1,.item-hero h2,.welcome h2{font-family:Batang,Georgia,serif;font-weight:500}
+.library-head h1{font-size:25px;letter-spacing:-.045em}.eyebrow{letter-spacing:.18em}
+.search{background:#f5f1e7;border-color:var(--line);border-radius:3px}.search>span{color:var(--green)}.search kbd{border-color:var(--line)}
+#categories button{border-radius:3px}#categories button[aria-pressed=true]{background:#eee1d6;color:#813a2e}
+.list-heading,.library-footer{border-color:var(--line)}.item-row{border-radius:3px}.item-row:hover{background:#eee1d6}.item-row[aria-current=true]{background:#eee1d6;color:#743529}
+.item-row img,.material img{background:#f2e8dc;border:1px solid var(--line)}.desk{background:#f5f1e7}.desk>#status{color:#a14f31}
+.hero-icon{background:#eee1d6;border-radius:3px}.favorite[aria-pressed=true]{color:#9d493a}.description,.description p{color:var(--muted)}
+.recipe-tabs button{border-radius:3px}.recipe-tabs button[aria-pressed=true]{background:#eee1d6;color:#813a2e;border-color:#b88176}
+.counter-panel{background:#eee7d9;color:#332f29;border-radius:2px;border-left:3px solid var(--green)}
+.counter-panel .eyebrow{color:#9d493a}.counter-panel p,.stepper span{color:#797065}.stepper input{color:#332f29}.stepper button{border-color:#bcae9b}.quick-counts button{color:#6a5d50;border-color:#cfc2b0;border-radius:3px}
+.material{border-radius:2px}.material .unit,.material-bottom,.shopping p,.shopping-row small{color:var(--muted)}.material-bottom,.shopping-row{border-color:var(--line)}
+.owned-input,.expansion select,.expansion input{background:#fffdf8;border-color:var(--line);color:#332f29}.related button,.expansion{background:#eee7d9;border-radius:3px}
+.primary{background:var(--green);border-radius:3px}.secondary{border-radius:3px}.suggestions button{border-radius:3px;background:var(--paper)}.suggestions button:hover{border-color:var(--green)}
+.sheet{background:var(--paper);border-color:var(--line);border-radius:2px}.sheet-back{background:#eee1d6}.sheet b{color:var(--green)}.illustration{background:none}.floating-dot{background:#9d493a}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--green)}
+@media(min-width:1550px){.workspace{grid-template-columns:300px minmax(0,1fr)}}
+@media(max-width:1000px){.workspace{grid-template-columns:260px minmax(0,1fr)}}
+@media(max-width:680px){.workspace{display:block}.library{border-right:0;border-bottom:1px solid var(--line)}}
