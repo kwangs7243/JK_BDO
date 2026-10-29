@@ -1,0 +1,56 @@
+{
+  "id": "5301",
+  "name": "맑은 액체 시약",
+  "icon": "https://www.korbdo.co.kr/png/00005301.png",
+  "description": "다양한 연금술 조합법에 사용되는 촉매다.\n\n- 사용처 : 각종 연금 재료 및 비약 제작\n\n- 획득처 : 연금 초급 Lv.1 이상이면 주거지에서 연금술 도구를 배치하여 제작\n\n- 제작 재료\n소금 x1\n여명초 x1\n정제수 x1\n야생 들풀 x1 또는 잡초 x1",
+  "recipes": [
+    {
+      "id": "0",
+      "method": "주거지 연금",
+      "action": "",
+      "inputs": [
+        {
+          "id": "9001",
+          "name": "소금",
+          "icon": "https://www.korbdo.co.kr/png/00009001.png",
+          "quantity": 1
+        },
+        {
+          "id": "5401",
+          "name": "여명초",
+          "icon": "https://www.korbdo.co.kr/png/00005401.png",
+          "quantity": 1
+        },
+        {
+          "id": "6656",
+          "name": "정제수",
+          "icon": "https://www.korbdo.co.kr/png/00006656.png",
+          "quantity": 1
+        },
+        {
+          "id": "5439",
+          "name": "야생 들풀",
+          "icon": "https://www.korbdo.co.kr/png/00005439.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    }
+  ],
+  "related": [
+    {
+      "id": "9819",
+      "name": "견습가의 연금상자",
+      "icon": "https://www.korbdo.co.kr/png/00009819.png",
+      "quantity": 1
+    },
+    {
+      "id": "9845",
+      "name": "[이벤트] 맑은 액체 시약 상자",
+      "icon": "https://www.korbdo.co.kr/png/00009845.png",
+      "quantity": null
+    }
+  ],
+  "source": "https://www.korbdo.co.kr/xml/ko-kr/5301.xml",
+  "sourceFetchedAt": "2026-10-29"
+}

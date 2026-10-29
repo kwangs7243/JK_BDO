@@ -1,0 +1,568 @@
+{
+  "id": "6656",
+  "name": "정제수",
+  "icon": "https://www.korbdo.co.kr/png/00006656.png",
+  "description": "물에 섞인 불순물을 솎아 내어 얻을 수 있는 깨끗한 물\n\n- 사용처 #1 : 우클릭으로 사용하면 갈증 해소\n- 사용 효과 : 열사병 치료\n- 지속 시간 : 즉시\n- 재사용 시간 : 5초\n\n- 사용처 #2 : 텃밭에 뿌리기\n- 사용 효과 : 텃밭의 누적 지하수량 대폭 증가\n\n- 획득처 #1 : 아래 재료를 가공(L) - 솎아내기\n  1개 가공 : 강물로 채운 병\n  5개 가공 : 선인장 수액, 흙탕물 주머니\n\n- 획득처 #2 : 일부 마을 잡화 상인에게 구매\n  모래알 바자르, 무이쿤, 아레하자 마을",
+  "recipes": [
+    {
+      "id": "0",
+      "method": "솎아내기",
+      "action": "MANUFACTURE_THINNING",
+      "inputs": [
+        {
+          "id": "5016",
+          "name": "선인장 수액",
+          "icon": "https://www.korbdo.co.kr/png/00005016.png",
+          "quantity": 5
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "1",
+      "method": "솎아내기",
+      "action": "MANUFACTURE_THINNING",
+      "inputs": [
+        {
+          "id": "6653",
+          "name": "강물로 채운 병",
+          "icon": "https://www.korbdo.co.kr/png/00006653.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "2",
+      "method": "솎아내기",
+      "action": "MANUFACTURE_THINNING",
+      "inputs": [
+        {
+          "id": "6654",
+          "name": "탁수로 채운 병",
+          "icon": "https://www.korbdo.co.kr/png/00006654.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "3",
+      "method": "솎아내기",
+      "action": "MANUFACTURE_THINNING",
+      "inputs": [
+        {
+          "id": "6655",
+          "name": "일급수로 채운 병",
+          "icon": "https://www.korbdo.co.kr/png/00006655.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "4",
+      "method": "솎아내기",
+      "action": "MANUFACTURE_THINNING",
+      "inputs": [
+        {
+          "id": "6657",
+          "name": "흙탕물 주머니",
+          "icon": "https://www.korbdo.co.kr/png/00006657.png",
+          "quantity": 5
+        }
+      ],
+      "outputQuantity": null
+    }
+  ],
+  "related": [
+    {
+      "id": "3577",
+      "name": "[장원] 황금마의 기상 분수대",
+      "icon": "https://www.korbdo.co.kr/png/Mansion_DPF_Fountain_01.png",
+      "quantity": null
+    },
+    {
+      "id": "3578",
+      "name": "[장원] 황금 사슴의 도약 분수대",
+      "icon": "https://www.korbdo.co.kr/png/Mansion_DPF_Fountain_02.png",
+      "quantity": null
+    },
+    {
+      "id": "3579",
+      "name": "[장원] 황금 인어의 꿈 분수대",
+      "icon": "https://www.korbdo.co.kr/png/Mansion_DPF_Fountain_03.png",
+      "quantity": null
+    },
+    {
+      "id": "5169",
+      "name": "견고한 순백 석재",
+      "icon": "https://www.korbdo.co.kr/png/00005169.png",
+      "quantity": null
+    },
+    {
+      "id": "6732",
+      "name": "마력이 깃든 델로티아 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006728.png",
+      "quantity": null
+    },
+    {
+      "id": "6737",
+      "name": "마력이 깃든 유자 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006737.png",
+      "quantity": null
+    },
+    {
+      "id": "6751",
+      "name": "마력이 깃든 후추 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006701.png",
+      "quantity": null
+    },
+    {
+      "id": "6752",
+      "name": "마력이 깃든 마늘 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006702.png",
+      "quantity": null
+    },
+    {
+      "id": "6753",
+      "name": "마력이 깃든 양파 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006703.png",
+      "quantity": null
+    },
+    {
+      "id": "6754",
+      "name": "마력이 깃든 고추 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006705.png",
+      "quantity": null
+    },
+    {
+      "id": "6755",
+      "name": "마력이 깃든 호박 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006706.png",
+      "quantity": null
+    },
+    {
+      "id": "6756",
+      "name": "마력이 깃든 당근 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006707.png",
+      "quantity": null
+    },
+    {
+      "id": "6757",
+      "name": "마력이 깃든 딸기 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006704.png",
+      "quantity": null
+    },
+    {
+      "id": "6758",
+      "name": "마력이 깃든 포도 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006801.png",
+      "quantity": null
+    },
+    {
+      "id": "6759",
+      "name": "마력이 깃든 해바라기 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006802.png",
+      "quantity": null
+    },
+    {
+      "id": "6760",
+      "name": "마력이 깃든 올리브 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006803.png",
+      "quantity": null
+    },
+    {
+      "id": "6761",
+      "name": "마력이 깃든 토마토 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006804.png",
+      "quantity": null
+    },
+    {
+      "id": "6762",
+      "name": "마력이 깃든 파프리카 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006805.png",
+      "quantity": null
+    },
+    {
+      "id": "6763",
+      "name": "마력이 깃든 씨감자",
+      "icon": "https://www.korbdo.co.kr/png/00006806.png",
+      "quantity": null
+    },
+    {
+      "id": "6764",
+      "name": "마력이 깃든 보리 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006807.png",
+      "quantity": null
+    },
+    {
+      "id": "6765",
+      "name": "마력이 깃든 밀 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006808.png",
+      "quantity": null
+    },
+    {
+      "id": "6766",
+      "name": "마력이 깃든 옥수수 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006809.png",
+      "quantity": null
+    },
+    {
+      "id": "6767",
+      "name": "마력이 깃든 씨고구마",
+      "icon": "https://www.korbdo.co.kr/png/00006810.png",
+      "quantity": null
+    },
+    {
+      "id": "6773",
+      "name": "마력이 깃든 여명초 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006901.png",
+      "quantity": null
+    },
+    {
+      "id": "6774",
+      "name": "마력이 깃든 은빛 철쭉 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006902.png",
+      "quantity": null
+    },
+    {
+      "id": "6775",
+      "name": "마력이 깃든 화염비늘꽃 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006903.png",
+      "quantity": null
+    },
+    {
+      "id": "6776",
+      "name": "마력이 깃든 마른갈기풀 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006904.png",
+      "quantity": null
+    },
+    {
+      "id": "6777",
+      "name": "마력이 깃든 비단 꿀풀 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006905.png",
+      "quantity": null
+    },
+    {
+      "id": "6779",
+      "name": "마력이 깃든 점쟁이 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006907.png",
+      "quantity": null
+    },
+    {
+      "id": "6780",
+      "name": "마력이 깃든 화살 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006908.png",
+      "quantity": null
+    },
+    {
+      "id": "6781",
+      "name": "마력이 깃든 난쟁이 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006909.png",
+      "quantity": null
+    },
+    {
+      "id": "6782",
+      "name": "마력이 깃든 구름 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006910.png",
+      "quantity": null
+    },
+    {
+      "id": "6783",
+      "name": "마력이 깃든 하늘 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006911.png",
+      "quantity": null
+    },
+    {
+      "id": "6784",
+      "name": "마력이 깃든 호랑이 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006912.png",
+      "quantity": null
+    },
+    {
+      "id": "6785",
+      "name": "마력이 깃든 황제 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006913.png",
+      "quantity": null
+    },
+    {
+      "id": "6786",
+      "name": "마력이 깃든 유령 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006914.png",
+      "quantity": null
+    },
+    {
+      "id": "6787",
+      "name": "마력이 깃든 안개 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006915.png",
+      "quantity": null
+    },
+    {
+      "id": "6788",
+      "name": "마력이 깃든 혹 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006916.png",
+      "quantity": null
+    },
+    {
+      "id": "6789",
+      "name": "마력이 깃든 허풍선이 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006917.png",
+      "quantity": null
+    },
+    {
+      "id": "6790",
+      "name": "마력이 깃든 태고의 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006918.png",
+      "quantity": null
+    },
+    {
+      "id": "6791",
+      "name": "마력이 깃든 광대 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006919.png",
+      "quantity": null
+    },
+    {
+      "id": "6793",
+      "name": "마력이 깃든 놀리나 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006924.png",
+      "quantity": null
+    },
+    {
+      "id": "6794",
+      "name": "마력이 깃든 페네스트라리아 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006925.png",
+      "quantity": null
+    },
+    {
+      "id": "6795",
+      "name": "마력이 깃든 다우베니아 아우레아 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00006926.png",
+      "quantity": null
+    },
+    {
+      "id": "6796",
+      "name": "마력이 깃든 송아리 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006927.png",
+      "quantity": null
+    },
+    {
+      "id": "6797",
+      "name": "마력이 깃든 껄껄이 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006928.png",
+      "quantity": null
+    },
+    {
+      "id": "6798",
+      "name": "마력이 깃든 자색 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006929.png",
+      "quantity": null
+    },
+    {
+      "id": "6799",
+      "name": "마력이 깃든 파이 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00006930.png",
+      "quantity": null
+    },
+    {
+      "id": "6800",
+      "name": "마력이 깃든 아카시아 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00007000.png",
+      "quantity": null
+    },
+    {
+      "id": "7032",
+      "name": "마력이 깃든 닭 모이",
+      "icon": "https://www.korbdo.co.kr/png/00007028.png",
+      "quantity": null
+    },
+    {
+      "id": "7033",
+      "name": "마력이 깃든 건초 더미",
+      "icon": "https://www.korbdo.co.kr/png/00007023.png",
+      "quantity": null
+    },
+    {
+      "id": "8937",
+      "name": "마력이 깃든 꾀꼬리 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00008934.png",
+      "quantity": null
+    },
+    {
+      "id": "8942",
+      "name": "마력이 깃든 붉은 점박이 광대 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00008939.png",
+      "quantity": null
+    },
+    {
+      "id": "8947",
+      "name": "마력이 깃든 상황 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00008944.png",
+      "quantity": null
+    },
+    {
+      "id": "8952",
+      "name": "마력이 깃든 망태 버섯 균사",
+      "icon": "https://www.korbdo.co.kr/png/00008949.png",
+      "quantity": null
+    },
+    {
+      "id": "9073",
+      "name": "콩나물",
+      "icon": "https://www.korbdo.co.kr/png/00009073.png",
+      "quantity": null
+    },
+    {
+      "id": "9075",
+      "name": "간장",
+      "icon": "https://www.korbdo.co.kr/png/00009075.png",
+      "quantity": null
+    },
+    {
+      "id": "9076",
+      "name": "된장",
+      "icon": "https://www.korbdo.co.kr/png/00009076.png",
+      "quantity": null
+    },
+    {
+      "id": "9306",
+      "name": "팔각차",
+      "icon": "https://www.korbdo.co.kr/png/00009306.png",
+      "quantity": null
+    },
+    {
+      "id": "9313",
+      "name": "바람의 정령수",
+      "icon": "https://www.korbdo.co.kr/png/00009313.png",
+      "quantity": null
+    },
+    {
+      "id": "9314",
+      "name": "대지의 정령수",
+      "icon": "https://www.korbdo.co.kr/png/00009314.png",
+      "quantity": null
+    },
+    {
+      "id": "9315",
+      "name": "물의 정령수",
+      "icon": "https://www.korbdo.co.kr/png/00009315.png",
+      "quantity": null
+    },
+    {
+      "id": "9357",
+      "name": "유자차",
+      "icon": "https://www.korbdo.co.kr/png/00009357.png",
+      "quantity": null
+    },
+    {
+      "id": "24203",
+      "name": "둥근 도자기",
+      "icon": "https://www.korbdo.co.kr/png/Pot_Base_54.png",
+      "quantity": null
+    },
+    {
+      "id": "24204",
+      "name": "감탕 도자기",
+      "icon": "https://www.korbdo.co.kr/png/Pot_Base_55.png",
+      "quantity": null
+    },
+    {
+      "id": "24205",
+      "name": "길쭉한 도자기",
+      "icon": "https://www.korbdo.co.kr/png/Pot_Base_56.png",
+      "quantity": null
+    },
+    {
+      "id": "24206",
+      "name": "루비 호리병",
+      "icon": "https://www.korbdo.co.kr/png/Pot_Base_51.png",
+      "quantity": null
+    },
+    {
+      "id": "24207",
+      "name": "화려한 사파이어 장식병",
+      "icon": "https://www.korbdo.co.kr/png/Pot_Base_52.png",
+      "quantity": null
+    },
+    {
+      "id": "24208",
+      "name": "에메랄드 호리병",
+      "icon": "https://www.korbdo.co.kr/png/Pot_Base_50.png",
+      "quantity": null
+    },
+    {
+      "id": "24209",
+      "name": "화려한 토파즈 주전자",
+      "icon": "https://www.korbdo.co.kr/png/Pot_Base_53.png",
+      "quantity": null
+    },
+    {
+      "id": "24210",
+      "name": "수려한 오팔 장식병",
+      "icon": "https://www.korbdo.co.kr/png/Pot_Base_49.png",
+      "quantity": null
+    },
+    {
+      "id": "24211",
+      "name": "황금손의 장식병",
+      "icon": "https://www.korbdo.co.kr/png/Pot_Base_48.png",
+      "quantity": null
+    },
+    {
+      "id": "24212",
+      "name": "황실 백금 주전자",
+      "icon": "https://www.korbdo.co.kr/png/Pot_Base_47.png",
+      "quantity": null
+    },
+    {
+      "id": "24261",
+      "name": "실험용 연금 도구",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_ODL_Alchemy_Deco_01.png",
+      "quantity": null
+    },
+    {
+      "id": "24262",
+      "name": "실험용 연금 도구 보관대",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_ODL_Alchemy_Deco_02.png",
+      "quantity": null
+    },
+    {
+      "id": "750077",
+      "name": "[이벤트] 생기있는 벚꽃 영약",
+      "icon": "https://www.korbdo.co.kr/png/00750077.png",
+      "quantity": null
+    },
+    {
+      "id": "750078",
+      "name": "[이벤트] 따스한 봄의 영약",
+      "icon": "https://www.korbdo.co.kr/png/00750078.png",
+      "quantity": null
+    },
+    {
+      "id": "820304",
+      "name": "마력이 깃든 배추 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00820301.png",
+      "quantity": null
+    },
+    {
+      "id": "820309",
+      "name": "마력이 깃든 무 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00820306.png",
+      "quantity": null
+    },
+    {
+      "id": "820314",
+      "name": "마력이 깃든 들깨 씨앗",
+      "icon": "https://www.korbdo.co.kr/png/00820311.png",
+      "quantity": null
+    },
+    {
+      "id": "820319",
+      "name": "마력이 깃든 볍씨",
+      "icon": "https://www.korbdo.co.kr/png/00820316.png",
+      "quantity": null
+    }
+  ],
+  "source": "https://www.korbdo.co.kr/xml/ko-kr/6656.xml",
+  "sourceFetchedAt": "2026-10-29"
+}

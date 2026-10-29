@@ -120,7 +120,7 @@ h1 {
 }
 .workspace-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
   gap: 24px;
 }
 .workspace-card {
@@ -139,6 +139,7 @@ h1 {
   background:
     radial-gradient(ellipse at 95% 15%, #58705b45, transparent 75%), #19201feb;
 }
+.craft-card { background: radial-gradient(ellipse at 95% 15%,#a7b98430,transparent 75%),#1e2922eb; }
 .workspace-card:hover {
   border-color: #c5ab75a6;
   transform: translateY(-3px);

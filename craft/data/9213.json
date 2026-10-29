@@ -1,0 +1,62 @@
+{
+  "id": "9213",
+  "name": "맥주",
+  "icon": "https://www.korbdo.co.kr/png/00009213.png",
+  "description": "곡물을 주재료로 하는 약한 술\n\n- 사용 효과\n   일꾼 행동력 +2\n  (월드맵의 일꾼 관리 메뉴에서 사용)\n\n- 획득처 : 요리 초급 Lv.1 이상이면 주거지에서 요리 도구를 배치하여 제작(요리 숙련 Lv.1 이상이면 맥주를 제작할 때 낮은 확률로 시원한 생맥주를 획득할 수 있다.)\n\n- 우클릭하면 일꾼 목록에서 행동력 회복을 진행할 수 있습니다.\n\n- 제작 재료\n밀 x5\n요리용 생수 x6 또는 정제수 x3\n발효제 x2\n설탕 x1",
+  "recipes": [
+    {
+      "id": "0",
+      "method": "주거지 요리",
+      "action": "",
+      "inputs": [
+        {
+          "id": "7001",
+          "name": "밀",
+          "icon": "https://www.korbdo.co.kr/png/00007001.png",
+          "quantity": 5
+        },
+        {
+          "id": "9059",
+          "name": "요리용 생수",
+          "icon": "https://www.korbdo.co.kr/png/00009059.png",
+          "quantity": 6
+        },
+        {
+          "id": "9005",
+          "name": "발효제",
+          "icon": "https://www.korbdo.co.kr/png/00009005.png",
+          "quantity": 2
+        },
+        {
+          "id": "9002",
+          "name": "설탕",
+          "icon": "https://www.korbdo.co.kr/png/00009002.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    }
+  ],
+  "related": [
+    {
+      "id": "9843",
+      "name": "[이벤트] 맥주 상자",
+      "icon": "https://www.korbdo.co.kr/png/00009843.png",
+      "quantity": null
+    },
+    {
+      "id": "9844",
+      "name": "[이벤트] 시험용 맥주 상자",
+      "icon": "https://www.korbdo.co.kr/png/00009843.png",
+      "quantity": null
+    },
+    {
+      "id": "9851",
+      "name": "견습가의 요리상자",
+      "icon": "https://www.korbdo.co.kr/png/00009851.png",
+      "quantity": null
+    }
+  ],
+  "source": "https://www.korbdo.co.kr/xml/ko-kr/9213.xml",
+  "sourceFetchedAt": "2026-10-29"
+}

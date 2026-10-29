@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import io
 import os
 import tempfile
 import threading
@@ -44,14 +45,23 @@ class LauncherResourceTests(unittest.TestCase):
             def read(self):
                 return self.payload
 
-        with patch.object(launcher, "urlopen", return_value=Response({"ok": True, "service": "bdo-suite-local", "workspaces": ["barter", "alchemy"]})):
+        with patch.object(launcher, "urlopen", return_value=Response({"ok": True, "service": "bdo-suite-local", "workspaces": ["barter", "alchemy", "craft"]})):
             self.assertTrue(launcher._health_is_ours())
+        with patch.object(launcher, "urlopen", return_value=Response({"ok": True, "service": "bdo-suite-local", "workspaces": ["barter", "alchemy"]})):
+            self.assertFalse(launcher._health_is_ours(), "an old server without the notebook is not the current suite")
         with patch.object(launcher, "urlopen", return_value=Response({"ok": True, "service": "other"})):
             self.assertFalse(launcher._health_is_ours())
         with patch.object(launcher, "urlopen", return_value=Response({"ok": True, "service": "bdo-barter-local"})):
             self.assertFalse(launcher._health_is_ours(), "legacy barter servers must not open as the integrated suite")
         with patch.object(launcher, "urlopen", side_effect=URLError("offline")):
             self.assertFalse(launcher._health_is_ours())
+
+    def test_health_probe_matches_actual_application_response(self):
+        with tempfile.TemporaryDirectory() as directory:
+            app = create_app(Path(directory) / "test.sqlite3", testing=True)
+            response = app.test_client().get("/suite-health")
+            with patch.object(launcher, "urlopen", return_value=io.BytesIO(response.data)):
+                self.assertTrue(launcher._health_is_ours())
 
 
 @unittest.skipUnless(os.name == "nt", "Windows named mutex behavior is release-platform specific")

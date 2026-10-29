@@ -31,6 +31,8 @@ datas = [
     (str(ROOT / "local_app" / "frontend"), "local_app/frontend"),
     (str(ROOT / "alchemy" / "frontend"), "alchemy/frontend"),
     (str(ROOT / "alchemy" / "data"), "alchemy/data"),
+    (str(ROOT / "craft" / "frontend"), "craft/frontend"),
+    (str(ROOT / "craft" / "data"), "craft/data"),
     (str(trade_model / "inference.onnx"), "barter/recognition_data/trade-model"),
     (str(trade_model / "inference.yml"), "barter/recognition_data/trade-model"),
     (str(ROOT / "barter" / "tools" / "trade_live_ocr.py"), "barter/tools"),

@@ -1,0 +1,63 @@
+import assert from 'node:assert/strict';
+import {spawn} from 'node:child_process';
+import {createRequire} from 'node:module';
+import {mkdtemp,mkdir,writeFile,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join,resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
+const require=createRequire(join(root,'package.json'));
+const {chromium}=require('playwright');
+const temp=await mkdtemp(join(tmpdir(),'bdo-craft-'));
+const out=process.env.BDO_LIVE_REPORT_DIR || join(temp,'report');
+const base='http://127.0.0.1:18786';
+const delay=ms=>new Promise(done=>setTimeout(done,ms));
+let browser;
+const server=spawn(process.env.PYTHON || 'python',['-B','-c',`from local_app.backend.app import create_app;from waitress import serve;serve(create_app(${JSON.stringify(join(temp,'barter.sqlite3'))},testing=True),host='127.0.0.1',port=18786)`],{cwd:root,env:{...process.env,PYTHONDONTWRITEBYTECODE:'1',PYTHONUTF8:'1'},windowsHide:true,stdio:'ignore'});
+try {
+  let ready=false;
+  for(let i=0;i<120;i++){try{if((await fetch(base+'/suite-health')).ok){ready=true;break;}}catch{}await delay(100);}
+  assert.ok(ready,'isolated craft server ready');
+  browser=await chromium.launch({executablePath:process.env.BDO_CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
+  const page=await browser.newPage({viewport:{width:1540,height:1050}});
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  // External item artwork is replaced locally; arithmetic and application APIs remain real.
+  await page.route('https://www.korbdo.co.kr/png/**',route=>route.fulfill({path:join(root,'craft/frontend/item.svg'),contentType:'image/svg+xml'}));
+  await page.goto(base+'/craft/');
+  await page.getByRole('button',{name:'🍺 맥주',exact:true}).click();
+  await page.locator('#item-name').filter({hasText:'맥주'}).waitFor();
+  await page.locator('[data-count="100"]').click();
+  assert.match(await page.locator('#shopping-list').innerText(),/밀[\s\S]*500개/);
+  assert.match(await page.locator('#shopping-list').innerText(),/요리용 생수[\s\S]*600개/);
+  await page.locator('#count').fill('0');
+  assert.equal(await page.locator('#copy').isDisabled(),true);
+  assert.match(await page.locator('#status').innerText(),/제작 횟수/);
+  await page.locator('#count').fill('100');
+  await page.locator('#search').fill('강철');
+  await page.locator('#items [data-item-id="4077"]').click();
+  await page.locator('#item-name').filter({hasText:'강철'}).waitFor();
+  await page.locator('[data-count="10"]').click();
+  assert.match(await page.locator('#shopping-list').innerText(),/석탄[\s\S]*50개/);
+  await page.locator('.material').filter({hasText:'녹아내린 철 조각'}).getByRole('button',{name:'하위 제작 펼치기 +'}).click();
+  await page.getByRole('spinbutton',{name:'하위 제작 1회 산출 기준'}).fill('2.5');
+  await page.getByRole('button',{name:'계산에 반영',exact:true}).click();
+  assert.match(await page.locator('#shopping-list').innerText(),/철 광석[\s\S]*100개/);
+  await page.locator('#favorite').click();
+  await page.waitForFunction(()=>document.querySelector('#favorite').getAttribute('aria-pressed')==='true');
+  await page.reload();
+  await page.locator('#item-name').filter({hasText:'강철'}).waitFor();
+  assert.equal(await page.locator('#favorite').getAttribute('aria-pressed'),'true');
+  await page.locator('[data-count="100"]').click();
+  await mkdir(out,{recursive:true});
+  await page.screenshot({path:join(out,'craft-desktop.png'),fullPage:true});
+  await page.setViewportSize({width:390,height:844});
+  await page.screenshot({path:join(out,'craft-mobile.png'),fullPage:true});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'no mobile horizontal overflow');
+  assert.deepEqual(errors,[]);
+  await writeFile(join(out,'browser-result.json'),JSON.stringify({passed:true,countsVerified:true,favoritesPersisted:true,invalidCountsBlocked:true,desktop:true,mobile:true,errors},null,2));
+  console.log(JSON.stringify({passed:true,output:out,errors}));
+} finally {
+  await browser?.close();server.kill();await delay(300);
+  if(dirname(temp)!==resolve(tmpdir()))throw Error('Unsafe temporary test path');
+  await rm(temp,{recursive:true,force:true,maxRetries:6,retryDelay:200});
+}

@@ -135,7 +135,7 @@ def main():
         try:
             wait_for(lambda: request("/api/health").get("ok"))
             suite = request("/suite-health")
-            assert suite["service"] == "bdo-suite-local" and suite["workspaces"] == ["barter", "alchemy"]
+            assert suite["service"] == "bdo-suite-local" and suite["workspaces"] == ["barter", "alchemy", "craft"]
             with urlopen(BASE + "/", timeout=10) as response:
                 portal = response.read().decode("utf-8")
                 assert 'href="/barter/"' in portal and 'href="/alchemy/"' in portal

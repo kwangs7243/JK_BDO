@@ -32,13 +32,14 @@ include-package-data = false
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["local_app*", "barter*", "alchemy*", "tools.warehouse_patch*"]
+include = ["local_app*", "barter*", "alchemy*", "craft*", "tools.warehouse_patch*"]
 exclude = ["local_app.tests*", "local_app.packaging*", "local_app.frontend*", "barter.frontend*", "barter.recognition_data*", "alchemy.frontend*"]
 
 [tool.setuptools.package-data]
 local_app = ["frontend/**/*"]
 barter = ["frontend/**/*", "recognition_data/*.json", "recognition_data/*.npz"]
 alchemy = ["frontend/**/*", "data/*.json"]
+craft = ["frontend/**/*", "data/*.json"]
 "tools.warehouse_patch" = ["*.npz"]
 
 [tool.pytest.ini_options]

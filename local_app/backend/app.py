@@ -11,8 +11,10 @@ from werkzeug.exceptions import BadRequest, RequestEntityTooLarge
 from alchemy.routes import alchemy_pages
 from alchemy.api import alchemy_api
 from alchemy.storage import AlchemyStorage, default_database_path as alchemy_database_path
+from craft.routes import craft_pages, craft_api
+from craft.storage import CraftStorage
 from local_app.lazy import LazyResource
-from local_app.config import HOST, PORT, SERVICE, VERSION
+from local_app.config import HOST, PORT, SERVICE, VERSION, WORKSPACES
 from barter.routes import barter_pages
 from barter.backend.api.scan import scan_api
 from barter.backend.api.maintenance import maintenance_api
@@ -44,6 +46,7 @@ def create_app(database_path: str | Path | None = None, *, reference_path: str |
     app.extensions["bdo_storage"] = LazyResource(initialize_barter)
     alchemy_db = Path(alchemy_path) if alchemy_path else db_path.with_name("alchemy.sqlite3") if testing else alchemy_database_path()
     app.extensions["alchemy_storage"] = AlchemyStorage(alchemy_db)
+    app.extensions["craft_storage"] = CraftStorage(app.extensions["alchemy_storage"])
     app.extensions["trade_batch_runtime"] = TradeBatchRuntime()
     if native_capture is not None:
         app.extensions["native_capture"] = native_capture
@@ -54,6 +57,8 @@ def create_app(database_path: str | Path | None = None, *, reference_path: str |
     app.register_blueprint(barter_pages)
     app.register_blueprint(alchemy_pages)
     app.register_blueprint(alchemy_api)
+    app.register_blueprint(craft_pages)
+    app.register_blueprint(craft_api)
     app.register_blueprint(api)
     app.register_blueprint(session_api)
     app.register_blueprint(scan_api)
@@ -76,6 +81,8 @@ def create_app(database_path: str | Path | None = None, *, reference_path: str |
         recognition_mutation = recognition_request and request.method in {"PATCH", "PUT", "POST", "DELETE"}
         alchemy_request = request.path.startswith("/api/alchemy/")
         alchemy_mutation = alchemy_request and request.method in {"PATCH", "PUT", "POST", "DELETE"}
+        craft_request = request.path.startswith("/api/craft/")
+        craft_mutation = craft_request and request.method in {"PATCH", "PUT", "POST", "DELETE"}
         if recognition_request and request.method == "OPTIONS":
             return jsonify({"ok": False, "error": {"code": "cors_preflight_denied", "message": "Cross-origin preflight is not accepted."}}), 403
         origin = request.headers.get("Origin")
@@ -85,7 +92,7 @@ def create_app(database_path: str | Path | None = None, *, reference_path: str |
                 allowed_origins.add(origin)
             if origin not in allowed_origins:
                 return jsonify({"ok": False, "error": {"code": "invalid_origin", "message": "Cross-origin requests are not accepted."}}), 403
-        if recognition_mutation or session_mutation or capture_mutation or alchemy_mutation:
+        if recognition_mutation or session_mutation or capture_mutation or alchemy_mutation or craft_mutation:
             expected_origin = f"http://{host}"
             if origin is None:
                 return jsonify({"ok": False, "error": {"code": "origin_required", "message": "A same-origin request is required."}}), 403
@@ -97,7 +104,7 @@ def create_app(database_path: str | Path | None = None, *, reference_path: str |
         state_mutation = request.method in {"PATCH", "PUT", "POST", "DELETE"} and (request.path in {
             "/api/inventory", "/api/inventory/order", "/api/settings", "/api/warehouse-scan"
         } or request.path.startswith(("/api/working-session", "/api/schedule-slots/")))
-        if recognition_request or state_mutation or capture_request or alchemy_request:
+        if recognition_request or state_mutation or capture_request or alchemy_request or craft_request:
             with mutation_condition:
                 state = app.extensions["bdo_mutation_state"]
                 if state["stopping"]:
@@ -123,7 +130,7 @@ def create_app(database_path: str | Path | None = None, *, reference_path: str |
 
     @app.get("/suite-health")
     def suite_health():
-        return jsonify({"ok": True, "service": SERVICE, "version": VERSION, "workspaces": ["barter", "alchemy"]})
+        return jsonify({"ok": True, "service": SERVICE, "version": VERSION, "workspaces": list(WORKSPACES)})
 
     @app.errorhandler(ContractError)
     def handle_contract_error(error: ContractError):

@@ -1,0 +1,3932 @@
+{
+  "id": "4051",
+  "name": "녹아내린 철 조각",
+  "icon": "https://www.korbdo.co.kr/png/00004051.png",
+  "description": "자연 채집물을 가공한 것으로 제작의 재료로 사용되며, 연금술 또는 가공을 통해 다른 형태로 변형시킬 수 있다.\n\n- 사용처 : 장비, 하우징 제작 등\n\n- 획득처 : 철 광석 5개를 가열하여 얻을 수 있다.",
+  "recipes": [
+    {
+      "id": "0",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "4001",
+          "name": "철 광석",
+          "icon": "https://www.korbdo.co.kr/png/00004001.png",
+          "quantity": 5
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "1",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10006",
+          "name": "아인 장검",
+          "icon": "https://www.korbdo.co.kr/png/00010006.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "2",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10007",
+          "name": "셀레스 장검",
+          "icon": "https://www.korbdo.co.kr/png/00010007.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "3",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10012",
+          "name": "칼리스 장검",
+          "icon": "https://www.korbdo.co.kr/png/00010012.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "4",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10013",
+          "name": "바레스 장검",
+          "icon": "https://www.korbdo.co.kr/png/00010013.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "5",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10014",
+          "name": "유리아 장검",
+          "icon": "https://www.korbdo.co.kr/png/00010014.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "6",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10056",
+          "name": "크레아 장검",
+          "icon": "https://www.korbdo.co.kr/png/00010056.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "7",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10057",
+          "name": "로사르 장검",
+          "icon": "https://www.korbdo.co.kr/png/00010057.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "8",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10102",
+          "name": "벤거츠 방패",
+          "icon": "https://www.korbdo.co.kr/png/00010102.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "9",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10103",
+          "name": "엑시언 방패",
+          "icon": "https://www.korbdo.co.kr/png/00010103.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "10",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10105",
+          "name": "카이트 방패",
+          "icon": "https://www.korbdo.co.kr/png/00010105.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "11",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10124",
+          "name": "크레아 방패",
+          "icon": "https://www.korbdo.co.kr/png/00010124.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "12",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10125",
+          "name": "로사르 방패",
+          "icon": "https://www.korbdo.co.kr/png/00010125.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "13",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10304",
+          "name": "강철 단검",
+          "icon": "https://www.korbdo.co.kr/png/00010304.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "14",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10406",
+          "name": "아인 부적",
+          "icon": "https://www.korbdo.co.kr/png/00010406.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "15",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10407",
+          "name": "셀레스 부적",
+          "icon": "https://www.korbdo.co.kr/png/00010407.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "16",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10412",
+          "name": "칼리스 부적",
+          "icon": "https://www.korbdo.co.kr/png/00010412.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "17",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10413",
+          "name": "바레스 부적",
+          "icon": "https://www.korbdo.co.kr/png/00010413.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "18",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10414",
+          "name": "유리아 부적",
+          "icon": "https://www.korbdo.co.kr/png/00010414.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "19",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10456",
+          "name": "크레아 부적",
+          "icon": "https://www.korbdo.co.kr/png/00010456.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "20",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10457",
+          "name": "로사르 부적",
+          "icon": "https://www.korbdo.co.kr/png/00010457.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "21",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10504",
+          "name": "쥬브르 타리스만",
+          "icon": "https://www.korbdo.co.kr/png/00010504.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "22",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10606",
+          "name": "아인 도끼",
+          "icon": "https://www.korbdo.co.kr/png/00010606.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "23",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10607",
+          "name": "셀레스 도끼",
+          "icon": "https://www.korbdo.co.kr/png/00010607.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "24",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10612",
+          "name": "칼리스 도끼",
+          "icon": "https://www.korbdo.co.kr/png/00010612.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "25",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10613",
+          "name": "바레스 도끼",
+          "icon": "https://www.korbdo.co.kr/png/00010613.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "26",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10614",
+          "name": "유리아 도끼",
+          "icon": "https://www.korbdo.co.kr/png/00010614.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "27",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10656",
+          "name": "크레아 도끼",
+          "icon": "https://www.korbdo.co.kr/png/00010656.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "28",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10657",
+          "name": "로사르 도끼",
+          "icon": "https://www.korbdo.co.kr/png/00010657.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "29",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10704",
+          "name": "오로스 장식매듭",
+          "icon": "https://www.korbdo.co.kr/png/00010704.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "30",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10809",
+          "name": "아제리안 투구",
+          "icon": "https://www.korbdo.co.kr/png/00010809.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "31",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10810",
+          "name": "아제리안 갑옷",
+          "icon": "https://www.korbdo.co.kr/png/00010810.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "32",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10811",
+          "name": "아제리안 장갑",
+          "icon": "https://www.korbdo.co.kr/png/00010811.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "33",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10812",
+          "name": "아제리안 신발",
+          "icon": "https://www.korbdo.co.kr/png/00010812.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "34",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10813",
+          "name": "타리타스 투구",
+          "icon": "https://www.korbdo.co.kr/png/00010813.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "35",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10814",
+          "name": "타리타스 갑옷",
+          "icon": "https://www.korbdo.co.kr/png/00010814.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "36",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10815",
+          "name": "타리타스 장갑",
+          "icon": "https://www.korbdo.co.kr/png/00010815.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "37",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10816",
+          "name": "타리타스 신발",
+          "icon": "https://www.korbdo.co.kr/png/00010816.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "38",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10817",
+          "name": "제레스 투구",
+          "icon": "https://www.korbdo.co.kr/png/00010817.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "39",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10818",
+          "name": "제레스 갑옷",
+          "icon": "https://www.korbdo.co.kr/png/00010818.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "40",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10819",
+          "name": "제레스 장갑",
+          "icon": "https://www.korbdo.co.kr/png/00010819.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "41",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10820",
+          "name": "제레스 신발",
+          "icon": "https://www.korbdo.co.kr/png/00010820.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "42",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10821",
+          "name": "탈리스 투구",
+          "icon": "https://www.korbdo.co.kr/png/00010821.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "43",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10822",
+          "name": "탈리스 갑옷",
+          "icon": "https://www.korbdo.co.kr/png/00010822.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "44",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10823",
+          "name": "탈리스 장갑",
+          "icon": "https://www.korbdo.co.kr/png/00010823.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "45",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10824",
+          "name": "탈리스 신발",
+          "icon": "https://www.korbdo.co.kr/png/00010824.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "46",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10933",
+          "name": "그루닐 투구",
+          "icon": "https://www.korbdo.co.kr/png/00010933.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "47",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10934",
+          "name": "그루닐 갑옷",
+          "icon": "https://www.korbdo.co.kr/png/00010934.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "48",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10935",
+          "name": "그루닐 장갑",
+          "icon": "https://www.korbdo.co.kr/png/00010935.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "49",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10936",
+          "name": "그루닐 신발",
+          "icon": "https://www.korbdo.co.kr/png/00010936.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "50",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10937",
+          "name": "로카바 투구",
+          "icon": "https://www.korbdo.co.kr/png/00010937.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "51",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10938",
+          "name": "로카바 갑옷",
+          "icon": "https://www.korbdo.co.kr/png/00010938.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "52",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10939",
+          "name": "로카바 장갑",
+          "icon": "https://www.korbdo.co.kr/png/00010939.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "53",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "10940",
+          "name": "로카바 신발",
+          "icon": "https://www.korbdo.co.kr/png/00010940.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "54",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11206",
+          "name": "아인 권갑",
+          "icon": "https://www.korbdo.co.kr/png/00011203.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "55",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11207",
+          "name": "셀레스 권갑",
+          "icon": "https://www.korbdo.co.kr/png/00011203.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "56",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11212",
+          "name": "칼리스 권갑",
+          "icon": "https://www.korbdo.co.kr/png/00011212.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "57",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11213",
+          "name": "바레스 권갑",
+          "icon": "https://www.korbdo.co.kr/png/00011212.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "58",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11214",
+          "name": "유리아 권갑",
+          "icon": "https://www.korbdo.co.kr/png/00011212.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "59",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11220",
+          "name": "크레아 권갑",
+          "icon": "https://www.korbdo.co.kr/png/00011220.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "60",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11221",
+          "name": "로사르 권갑",
+          "icon": "https://www.korbdo.co.kr/png/00011220.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "61",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11303",
+          "name": "가죽 완갑",
+          "icon": "https://www.korbdo.co.kr/png/00011303.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "62",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11304",
+          "name": "비늘 완갑",
+          "icon": "https://www.korbdo.co.kr/png/00011304.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "63",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11305",
+          "name": "무쇠 완갑",
+          "icon": "https://www.korbdo.co.kr/png/00011305.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "64",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11324",
+          "name": "크레아 완갑",
+          "icon": "https://www.korbdo.co.kr/png/00011324.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "65",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11325",
+          "name": "로사르 완갑",
+          "icon": "https://www.korbdo.co.kr/png/00011325.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "66",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11356",
+          "name": "아인 태도",
+          "icon": "https://www.korbdo.co.kr/png/00011353.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "67",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11357",
+          "name": "셀레스 태도",
+          "icon": "https://www.korbdo.co.kr/png/00011353.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "68",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11362",
+          "name": "칼리스 태도",
+          "icon": "https://www.korbdo.co.kr/png/00011362.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "69",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11363",
+          "name": "바레스 태도",
+          "icon": "https://www.korbdo.co.kr/png/00011362.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "70",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11364",
+          "name": "유리아 태도",
+          "icon": "https://www.korbdo.co.kr/png/00011362.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "71",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11370",
+          "name": "크레아 태도",
+          "icon": "https://www.korbdo.co.kr/png/00011370.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "72",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "11371",
+          "name": "로사르 태도",
+          "icon": "https://www.korbdo.co.kr/png/00011371.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "73",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13004",
+          "name": "침낭 노리개",
+          "icon": "https://www.korbdo.co.kr/png/00013005.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "74",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13206",
+          "name": "아인 소검",
+          "icon": "https://www.korbdo.co.kr/png/00013203.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "75",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13207",
+          "name": "셀레스 소검",
+          "icon": "https://www.korbdo.co.kr/png/00013203.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "76",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13212",
+          "name": "칼리스 소검",
+          "icon": "https://www.korbdo.co.kr/png/00013207.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "77",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13213",
+          "name": "바레스 소검",
+          "icon": "https://www.korbdo.co.kr/png/00013207.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "78",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13214",
+          "name": "유리아 소검",
+          "icon": "https://www.korbdo.co.kr/png/00013207.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "79",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13256",
+          "name": "크레아 소검",
+          "icon": "https://www.korbdo.co.kr/png/00013256.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "80",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13257",
+          "name": "로사르 소검",
+          "icon": "https://www.korbdo.co.kr/png/00013257.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "81",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13306",
+          "name": "아인 도검",
+          "icon": "https://www.korbdo.co.kr/png/00013305.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "82",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13307",
+          "name": "셀레스 도검",
+          "icon": "https://www.korbdo.co.kr/png/00013305.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "83",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13312",
+          "name": "칼리스 도검",
+          "icon": "https://www.korbdo.co.kr/png/00013302.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "84",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13313",
+          "name": "바레스 도검",
+          "icon": "https://www.korbdo.co.kr/png/00013302.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "85",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13314",
+          "name": "유리아 도검",
+          "icon": "https://www.korbdo.co.kr/png/00013302.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "86",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13356",
+          "name": "크레아 도검",
+          "icon": "https://www.korbdo.co.kr/png/00013303.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "87",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13357",
+          "name": "로사르 도검",
+          "icon": "https://www.korbdo.co.kr/png/00013303.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "88",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13406",
+          "name": "아인 반월추",
+          "icon": "https://www.korbdo.co.kr/png/00013403.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "89",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13407",
+          "name": "셀레스 반월추",
+          "icon": "https://www.korbdo.co.kr/png/00013403.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "90",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13412",
+          "name": "칼리스 반월추",
+          "icon": "https://www.korbdo.co.kr/png/00013412.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "91",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13413",
+          "name": "바레스 반월추",
+          "icon": "https://www.korbdo.co.kr/png/00013412.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "92",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13414",
+          "name": "유리아 반월추",
+          "icon": "https://www.korbdo.co.kr/png/00013412.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "93",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13420",
+          "name": "크레아 반월추",
+          "icon": "https://www.korbdo.co.kr/png/00013420.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "94",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13421",
+          "name": "로사르 반월추",
+          "icon": "https://www.korbdo.co.kr/png/00013420.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "95",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13504",
+          "name": "가막새 고검",
+          "icon": "https://www.korbdo.co.kr/png/00013504.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "96",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13706",
+          "name": "아인 석궁",
+          "icon": "https://www.korbdo.co.kr/png/00013706.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "97",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13707",
+          "name": "셀레스 석궁",
+          "icon": "https://www.korbdo.co.kr/png/00013707.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "98",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13712",
+          "name": "칼리스 석궁",
+          "icon": "https://www.korbdo.co.kr/png/00013712.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "99",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13713",
+          "name": "바레스 석궁",
+          "icon": "https://www.korbdo.co.kr/png/00013713.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "100",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13714",
+          "name": "유리아 석궁",
+          "icon": "https://www.korbdo.co.kr/png/00013714.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "101",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13756",
+          "name": "크레아 석궁",
+          "icon": "https://www.korbdo.co.kr/png/00013720.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "102",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13757",
+          "name": "로사르 석궁",
+          "icon": "https://www.korbdo.co.kr/png/00013721.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "103",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "13804",
+          "name": "가나트 라곤",
+          "icon": "https://www.korbdo.co.kr/png/00013804.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "104",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "14101",
+          "name": "강철 타리타스 투구",
+          "icon": "https://www.korbdo.co.kr/png/00010813.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "105",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "14102",
+          "name": "강철 타리타스 갑옷",
+          "icon": "https://www.korbdo.co.kr/png/00010814.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "106",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "14103",
+          "name": "강철 타리타스 장갑",
+          "icon": "https://www.korbdo.co.kr/png/00010815.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "107",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "14104",
+          "name": "강철 타리타스 신발",
+          "icon": "https://www.korbdo.co.kr/png/00010816.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "108",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "14504",
+          "name": "에스티크 수리검",
+          "icon": "https://www.korbdo.co.kr/png/00014504.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "109",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "14604",
+          "name": "에스티크 표창",
+          "icon": "https://www.korbdo.co.kr/png/00014604.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "110",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "690509",
+          "name": "아인 전투도끼",
+          "icon": "https://www.korbdo.co.kr/png/00690508.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "111",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "690510",
+          "name": "셀레스 전투도끼",
+          "icon": "https://www.korbdo.co.kr/png/00690508.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "112",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "690515",
+          "name": "칼리스 전투도끼",
+          "icon": "https://www.korbdo.co.kr/png/00690515.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "113",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "690516",
+          "name": "바레스 전투도끼",
+          "icon": "https://www.korbdo.co.kr/png/00690516.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "114",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "690517",
+          "name": "유리아 전투도끼",
+          "icon": "https://www.korbdo.co.kr/png/00690516.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "115",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "690518",
+          "name": "크레아 전투도끼",
+          "icon": "https://www.korbdo.co.kr/png/00690519.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "116",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "690519",
+          "name": "로사르 전투도끼",
+          "icon": "https://www.korbdo.co.kr/png/00690519.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "117",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "692007",
+          "name": "아인 사곡도",
+          "icon": "https://www.korbdo.co.kr/png/00692006.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "118",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "692008",
+          "name": "셀레스 사곡도",
+          "icon": "https://www.korbdo.co.kr/png/00692006.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "119",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "692013",
+          "name": "칼리스 사곡도",
+          "icon": "https://www.korbdo.co.kr/png/00692017.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "120",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "692014",
+          "name": "바레스 사곡도",
+          "icon": "https://www.korbdo.co.kr/png/00692017.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "121",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "692015",
+          "name": "유리아 사곡도",
+          "icon": "https://www.korbdo.co.kr/png/00692017.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "122",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "692016",
+          "name": "크레아 사곡도",
+          "icon": "https://www.korbdo.co.kr/png/00692017.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "123",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "692017",
+          "name": "로사르 사곡도",
+          "icon": "https://www.korbdo.co.kr/png/00692017.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "124",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "692504",
+          "name": "아힌 금계",
+          "icon": "https://www.korbdo.co.kr/png/00692505.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "125",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "692505",
+          "name": "바둠 금계",
+          "icon": "https://www.korbdo.co.kr/png/00692505.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "126",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "692506",
+          "name": "네샬 금계",
+          "icon": "https://www.korbdo.co.kr/png/00692565.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "127",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "692510",
+          "name": "크레아 금계",
+          "icon": "https://www.korbdo.co.kr/png/00692510.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "128",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "692511",
+          "name": "로사르 금계",
+          "icon": "https://www.korbdo.co.kr/png/00692510.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "129",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "719004",
+          "name": "오로스 비츠아리",
+          "icon": "https://www.korbdo.co.kr/png/00719004.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "130",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "730507",
+          "name": "아인 샛별",
+          "icon": "https://www.korbdo.co.kr/png/00730504.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "131",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "730508",
+          "name": "셀레스 샛별",
+          "icon": "https://www.korbdo.co.kr/png/00730504.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "132",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "730513",
+          "name": "칼리스 샛별",
+          "icon": "https://www.korbdo.co.kr/png/00730517.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "133",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "730514",
+          "name": "바레스 샛별",
+          "icon": "https://www.korbdo.co.kr/png/00730517.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "134",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "730515",
+          "name": "유리아 샛별",
+          "icon": "https://www.korbdo.co.kr/png/00730517.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "135",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "730516",
+          "name": "크레아 샛별",
+          "icon": "https://www.korbdo.co.kr/png/00730517.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "136",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "730517",
+          "name": "로사르 샛별",
+          "icon": "https://www.korbdo.co.kr/png/00730517.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "137",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "730704",
+          "name": "파우 크라툼",
+          "icon": "https://www.korbdo.co.kr/png/00730704.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "138",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "730705",
+          "name": "루카 크라툼",
+          "icon": "https://www.korbdo.co.kr/png/00730704.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "139",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "730706",
+          "name": "비슈르 크라툼",
+          "icon": "https://www.korbdo.co.kr/png/00730706.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "140",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "730710",
+          "name": "크레아 크라툼",
+          "icon": "https://www.korbdo.co.kr/png/00730710.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "141",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "730711",
+          "name": "로사르 크라툼",
+          "icon": "https://www.korbdo.co.kr/png/00730710.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "142",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "732256",
+          "name": "아인 카이브",
+          "icon": "https://www.korbdo.co.kr/png/00732255.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "143",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "732257",
+          "name": "셀레스 카이브",
+          "icon": "https://www.korbdo.co.kr/png/00732255.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "144",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "732262",
+          "name": "칼리스 카이브",
+          "icon": "https://www.korbdo.co.kr/png/00732266.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "145",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "732263",
+          "name": "바레스 카이브",
+          "icon": "https://www.korbdo.co.kr/png/00732266.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "146",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "732264",
+          "name": "유리아 카이브",
+          "icon": "https://www.korbdo.co.kr/png/00732266.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "147",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "732265",
+          "name": "크레아 카이브",
+          "icon": "https://www.korbdo.co.kr/png/00732266.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "148",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "732266",
+          "name": "로사르 카이브",
+          "icon": "https://www.korbdo.co.kr/png/00732266.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "149",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "733006",
+          "name": "아인 세레나카",
+          "icon": "https://www.korbdo.co.kr/png/00733005.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "150",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "733007",
+          "name": "셀레스 세레나카",
+          "icon": "https://www.korbdo.co.kr/png/00733005.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "151",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "733012",
+          "name": "칼리스 세레나카",
+          "icon": "https://www.korbdo.co.kr/png/00733016.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "152",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "733013",
+          "name": "바레스 세레나카",
+          "icon": "https://www.korbdo.co.kr/png/00733016.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "153",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "733014",
+          "name": "유리아 세레나카",
+          "icon": "https://www.korbdo.co.kr/png/00733016.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "154",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "733015",
+          "name": "크레아 세레나카",
+          "icon": "https://www.korbdo.co.kr/png/00733016.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "155",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "733016",
+          "name": "로사르 세레나카",
+          "icon": "https://www.korbdo.co.kr/png/00733016.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "156",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "733203",
+          "name": "파르 마레카",
+          "icon": "https://www.korbdo.co.kr/png/00733203.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "157",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "733204",
+          "name": "도르 마레카",
+          "icon": "https://www.korbdo.co.kr/png/00733203.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "158",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "733205",
+          "name": "라르 마레카",
+          "icon": "https://www.korbdo.co.kr/png/00733205.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "159",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "733209",
+          "name": "크레아 마레카",
+          "icon": "https://www.korbdo.co.kr/png/00733209.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "160",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "733210",
+          "name": "로사르 마레카",
+          "icon": "https://www.korbdo.co.kr/png/00733209.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "161",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "735406",
+          "name": "아인 슬레이어",
+          "icon": "https://www.korbdo.co.kr/png/00735405.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "162",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "735407",
+          "name": "셀레스 슬레이어",
+          "icon": "https://www.korbdo.co.kr/png/00735405.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "163",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "735412",
+          "name": "칼리스 슬레이어",
+          "icon": "https://www.korbdo.co.kr/png/00735416.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "164",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "735413",
+          "name": "바레스 슬레이어",
+          "icon": "https://www.korbdo.co.kr/png/00735416.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "165",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "735414",
+          "name": "유리아 슬레이어",
+          "icon": "https://www.korbdo.co.kr/png/00735416.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "166",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "735415",
+          "name": "크레아 슬레이어",
+          "icon": "https://www.korbdo.co.kr/png/00735416.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "167",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "735416",
+          "name": "로사르 슬레이어",
+          "icon": "https://www.korbdo.co.kr/png/00735416.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "168",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "735603",
+          "name": "레바탄 샤드",
+          "icon": "https://www.korbdo.co.kr/png/00735604.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "169",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "735604",
+          "name": "브르탄 샤드",
+          "icon": "https://www.korbdo.co.kr/png/00735604.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "170",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "735605",
+          "name": "라르탄 샤드",
+          "icon": "https://www.korbdo.co.kr/png/00735605.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "171",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "735609",
+          "name": "크레아 샤드",
+          "icon": "https://www.korbdo.co.kr/png/00735609.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "172",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "735610",
+          "name": "로사르 샤드",
+          "icon": "https://www.korbdo.co.kr/png/00735609.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "173",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "739406",
+          "name": "아인 호화선",
+          "icon": "https://www.korbdo.co.kr/png/00739405.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "174",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "739407",
+          "name": "셀레스 호화선",
+          "icon": "https://www.korbdo.co.kr/png/00739405.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "175",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "739412",
+          "name": "칼리스 호화선",
+          "icon": "https://www.korbdo.co.kr/png/00739416.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "176",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "739413",
+          "name": "바레스 호화선",
+          "icon": "https://www.korbdo.co.kr/png/00739416.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "177",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "739414",
+          "name": "유리아 호화선",
+          "icon": "https://www.korbdo.co.kr/png/00739416.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "178",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "739415",
+          "name": "크레아 호화선",
+          "icon": "https://www.korbdo.co.kr/png/00739416.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "179",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "739416",
+          "name": "로사르 호화선",
+          "icon": "https://www.korbdo.co.kr/png/00739416.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "180",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "739904",
+          "name": "버들 도장",
+          "icon": "https://www.korbdo.co.kr/png/00739906.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "181",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "739905",
+          "name": "편백 도장",
+          "icon": "https://www.korbdo.co.kr/png/00739905.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "182",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "739906",
+          "name": "금강 도장",
+          "icon": "https://www.korbdo.co.kr/png/00739904.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "183",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "739910",
+          "name": "크레아 도장",
+          "icon": "https://www.korbdo.co.kr/png/00739910.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "184",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "739911",
+          "name": "로사르 도장",
+          "icon": "https://www.korbdo.co.kr/png/00739910.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "185",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "740706",
+          "name": "아인 호령부",
+          "icon": "https://www.korbdo.co.kr/png/00740705.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "186",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "740707",
+          "name": "셀레스 호령부",
+          "icon": "https://www.korbdo.co.kr/png/00740705.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "187",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "740712",
+          "name": "칼리스 호령부",
+          "icon": "https://www.korbdo.co.kr/png/00740716.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "188",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "740713",
+          "name": "바레스 호령부",
+          "icon": "https://www.korbdo.co.kr/png/00740716.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "189",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "740714",
+          "name": "유리아 호령부",
+          "icon": "https://www.korbdo.co.kr/png/00740716.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "190",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "740715",
+          "name": "크레아 호령부",
+          "icon": "https://www.korbdo.co.kr/png/00740716.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "191",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "740716",
+          "name": "로사르 호령부",
+          "icon": "https://www.korbdo.co.kr/png/00740716.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "192",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "741003",
+          "name": "비취 비녀칼",
+          "icon": "https://www.korbdo.co.kr/png/00741003.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "193",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "741004",
+          "name": "흑칠 비녀칼",
+          "icon": "https://www.korbdo.co.kr/png/00741004.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "194",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "741005",
+          "name": "금강 비녀칼",
+          "icon": "https://www.korbdo.co.kr/png/00741005.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "195",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "741009",
+          "name": "크레아 비녀칼",
+          "icon": "https://www.korbdo.co.kr/png/00741009.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "196",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "741010",
+          "name": "로사르 비녀칼",
+          "icon": "https://www.korbdo.co.kr/png/00741009.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "197",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "742306",
+          "name": "아인 망치",
+          "icon": "https://www.korbdo.co.kr/png/00742303.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "198",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "742307",
+          "name": "셀레스 망치",
+          "icon": "https://www.korbdo.co.kr/png/00742303.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "199",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "742312",
+          "name": "칼리스 망치",
+          "icon": "https://www.korbdo.co.kr/png/00742311.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "200",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "742313",
+          "name": "바레스 망치",
+          "icon": "https://www.korbdo.co.kr/png/00742311.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "201",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "742314",
+          "name": "유리아 망치",
+          "icon": "https://www.korbdo.co.kr/png/00742311.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "202",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "742315",
+          "name": "크레아 망치",
+          "icon": "https://www.korbdo.co.kr/png/00742311.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "203",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "742316",
+          "name": "로사르 망치",
+          "icon": "https://www.korbdo.co.kr/png/00742311.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "204",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "742503",
+          "name": "가속의 중력핵",
+          "icon": "https://www.korbdo.co.kr/png/00742503.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "205",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "742504",
+          "name": "증강의 중력핵",
+          "icon": "https://www.korbdo.co.kr/png/00742503.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "206",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "742505",
+          "name": "질량의 중력핵",
+          "icon": "https://www.korbdo.co.kr/png/00742503.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "207",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "742509",
+          "name": "크레아 중력핵",
+          "icon": "https://www.korbdo.co.kr/png/00742509.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "208",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "742510",
+          "name": "로사르 중력핵",
+          "icon": "https://www.korbdo.co.kr/png/00742509.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "209",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "746606",
+          "name": "아인 환도",
+          "icon": "https://www.korbdo.co.kr/png/00746603.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "210",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "746607",
+          "name": "셀레스 환도",
+          "icon": "https://www.korbdo.co.kr/png/00746603.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "211",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "746612",
+          "name": "칼리스 환도",
+          "icon": "https://www.korbdo.co.kr/png/00746612.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "212",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "746613",
+          "name": "바레스 환도",
+          "icon": "https://www.korbdo.co.kr/png/00746612.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "213",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "746614",
+          "name": "유리아 환도",
+          "icon": "https://www.korbdo.co.kr/png/00746612.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "214",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "746615",
+          "name": "크레아 환도",
+          "icon": "https://www.korbdo.co.kr/png/00746612.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "215",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "746616",
+          "name": "로사르 환도",
+          "icon": "https://www.korbdo.co.kr/png/00746616.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "216",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "746803",
+          "name": "금강 곰방대",
+          "icon": "https://www.korbdo.co.kr/png/00746803.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "217",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "746804",
+          "name": "교목 곰방대",
+          "icon": "https://www.korbdo.co.kr/png/00742280.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "218",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "746805",
+          "name": "죽립 곰방대",
+          "icon": "https://www.korbdo.co.kr/png/00746805.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "219",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "746809",
+          "name": "크레아 곰방대",
+          "icon": "https://www.korbdo.co.kr/png/00746809.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "220",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "746810",
+          "name": "로사르 곰방대",
+          "icon": "https://www.korbdo.co.kr/png/00746809.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "221",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749206",
+          "name": "아인 리볼버",
+          "icon": "https://www.korbdo.co.kr/png/00749203.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "222",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749207",
+          "name": "셀레스 리볼버",
+          "icon": "https://www.korbdo.co.kr/png/00749203.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "223",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749212",
+          "name": "칼리스 리볼버",
+          "icon": "https://www.korbdo.co.kr/png/00749211.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "224",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749213",
+          "name": "바레스 리볼버",
+          "icon": "https://www.korbdo.co.kr/png/00749211.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "225",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749214",
+          "name": "유리아 리볼버",
+          "icon": "https://www.korbdo.co.kr/png/00749211.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "226",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749215",
+          "name": "크레아 리볼버",
+          "icon": "https://www.korbdo.co.kr/png/00749211.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "227",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749216",
+          "name": "로사르 리볼버",
+          "icon": "https://www.korbdo.co.kr/png/00749216.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "228",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749403",
+          "name": "프리아 샷건",
+          "icon": "https://www.korbdo.co.kr/png/00749403.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "229",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749404",
+          "name": "비엔트 샷건",
+          "icon": "https://www.korbdo.co.kr/png/00742283.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "230",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749405",
+          "name": "세르피 샷건",
+          "icon": "https://www.korbdo.co.kr/png/00749405.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "231",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749409",
+          "name": "크레아 샷건",
+          "icon": "https://www.korbdo.co.kr/png/00749409.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "232",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749410",
+          "name": "로사르 샷건",
+          "icon": "https://www.korbdo.co.kr/png/00749409.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "233",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749642",
+          "name": "아인 여의봉",
+          "icon": "https://www.korbdo.co.kr/png/00749639.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "234",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749643",
+          "name": "셀레스 여의봉",
+          "icon": "https://www.korbdo.co.kr/png/00749639.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "235",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749648",
+          "name": "칼리스 여의봉",
+          "icon": "https://www.korbdo.co.kr/png/00749647.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "236",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749649",
+          "name": "바레스 여의봉",
+          "icon": "https://www.korbdo.co.kr/png/00749647.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "237",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749650",
+          "name": "유리아 여의봉",
+          "icon": "https://www.korbdo.co.kr/png/00749647.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "238",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749651",
+          "name": "크레아 여의봉",
+          "icon": "https://www.korbdo.co.kr/png/00749647.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "239",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749652",
+          "name": "로사르 여의봉",
+          "icon": "https://www.korbdo.co.kr/png/00749652.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "240",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749766",
+          "name": "비취 호리병",
+          "icon": "https://www.korbdo.co.kr/png/00749766.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "241",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749767",
+          "name": "홍목 호리병",
+          "icon": "https://www.korbdo.co.kr/png/00742287.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "242",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749768",
+          "name": "오동 호리병",
+          "icon": "https://www.korbdo.co.kr/png/00749768.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "243",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749772",
+          "name": "크레아 호리병",
+          "icon": "https://www.korbdo.co.kr/png/00749772.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "244",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "749773",
+          "name": "로사르 호리병",
+          "icon": "https://www.korbdo.co.kr/png/00749772.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "245",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "931706",
+          "name": "아인 성약",
+          "icon": "https://www.korbdo.co.kr/png/00931705.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "246",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "931707",
+          "name": "셀레스 성약",
+          "icon": "https://www.korbdo.co.kr/png/00931705.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "247",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "931712",
+          "name": "칼리스 성약",
+          "icon": "https://www.korbdo.co.kr/png/00931712.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "248",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "931713",
+          "name": "바레스 성약",
+          "icon": "https://www.korbdo.co.kr/png/00931712.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "249",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "931714",
+          "name": "유리아 성약",
+          "icon": "https://www.korbdo.co.kr/png/00931712.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "250",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "931715",
+          "name": "크레아 성약",
+          "icon": "https://www.korbdo.co.kr/png/00931712.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "251",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "931716",
+          "name": "로사르 성약",
+          "icon": "https://www.korbdo.co.kr/png/00931716.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "252",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "931794",
+          "name": "언약의 봉인구",
+          "icon": "https://www.korbdo.co.kr/png/00931794.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "253",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "931795",
+          "name": "경계의 봉인구",
+          "icon": "https://www.korbdo.co.kr/png/00931795.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "254",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "931796",
+          "name": "신념의 봉인구",
+          "icon": "https://www.korbdo.co.kr/png/00931796.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "255",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "931800",
+          "name": "크레아 봉인구",
+          "icon": "https://www.korbdo.co.kr/png/00931800.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "256",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "931801",
+          "name": "로사르 봉인구",
+          "icon": "https://www.korbdo.co.kr/png/00931800.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "257",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "933003",
+          "name": "페리아 마탄",
+          "icon": "https://www.korbdo.co.kr/png/00933003.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "258",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "933004",
+          "name": "피데스 마탄",
+          "icon": "https://www.korbdo.co.kr/png/00933004.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "259",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "933005",
+          "name": "볼로나 마탄",
+          "icon": "https://www.korbdo.co.kr/png/00933005.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "260",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "933009",
+          "name": "크레아 마탄",
+          "icon": "https://www.korbdo.co.kr/png/00933009.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    },
+    {
+      "id": "261",
+      "method": "가열하기",
+      "action": "MANUFACTURE_HEAT",
+      "inputs": [
+        {
+          "id": "933010",
+          "name": "로사르 마탄",
+          "icon": "https://www.korbdo.co.kr/png/00933009.png",
+          "quantity": 1
+        }
+      ],
+      "outputQuantity": null
+    }
+  ],
+  "related": [
+    {
+      "id": "3701",
+      "name": "연금술 도구",
+      "icon": "https://www.korbdo.co.kr/png/Crafting_Alchemy_01.png",
+      "quantity": null
+    },
+    {
+      "id": "3702",
+      "name": "중급 연금술 도구",
+      "icon": "https://www.korbdo.co.kr/png/Crafting_Alchemy_02.png",
+      "quantity": null
+    },
+    {
+      "id": "3703",
+      "name": "상급 연금술 도구",
+      "icon": "https://www.korbdo.co.kr/png/Crafting_Alchemy_03.png",
+      "quantity": null
+    },
+    {
+      "id": "3717",
+      "name": "요리 도구",
+      "icon": "https://www.korbdo.co.kr/png/Crafting_Cooking_01.png",
+      "quantity": null
+    },
+    {
+      "id": "3718",
+      "name": "중급 요리 도구",
+      "icon": "https://www.korbdo.co.kr/png/Crafting_Cooking_02.png",
+      "quantity": null
+    },
+    {
+      "id": "3719",
+      "name": "상급 요리 도구",
+      "icon": "https://www.korbdo.co.kr/png/Crafting_Cooking_03.png",
+      "quantity": null
+    },
+    {
+      "id": "3730",
+      "name": "발레노스 전통 연금술 도구",
+      "icon": "https://www.korbdo.co.kr/png/Crafting_Alchemy_04.png",
+      "quantity": null
+    },
+    {
+      "id": "3731",
+      "name": "세렌디아 전통 연금술 도구",
+      "icon": "https://www.korbdo.co.kr/png/Crafting_Alchemy_05.png",
+      "quantity": null
+    },
+    {
+      "id": "3732",
+      "name": "칼페온 전통 연금술 도구",
+      "icon": "https://www.korbdo.co.kr/png/Crafting_Alchemy_06.png",
+      "quantity": null
+    },
+    {
+      "id": "3740",
+      "name": "발레노스 전통 요리 도구",
+      "icon": "https://www.korbdo.co.kr/png/Crafting_Cooking_04.png",
+      "quantity": null
+    },
+    {
+      "id": "3741",
+      "name": "세렌디아 전통 요리 도구",
+      "icon": "https://www.korbdo.co.kr/png/Crafting_Cooking_05.png",
+      "quantity": null
+    },
+    {
+      "id": "3742",
+      "name": "칼페온 전통 요리 도구",
+      "icon": "https://www.korbdo.co.kr/png/Crafting_Cooking_06.png",
+      "quantity": null
+    },
+    {
+      "id": "4052",
+      "name": "철 주괴",
+      "icon": "https://www.korbdo.co.kr/png/00004052.png",
+      "quantity": null
+    },
+    {
+      "id": "4077",
+      "name": "강철",
+      "icon": "https://www.korbdo.co.kr/png/00004077.png",
+      "quantity": null
+    },
+    {
+      "id": "10805",
+      "name": "레플라스 투구",
+      "icon": "https://www.korbdo.co.kr/png/00010805.png",
+      "quantity": null
+    },
+    {
+      "id": "10806",
+      "name": "레플라스 갑옷",
+      "icon": "https://www.korbdo.co.kr/png/00010806.png",
+      "quantity": null
+    },
+    {
+      "id": "10807",
+      "name": "레플라스 장갑",
+      "icon": "https://www.korbdo.co.kr/png/00010807.png",
+      "quantity": null
+    },
+    {
+      "id": "10808",
+      "name": "레플라스 신발",
+      "icon": "https://www.korbdo.co.kr/png/00010808.png",
+      "quantity": null
+    },
+    {
+      "id": "11902",
+      "name": "영롱한 루비 귀걸이",
+      "icon": "https://www.korbdo.co.kr/png/00011902.png",
+      "quantity": null
+    },
+    {
+      "id": "12112",
+      "name": "영롱한 토파즈 반지",
+      "icon": "https://www.korbdo.co.kr/png/00012112.png",
+      "quantity": null
+    },
+    {
+      "id": "28066",
+      "name": "대리석 바닥",
+      "icon": "https://www.korbdo.co.kr/png/inHouse_Floor_Marble_08.png",
+      "quantity": null
+    },
+    {
+      "id": "28078",
+      "name": "핀토마리아 모래시계",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_X_DPFO_Voyage_Sandglass_01.png",
+      "quantity": null
+    },
+    {
+      "id": "28083",
+      "name": "핀토마리아 망원경",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_X_DPFO_Voyage_Telescope_01.png",
+      "quantity": null
+    },
+    {
+      "id": "28106",
+      "name": "마고리아 고래 촛대",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_X_DPFO_Dolphin_Lamp_02.png",
+      "quantity": null
+    },
+    {
+      "id": "28107",
+      "name": "마고리아 고래 문어 장식 촛대",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_X_DPFO_Octopuslamp_01.png",
+      "quantity": null
+    },
+    {
+      "id": "28115",
+      "name": "물안개 바닥 장식",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_Floor_Marble_12.png",
+      "quantity": null
+    },
+    {
+      "id": "28337",
+      "name": "소가죽 협탁",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_002_DFF_Chest_01.png",
+      "quantity": null
+    },
+    {
+      "id": "28338",
+      "name": "소가죽 서랍장",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_002_DFF_Dresser_01.png",
+      "quantity": null
+    },
+    {
+      "id": "28339",
+      "name": "소가죽 옷장",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_002_DFF_Closet_01.png",
+      "quantity": null
+    },
+    {
+      "id": "28340",
+      "name": "소가죽 식탁",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_002_DFF_Table_01.png",
+      "quantity": null
+    },
+    {
+      "id": "28341",
+      "name": "소가죽 탁자",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_002_DFF_SideTable_01.png",
+      "quantity": null
+    },
+    {
+      "id": "28342",
+      "name": "소가죽 의자",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_002_DFF_Chair_01.png",
+      "quantity": null
+    },
+    {
+      "id": "28343",
+      "name": "소가죽 소파",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_002_DFF_Sofa_01.png",
+      "quantity": null
+    },
+    {
+      "id": "28344",
+      "name": "소가죽 책장",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_002_DFF_Bookcase_01.png",
+      "quantity": null
+    },
+    {
+      "id": "28345",
+      "name": "소가죽 침대",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_002_DFF_Bed_01.png",
+      "quantity": null
+    },
+    {
+      "id": "28350",
+      "name": "아카디안 바닥 A",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_Floor_Tile_03.png",
+      "quantity": null
+    },
+    {
+      "id": "28351",
+      "name": "아카디안 바닥 B",
+      "icon": "https://www.korbdo.co.kr/png/InHouse_Floor_Tile_03a.png",
+      "quantity": null
+    },
+    {
+      "id": "56003",
+      "name": "대포탄",
+      "icon": "https://www.korbdo.co.kr/png/00003027.png",
+      "quantity": null
+    },
+    {
+      "id": "56007",
+      "name": "화염포탄",
+      "icon": "https://www.korbdo.co.kr/png/00003031.png",
+      "quantity": null
+    },
+    {
+      "id": "56008",
+      "name": "연습포탄",
+      "icon": "https://www.korbdo.co.kr/png/00003032.png",
+      "quantity": null
+    },
+    {
+      "id": "56009",
+      "name": "폭탄",
+      "icon": "https://www.korbdo.co.kr/png/00003033.png",
+      "quantity": null
+    },
+    {
+      "id": "65984",
+      "name": "카니온 키벨리우스",
+      "icon": "https://www.korbdo.co.kr/png/00732653.png",
+      "quantity": null
+    }
+  ],
+  "source": "https://www.korbdo.co.kr/xml/ko-kr/4051.xml",
+  "sourceFetchedAt": "2026-10-29"
+}

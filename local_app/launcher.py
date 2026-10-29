@@ -18,7 +18,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "--trade-ocr-worker":
     from barter.tools.trade_batch_worker import main
     raise SystemExit(main())
 
-from local_app.config import HOST, PORT, SERVICE
+from local_app.config import HOST, PORT, SERVICE, WORKSPACES
 
 APP_URL = f"http://{HOST}:{PORT}/"
 HEALTH_URL = f"http://{HOST}:{PORT}/suite-health"
@@ -65,7 +65,7 @@ def _health_is_ours(timeout: float = 0.8) -> bool:
     try:
         with urlopen(HEALTH_URL, timeout=timeout) as response:
             payload = json.loads(response.read().decode("utf-8"))
-        return payload.get("ok") is True and payload.get("service") == SERVICE and payload.get("workspaces") == ["barter", "alchemy"]
+        return payload.get("ok") is True and payload.get("service") == SERVICE and payload.get("workspaces") == list(WORKSPACES)
     except (OSError, URLError, ValueError, json.JSONDecodeError):
         return False
 
@@ -143,7 +143,7 @@ def run_launcher() -> int:
                 native_capture = NativeCaptureController(Win32CapturePlatform(), default_database_path().with_name("native-capture-profiles.json"))
             app = create_app(reference_path=packaged_root / "reference/barter_items.json", native_capture=native_capture)
             service["app"] = app
-            progress("물물교환과 연금 작업실을 연결하고 있습니다.")
+            progress("작업실을 연결하고 있습니다.")
             from waitress import create_server
             try:
                 server = create_server(app, host=HOST, port=PORT, threads=4)
