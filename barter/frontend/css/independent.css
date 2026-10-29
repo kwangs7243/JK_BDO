@@ -1,0 +1,135 @@
+@font-face{font-family:'Maritime Title';src:url('/portal-assets/fonts/hahmlet/Hahmlet.ttf') format('truetype');font-weight:100 900;font-style:normal;font-display:swap}
+body.art-maritime{--surface:#102c38;--surface-input:#0e2633;--surface-raised:#193643;--surface-header:#17313d;--surface-hover:#234551;--text:#e1e9e3;--muted:#adc1c4;--text-quiet:#9aafb3;--line:#77928e55;--line-soft:#95aca32e;--line-highlight:#d3b47788;--accent:#e0c18a;--accent-fill:#c6a568;--accent-soft:#c7ad6c22;--primary:#d8be88;--primary-hover:#efd7a0;--radius:2px;--shadow-panel:none;--highlight:none;grid-template-columns:205px minmax(0,1fr);grid-template-rows:90px minmax(0,1fr);font-family:Pretendard,'Malgun Gothic',sans-serif}
+body.art-maritime:before{background:linear-gradient(90deg,#071c28ed,#0a2632d4 47%,#092333c2 78%,#092333a3),url('/assets/art/voyage.png') center/cover no-repeat}
+body.art-maritime h1,body.art-maritime h2,body.art-maritime h3{font-family:'Maritime Title',Pretendard,sans-serif;font-weight:500;letter-spacing:-.035em}
+body.art-maritime button,body.art-maritime input,body.art-maritime select,body.art-maritime summary{border-radius:2px;box-shadow:none}
+body.art-maritime button.primary{background:linear-gradient(115deg,#e6cf9b,#b59355);border-color:#ddc18d;color:#302a1c;box-shadow:inset 0 1px #fff5}
+body.art-maritime .app-header{grid-column:1/-1;grid-row:1;display:grid;grid-template-columns:170px minmax(0,1fr) auto auto;gap:20px;align-items:center;padding:0 35px;background:#0b2631b8;border-bottom:1px solid #c7b17b3d;min-height:0}
+body.art-maritime .app-header .brand{margin:0;padding:0;border:0;gap:10px}
+body.art-maritime .brand h1{font:650 18px Pretendard,sans-serif;color:#e9e6d7;white-space:nowrap}
+body.art-maritime .brand-mark{color:#dac18c;width:31px;height:36px}
+body.art-maritime .brand span:not(.brand-mark){font-size:10px;color:#a2b4b6}
+body.art-maritime .app-header .workspace-nav{display:flex;gap:22px;min-width:0;align-items:center}
+body.art-maritime .workspace-nav button{position:relative;padding:11px 0;font-size:13px;white-space:nowrap;border:0;background:transparent;box-shadow:none;color:#a3bbc1;gap:6px}
+body.art-maritime .workspace-nav .nav-icon{display:none}
+body.art-maritime .workspace-nav button[aria-current]{color:#ecd19c;background:transparent;border:0;box-shadow:none}
+body.art-maritime .workspace-nav button[aria-current]:after{content:'';position:absolute;bottom:0;left:48%;width:4px;height:4px;transform:rotate(45deg);background:#d4b272}
+body.art-maritime .header-utilities{gap:5px}
+body.art-maritime .header-utilities>button,body.art-maritime .header-tools>summary{font-size:11px;padding:8px 5px;border-color:transparent;color:#b7c7c7;white-space:nowrap}
+body.art-maritime .concept-switch{display:flex;align-items:center;gap:12px;margin-left:5px}
+body.art-maritime .concept-switch a{min-width:70px;padding:12px 8px;font:500 13px Pretendard,sans-serif;text-align:center;color:#c9cbbd;background:none;border:0;box-shadow:none;border-radius:0;position:relative;white-space:nowrap}
+body.art-maritime .concept-switch a[aria-current]{color:#ecd19c}
+body.art-maritime .concept-switch a[aria-current]:after{content:'';position:absolute;bottom:2px;left:15px;right:15px;height:1px;background:currentColor}
+body.art-maritime .app-sidebar{grid-row:2;grid-column:1;background:transparent;border:0;padding:30px 18px 22px 30px;overflow:auto}
+.sea-compass{position:relative;display:grid;place-items:center;width:105px;height:105px;border:1px solid #c6aa6b4d;border-radius:50%;margin:0 auto 35px;box-shadow:0 0 0 6px #bcaa7010,inset 0 0 0 8px #bcaa700a;flex:none;opacity:.85}
+.sea-compass:before,.sea-compass:after{content:'';width:78px;height:1px;background:#c6aa6b5c;position:absolute;transform:rotate(45deg)}
+.sea-compass:after{transform:rotate(-45deg)}.sea-compass i{width:55px;height:55px;border:1px solid #c6aa6b40;transform:rotate(45deg);position:absolute}
+.sea-compass span{font:72px/1 Georgia;color:#ddc28d;position:relative}.sea-compass b,.sea-compass em{position:absolute;font:10px Georgia;color:#e0ca9c;top:-7px;background:#092430;padding:0 5px}.sea-compass em{top:auto;bottom:-7px}
+body.art-maritime .warehouse-tier-menu{display:none}
+body.art-maritime:has(#app-content[data-view="inventory"]) .warehouse-tier-menu{display:block}
+body.art-maritime .warehouse-tier-menu .inventory-tier-tabs{display:grid;gap:2px;border:0;background:none;padding:0;margin:0}
+body.art-maritime .warehouse-tier-menu button{position:relative;padding:13px 15px;font-size:13px;text-align:left;color:#a5b9bd;border:0;background:none;box-shadow:none}
+body.art-maritime .warehouse-tier-menu button[aria-pressed="true"]{color:#f1d8a7;background:linear-gradient(90deg,#b7a16522,transparent)}
+body.art-maritime .warehouse-tier-menu button[aria-pressed="true"]:before{content:'';position:absolute;left:0;top:20%;height:60%;width:3px;background:#d4b36e;border-radius:0 100% 100% 0}
+body.art-maritime .nav-caption{font-size:11px;color:#b2b2a0;margin:0 15px 12px}
+body.art-maritime .sidebar-capture{margin:25px 0 0;padding-top:23px;border-color:#a8b2a12f}
+body.art-maritime .sidebar-capture button{font-size:12px;padding:9px 12px;color:#b4c6ca}
+body.art-maritime .sidebar-capture p:last-child{font-size:11px;line-height:1.9;color:#96acaf}
+body.art-maritime .sidebar-footer{gap:10px;padding-top:30px;font-size:11px}
+body.art-maritime #runtime-status{margin:0;white-space:normal;font-size:10px;color:#a8b7b4}
+body.art-maritime #runtime-status[data-kind="error"]{color:var(--danger)}
+body.art-maritime .sidebar-footer button{font-size:11px;background:none;border-color:#8a9d8b33}
+body.art-maritime main.workspace{padding:28px 35px 22px 35px;background:transparent;grid-row:2;grid-column:2}
+body.art-maritime .panel{border:0;border-radius:0;box-shadow:none;background:transparent}
+body.art-maritime .panel-heading{padding:0 0 25px;align-items:center;gap:18px}
+body.art-maritime .panel-heading h2{font:500 35px/1.5 'Maritime Title',Pretendard,sans-serif;color:#f0e3c5;letter-spacing:-.045em;margin:0 0 5px}
+body.art-maritime .session-heading h2:before{display:none}
+body.art-maritime .panel-heading .hint{font-size:12px;color:#adc1c4}
+body.art-maritime .inventory-panel{overflow:auto;scrollbar-gutter:stable;padding-right:7px}
+body.art-maritime .inventory-panel>.panel-heading{padding-bottom:29px}
+body.art-maritime .inventory-panel .inventory-toolbar{padding:14px 0;gap:25px;background:transparent;border-radius:0;border-inline:0;border-block:1px solid #b5b79f42;align-items:end}
+body.art-maritime .inventory-toolbar input,body.art-maritime .inventory-toolbar select{border:0;border-bottom:1px solid #9cafa15c;background:#102c3859;border-radius:0;font-size:12px}
+body.art-maritime .inventory-toolbar .search-field{flex:1;max-width:330px;font-size:11px}
+body.art-maritime .inventory-toolbar .field{font-size:11px;max-width:160px}
+body.art-maritime .inventory-toolbar>span{font-size:11px}
+body.art-maritime .inventory-panel .inventory-null-hint{padding:10px 0 0;margin:0 0 25px;border:0;background:none;font-size:11px;color:#a6b6b4}
+body.art-maritime #inventory-root{overflow:visible;flex:none;min-height:auto;padding:0;gap:32px}
+body.art-maritime .inventory-panel .tier-section{background:none;border:0;border-radius:0;box-shadow:none;overflow:visible}
+body.art-maritime .tier-heading{border:0;border-bottom:1px solid #a5b6a64d;padding:0 0 13px;margin-bottom:3px;background:none;box-shadow:none;gap:12px}
+body.art-maritime .tier-heading h3{font:500 21px 'Maritime Title',Pretendard,sans-serif;color:#dedfcd!important}
+body.art-maritime .tier-heading h3:before{display:none}
+body.art-maritime .tier-item-count{font-size:10px;color:#a6b5b2}
+body.art-maritime .tier-bulk-tools{font-size:10px;gap:7px}
+body.art-maritime .tier-bulk-tools label{max-width:135px}
+body.art-maritime .tier-bulk-tools input{width:50px;background:#0b263080;border-color:#8a9d8b44}
+body.art-maritime .tier-bulk-tools button{font-size:10px;background:none;border-color:#8a9d8b44}
+body.art-maritime .inventory-slots{grid-template-columns:repeat(4,minmax(0,1fr));gap:0 27px;padding:0}
+body.art-maritime .inventory-panel .inventory-row{display:grid;grid-template-columns:54px minmax(0,1fr);grid-template-rows:auto auto auto;gap:0 14px;padding:22px 0;position:relative;background:none;border:0;border-bottom:1px solid #a2b7ac36;border-radius:0;box-shadow:none}
+body.art-maritime .inventory-panel .inventory-row:hover{background:linear-gradient(90deg,#a1bda508,transparent);border-color:#cfbc8f66;box-shadow:none}
+body.art-maritime .inventory-row .item-name{display:contents}
+body.art-maritime .inventory-slot-icon{grid-column:1;grid-row:1/4;align-self:center;width:54px;height:82px;background:none;border:0;box-shadow:none;border-radius:0}
+body.art-maritime .inventory-slot-icon img{width:52px;height:52px;filter:drop-shadow(0 4px 6px #0005)}
+body.art-maritime .inventory-item-label{grid-column:2;grid-row:1;min-height:36px;font-size:12px;line-height:1.5;color:#d2e0df;text-shadow:0 1px 5px #071c28}
+body.art-maritime .inventory-stock{grid-column:2;grid-row:2;min-width:0}
+body.art-maritime .inventory-stock>.inventory-field-label{display:none}
+body.art-maritime .inventory-quantity-controls{width:100%;display:grid;grid-template-columns:minmax(0,1fr) 22px 22px;gap:2px}
+body.art-maritime .inventory-row input[data-value="stock"]{grid-column:1;grid-row:1;width:100%;min-width:0;background:none;border:0;padding:0;font:34px/1.2 Georgia,'Maritime Title',serif;color:#f0dcb0;text-align:left}
+body.art-maritime .inventory-row input[data-value="stock"]::placeholder{font:13px Pretendard,sans-serif;color:#a8babc}
+body.art-maritime .inventory-quantity-controls button:first-child{grid-column:2}
+body.art-maritime .inventory-quantity-controls button:last-child{grid-column:3}
+body.art-maritime .inventory-row .quantity-step{grid-row:1;background:none;border:0;border-radius:0;box-shadow:none;color:#a1b9bd;font-size:13px;padding:0;min-height:30px}
+body.art-maritime .inventory-row .inventory-slot-footer{grid-column:2;grid-row:3;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:5px;border:0;padding-top:7px}
+body.art-maritime .inventory-target{gap:4px;justify-content:start;font-size:10px}
+body.art-maritime .inventory-target .inventory-field-label{font-size:10px}
+body.art-maritime .inventory-row input[data-value="target"]{width:38px;font-size:11px;border:0;background:none;text-align:left;padding:0;color:#becdca}
+body.art-maritime .inventory-row .stock-balance{padding:0;min-height:0;background:none;border:0;font-size:10px;color:#9eb7ae;gap:3px}
+body.art-maritime .inventory-row .stock-balance>span{display:none}
+body.art-maritime .inventory-row .stock-balance strong{font-size:10px;font-weight:500;text-align:left}
+body.art-maritime .inventory-row .stock-balance[data-kind="short"]{color:#e9c082;background:none;border:0;text-shadow:0 1px 5px #071c28}
+body.art-maritime .inventory-panel .tier-rule-details{background:none;border-color:#b5b79f42;overflow:visible;max-height:none;margin-top:28px;padding:15px 0}
+body.art-maritime .session-heading{border-bottom:1px solid #a5b6a64d}
+body.art-maritime .session-input-actions{gap:7px;flex-wrap:wrap}
+body.art-maritime .session-toolbar{background:linear-gradient(100deg,#173a46d9,#102c38bc);border:1px solid #b5b79f42;border-radius:0;box-shadow:none;margin:22px 0 17px}
+body.art-maritime .session-toolbar input{font:22px Georgia,serif;color:#f0dcb0;background:#0a253078;border-color:#a5b6a64d}
+body.art-maritime .list-filter-bar input,body.art-maritime .list-filter-bar select{background:#102c38d9;border-color:#a5b6a64d}
+body.art-maritime .trade-list-scroll{background:linear-gradient(110deg,#102c38ed,#0c2430e8);border:0;border-top:1px solid #b5b79f66;border-radius:0;box-shadow:none}
+body.art-maritime .trade-session-table th{background:#173541f5;color:#cfdbd5}
+body.art-maritime .trade-row:nth-child(even):not(:hover):not(:focus-within){background:#527b8412}
+body.art-maritime .trade-row td{padding-block:15px}
+body.art-maritime .session-empty-state h3{font:500 25px 'Maritime Title',Pretendard,sans-serif;color:#efdfbd}
+body.art-maritime .briefing-command{background:none;border:0;border-bottom:1px solid #b5b79f55;border-radius:0;padding:0 0 20px;box-shadow:none}
+body.art-maritime .briefing-heading h2{font:500 34px 'Maritime Title',Pretendard,sans-serif;color:#f0e3c5}
+body.art-maritime .briefing-toolbar{margin-top:16px}
+body.art-maritime .brief-mode-tabs{background:none;border:0;border-radius:0;gap:12px;padding:0}
+body.art-maritime .brief-mode-tabs button{background:none;border:0;border-bottom:1px solid transparent;padding:9px 5px;box-shadow:none}
+body.art-maritime .brief-mode-tabs button[aria-selected="true"]{color:#ecd19c;border-color:#c6a86a;background:none}
+body.art-maritime .briefing-menu>summary{background:#17313dcc;border-color:#a4b49655;border-radius:0;color:#d7dfcf}
+body.art-maritime .schedule-columns{gap:27px;scrollbar-gutter:stable}
+body.art-maritime .schedule-columns>section{min-width:0;background:linear-gradient(110deg,#102c38e8,#0c2430e0);padding:0 16px}
+body.art-maritime .schedule-columns h3{background:#142f3cf5;border:0;border-bottom:1px solid #b5b79f55;border-radius:0;padding:15px 0;gap:15px;font:500 17px 'Maritime Title',Pretendard,sans-serif}
+body.art-maritime .mode-heading-stats{font-family:Pretendard,sans-serif;gap:15px}
+body.art-maritime .mode-settlement{background:none;border:0;border-bottom:1px solid #a0b0a53d;border-radius:0;padding:13px 0}
+body.art-maritime .mode-settlement h4{font:500 12px 'Maritime Title',Pretendard,sans-serif}
+body.art-maritime .sortie-card{background:none;border:0;border-top:3px double #b9a77166;border-radius:0;box-shadow:none;padding:0 0 14px;margin-top:12px}
+body.art-maritime .sortie-heading{background:none;border:0;box-shadow:none;border-radius:0;margin:0;padding:18px 0 15px}
+body.art-maritime .sortie-index{font:italic 32px Georgia,serif;color:#d9bb82;border:0;padding-right:5px}
+body.art-maritime .sortie-title{font-family:'Maritime Title',Pretendard,sans-serif;font-weight:500}
+body.art-maritime .sortie-metrics{gap:20px}
+body.art-maritime .sortie-metrics strong{color:#e6d5aa}
+body.art-maritime .sortie-cargo{padding-bottom:13px;border-color:#a6b4a63d}
+body.art-maritime .route-card{padding-block:17px;gap:14px;border-color:#a6b4a63d}
+body.art-maritime .route-step-number{border-radius:50%;border-color:#bcaa6f66;background:none;color:#e1c48a;position:relative}
+body.art-maritime .route-card:not(:last-child) .route-step-number:after{content:'';position:absolute;top:calc(100% + 6px);left:50%;height:28px;border-left:1px dotted #bcaa6f66}
+body.art-maritime .route-heading{font:500 17px 'Maritime Title',Pretendard,sans-serif;color:#ece7d3}
+body.art-maritime .route-actions button{border-radius:0;font-size:12px}
+body.art-maritime .route-complete-button{background:linear-gradient(115deg,#dec694,#ac8e51);color:#2b2c20;border-color:#dec694}
+body.art-maritime .sortie-footer{border-color:#a6b4a63d;padding-top:15px}
+body.art-maritime .app-dialog,body.art-maritime .mv-window{background:#112b37;border-color:#b79e626e;border-radius:2px}
+body.art-maritime .dialog-titlebar,body.art-maritime .mv-header{background:#17313d;border-color:#b79e6255}
+body.art-maritime .dialog-titlebar h2{font-family:'Maritime Title',Pretendard,sans-serif;font-weight:500}
+body.art-maritime .trade-roi-panel,body.art-maritime .trade-recognition-panel,body.art-maritime .screen-capture-session,body.art-maritime .patch-review-tier{border-radius:0;background:#0c2531}
+body.art-maritime .dialog-body{color:#e1e9e3}
+body.art-maritime .header-tool-actions,body.art-maritime .briefing-popover{background:#173541;border-color:#b7a16b66;border-radius:0;z-index:40}
+@media(max-width:1450px){body.art-maritime .app-header{grid-template-columns:160px minmax(0,1fr) auto auto;gap:12px;padding-inline:25px}body.art-maritime .app-header .workspace-nav{gap:14px}body.art-maritime .workspace-nav button{font-size:12px}body.art-maritime .concept-switch{gap:4px}body.art-maritime .concept-switch a{min-width:62px;font-size:12px}body.art-maritime .inventory-slots{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1250px){body.art-maritime{grid-template-rows:112px minmax(0,1fr);grid-template-columns:170px minmax(0,1fr)}body.art-maritime .app-header{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:58px 54px;gap:0 15px;padding-inline:24px}body.art-maritime .app-header .brand{grid-column:1;grid-row:1}body.art-maritime .app-header>.concept-switch{grid-column:2;grid-row:1}body.art-maritime .app-header>.workspace-nav{grid-column:1;grid-row:2;gap:23px}body.art-maritime .header-utilities{grid-column:2;grid-row:2}body.art-maritime .app-sidebar{padding-left:20px}body.art-maritime main.workspace{padding:24px}body.art-maritime .panel-heading h2{font-size:31px}body.art-maritime .briefing-heading h2{font-size:31px}body.art-maritime .route-exchange-items{font-size:14px}}
+@media(max-width:850px){body.art-maritime{grid-template-columns:130px minmax(0,1fr)}body.art-maritime main.workspace{padding:18px}body.art-maritime .app-sidebar{padding-inline:10px}.sea-compass{width:80px;height:80px}.sea-compass i{width:45px;height:45px}.sea-compass span{font-size:60px}.sea-compass:before,.sea-compass:after{width:60px}body.art-maritime .inventory-slots{grid-template-columns:repeat(2,minmax(0,1fr))}body.art-maritime .inventory-row{grid-template-columns:40px minmax(0,1fr)!important;gap:0 10px!important}body.art-maritime .inventory-slot-icon{width:40px}body.art-maritime .inventory-slot-icon img{width:39px;height:39px}body.art-maritime .header-utilities>button{display:none}body.art-maritime .warehouse-tier-menu button{font-size:12px}body.art-maritime .schedule-columns>section{padding-inline:10px}body.art-maritime .sortie-metrics{gap:12px}body.art-maritime .session-input-actions{width:100%}}

@@ -1,0 +1,119 @@
+@font-face{font-family:'Laboratory Title';src:url('/portal-assets/fonts/gowunbatang/GowunBatang-Bold.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap}
+body.art-laboratory{--text:#e4dec7;--muted:#adb99b;--gold:#cdb075;--light:#ecdbab;--line:#b1a66845;--card:#14261b;--bg:#122016;display:block;font:14px/1.65 Pretendard,'Malgun Gothic',sans-serif;background:transparent;min-height:100dvh}
+body.art-laboratory:before{background:linear-gradient(90deg,#0c1a12f5,#122416e4 47%,#142116ad 78%,#161b0f88),url('/alchemy/assets/art/laboratory.png') center/cover no-repeat}
+body.art-laboratory h1,body.art-laboratory h2,body.art-laboratory h3{font-family:'Laboratory Title',Pretendard,sans-serif;font-weight:700;letter-spacing:-.025em;color:#e8d8ad}
+body.art-laboratory input,body.art-laboratory select,body.art-laboratory textarea{background:#11271bd9;border-color:#a6b18066;color:#eee6cc;border-radius:2px;font-size:14px;min-width:0}
+body.art-laboratory button{background:#1b3023b3;border-color:#a6b18066;color:#d8dbbd;border-radius:2px;box-shadow:none;font-size:13px}
+body.art-laboratory button:hover:not(:disabled){border-color:#dec48a;background:#34422ab8}
+body.art-laboratory button.primary,body.art-laboratory button[data-finish]{background:linear-gradient(120deg,#e6ce97,#b29151);border-color:#d7bd83;color:#2c2c1c;box-shadow:inset 0 1px #fff5}
+body.art-laboratory button.danger{background:#322a2066;border-color:#a9755c77;color:#e5b9a1}
+body.art-laboratory button:disabled{opacity:.45}
+.studio-topbar{display:flex;align-items:center;gap:38px;min-height:90px;padding:12px 40px;color:#d8c598}
+body.art-laboratory .studio-topbar .brand{gap:12px;min-width:160px;font-family:'Laboratory Title',Pretendard,sans-serif;color:#e3d0a3;font-size:27px;flex:none}
+body.art-laboratory .studio-topbar .brand>span{font:42px Georgia;color:#c6a365}
+body.art-laboratory .studio-topbar .brand small{font:9px Georgia;color:#b5b38b;letter-spacing:.17em;margin-top:5px}
+.studio-topbar>nav[aria-label="연금 메뉴"]{display:flex;gap:25px;margin-right:auto;min-width:0;flex-wrap:wrap}
+.studio-topbar>nav[aria-label="연금 메뉴"] a{position:relative;font-size:12px;color:#a9b59c;padding:10px 0;white-space:nowrap}
+.studio-topbar>nav[aria-label="연금 메뉴"] a>span{display:none}
+.studio-topbar>nav[aria-label="연금 메뉴"] a[aria-current]{color:#e8c789;border-bottom:1px solid #b79a5e}
+body.art-laboratory .studio-topbar .concept-switch{display:flex;align-items:center;gap:12px;flex:none}
+body.art-laboratory .concept-switch a{position:relative;min-width:72px;padding:12px 8px;font:500 13px Pretendard,sans-serif;text-align:center;color:#c2c4ad;background:none;border:0;border-radius:0;box-shadow:none;white-space:nowrap}
+body.art-laboratory .concept-switch a[aria-current]{color:#ead29a}
+body.art-laboratory .concept-switch a[aria-current]:after{content:'';position:absolute;bottom:2px;left:18px;right:18px;height:1px;background:currentColor}
+body.art-laboratory .workspace{width:100%;max-width:1660px;padding:0 40px 15px;margin:auto;background:transparent;min-width:0}
+body.art-laboratory .app-header{background:none;border:0;padding:15px 4px 19px;min-height:104px;gap:20px}
+body.art-laboratory .app-header h1{font-size:37px;margin:7px 0 0;line-height:1.4}
+body.art-laboratory .header-crumb{font:9px Georgia;letter-spacing:.16em;color:#b4aa7d}
+body.art-laboratory .header-actions{gap:15px}
+body.art-laboratory .local-badge{color:#b8be9f;background:none;border:0;font-size:11px}
+body.art-laboratory .header-actions button{background:none;border-color:#bca26766;font-size:12px;padding:10px 18px}
+body.art-laboratory #status{background:none;border:0;min-height:23px;padding:2px 4px 7px;color:#a8b797;font-size:12px}
+body.art-laboratory #status[data-kind="error"]{color:#edb3a3}
+body.art-laboratory #content{padding:0 4px;min-width:0}
+body.art-laboratory .intro{padding:14px 0 22px;background:none;text-shadow:none}
+body.art-laboratory .intro h2{font-size:29px}
+body.art-laboratory .intro .eyebrow{font:9px Georgia;color:#b4aa7d}
+body.art-laboratory .intro p{font-size:12px;margin-top:8px}
+body.art-laboratory .dashboard-intro{display:none}
+body.art-laboratory .stats{display:flex;flex-wrap:wrap;gap:26px;margin:0 0 28px;padding:6px 0 15px;border-bottom:1px solid #b1a66845}
+body.art-laboratory .stats>div{display:flex;flex-direction:row;align-items:baseline;gap:13px;background:none;border:0;box-shadow:none;padding:0 25px 0 0;min-width:0}
+body.art-laboratory .stats>div>span{font-size:11px;color:#a7b393}
+body.art-laboratory .stats strong{font:26px Georgia;color:#d7bf85}
+body.art-laboratory .panel{background:linear-gradient(110deg,#152b1dc9,#12251abc);border:0;border-top:1px solid #b1a66845;border-radius:0;box-shadow:none;padding:24px 22px;margin-bottom:25px;min-width:0}
+body.art-laboratory .panel h2{font-size:22px;font-family:'Laboratory Title',Pretendard,sans-serif;font-weight:700}
+body.art-laboratory .panel h2:before{display:none}
+body.art-laboratory .panel-heading{align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:17px}
+body.art-laboratory .panel-heading h2{margin:0}
+body.art-laboratory .hint,body.art-laboratory .muted,body.art-laboratory small{color:#adb99b}
+body.art-laboratory .hint{font-size:12px;line-height:1.8}
+body.art-laboratory .dashboard-layout{display:grid;grid-template-columns:265px minmax(0,1fr) 235px;gap:32px;align-items:start;margin-bottom:30px}
+body.art-laboratory .dashboard-layout>.panel{padding:0;background:none;border:0;margin:0}
+body.art-laboratory .goals-panel .panel-heading{padding-bottom:14px;border-bottom:1px solid #b1a66845}
+body.art-laboratory .goals-panel .panel-heading .hint{font-size:10px}
+body.art-laboratory .goal-card{background:none;border:0;border-bottom:1px solid #acaa7635;border-radius:0;padding:20px 0;box-shadow:none}
+body.art-laboratory .goal-top{gap:13px;flex-wrap:wrap}
+body.art-laboratory .goal-top>a{display:flex;gap:12px;align-items:center;font-size:13px;line-height:1.6;color:#dfdfbf}
+body.art-laboratory .goal-top>a .item-icon{width:39px;height:39px}
+body.art-laboratory .goal-top .actions{width:100%;gap:7px;justify-content:flex-start;margin-top:6px}
+body.art-laboratory .goal-card .small{font-size:10px;padding:4px 7px;background:none;border-color:#a6b18044;color:#bdc6a5}
+body.art-laboratory .goal-meta{display:flex;flex-wrap:wrap;gap:5px 10px;font-size:11px;color:#b0b998;margin-top:11px}
+body.art-laboratory .progress-track{height:2px;border:0;background:#c4b67b22;margin-top:13px;border-radius:0}
+body.art-laboratory .progress-track span{background:linear-gradient(90deg,#8b9758,#dbb76e);border-radius:0}
+body.art-laboratory .jobs-panel>.panel-heading{padding-bottom:14px;border-bottom:1px solid #b1a66845}
+body.art-laboratory .jobs-panel>.panel-heading .hint{font-size:10px}
+body.art-laboratory .job{display:block;position:relative;border:0;border-bottom:1px solid #acaa7635;padding:15px 0 25px;background:none}
+body.art-laboratory .job-title{text-align:center;margin:3px 0 7px}
+body.art-laboratory .job-title strong{font:700 27px 'Laboratory Title',Pretendard,sans-serif;color:#efe1b7;display:block}
+body.art-laboratory .job-title strong>.item-icon{display:none}
+body.art-laboratory .job-title p{font-size:11px;color:#a1b391;margin-top:9px}
+.job-visual{height:340px;position:relative;margin:14px 0}
+.job-orbit{position:absolute;width:260px;height:260px;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid #bdab655c;border-radius:50%;box-shadow:0 0 0 10px #c2b26a08,inset 0 0 0 10px #c2b26a06;pointer-events:none}
+.job-orbit:before,.job-orbit:after{content:'';position:absolute;inset:17px;border:1px dashed #bdab654d;border-radius:50%}.job-orbit:after{inset:42px;border-style:solid;border-color:#bdab6533}
+.job-orbit>span{position:absolute;inset:0;display:grid;place-items:center;font:220px/1 Georgia;color:#a8995538}
+.job-core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:153px;height:193px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse,#1a3523eb,transparent 72%);z-index:1;pointer-events:none}
+body.art-laboratory .job-core>.item-icon{width:62px;height:62px;filter:drop-shadow(0 0 14px #b8d88e33)}
+.job-core>span{font-size:10px;color:#aab990;margin-top:9px}.job-core>strong{font:43px Georgia;color:#ead3a0;margin-top:8px;line-height:1.1}.job-core small{font:11px Pretendard,sans-serif;margin-left:7px}
+.job-reagents{list-style:none;position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;margin:0;padding:0;gap:135px 205px;pointer-events:none}
+.job-reagents li{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px}
+body.art-laboratory .job-reagents .item-icon{width:42px;height:42px;margin:0;filter:drop-shadow(0 3px 5px #0006)}
+.job-reagents strong{font-size:12px;font-weight:500;color:#d5d6b8}.job-reagents span{font-size:10px;color:#a1b58a}
+.job-visual:has(.job-reagents li:nth-child(5)){height:auto;padding-top:280px}.job-visual:has(.job-reagents li:nth-child(5)) .job-orbit,.job-visual:has(.job-reagents li:nth-child(5)) .job-core{top:135px}
+.job-visual:has(.job-reagents li:nth-child(5)) .job-reagents{position:static;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto;gap:20px 15px}
+body.art-laboratory .job-actions{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:24px;flex-wrap:wrap}
+body.art-laboratory .jobs-panel .job-actions button[data-finish]{min-width:180px;padding:12px 20px;background:linear-gradient(120deg,#e6ce97,#b29151);border-color:#d7bd83;color:#2c2c1c;box-shadow:inset 0 1px #fff5}
+body.art-laboratory .job-actions [data-cancel]{background:none;border:0;color:#a6ae8c;font-size:11px}
+.lab-work-notes{position:relative;margin-top:5px;padding:30px 23px 27px;background:linear-gradient(115deg,#e0cca2ed,#c7b187ed);color:#50482e;clip-path:polygon(1% 1%,97% 0,100% 35%,98% 99%,70% 100%,0 98%,1% 50%,0 10%);transform:rotate(.7deg);min-width:0}
+.lab-work-notes:before{content:'';position:absolute;top:0;left:44%;height:23px;width:38px;background:#bca76b70;transform:rotate(-5deg)}
+.notes-kicker{font:9px Georgia;letter-spacing:.12em;color:#81714c}
+body.art-laboratory .lab-work-notes h2{font:700 23px 'Laboratory Title',Pretendard,sans-serif;color:#66512c;margin:9px 0 0;padding-bottom:17px;border-bottom:1px solid #8c764e66}
+.lab-work-notes section{padding:20px 0;border-bottom:1px solid #8c764e44}.lab-work-notes section>span{font-size:11px;color:#81714c;display:block}.lab-work-notes strong{font:34px Georgia;display:block;color:#6d613a;margin-top:8px}.lab-work-notes strong small{font:10px Pretendard,sans-serif!important;color:#81714c!important;margin-left:5px}
+.lab-work-notes p{font-size:11px;color:#75694a;margin-top:13px;line-height:1.9}.lab-work-notes>a{font-size:11px;color:#7a633a;display:block;margin-top:24px}
+body.art-laboratory .goal-registration{background:#142c1dd6;border-top:1px solid #b1a66866}
+body.art-laboratory .form-row{gap:16px;align-items:end;flex-wrap:wrap}
+body.art-laboratory .form-row label{font-size:12px;color:#b7c0a0;min-width:0}
+body.art-laboratory .form-row input,body.art-laboratory .form-row select{font-size:14px}
+body.art-laboratory .product-grid{gap:0 22px}
+body.art-laboratory .product-card{background:none;border:0;border-bottom:1px solid #a6b18033;border-radius:0;box-shadow:none;padding:17px 0;color:#d5d7be}
+body.art-laboratory .product-card:hover{background:#b4c29a0c}
+body.art-laboratory .product-card strong{font-size:13px}
+body.art-laboratory .product-card .item-icon{width:45px;height:45px}
+body.art-laboratory .layout-two:not(.dashboard-layout){gap:26px}
+body.art-laboratory .tree-node{border:0;border-left:1px solid #b1a66855;border-radius:0;background:#142c1dbf;padding:18px;box-shadow:none}
+body.art-laboratory .tree-node+.tree-node{margin-top:14px}
+body.art-laboratory .plan-summary{background:#1a3120c7;border:0;border-block:1px solid #b1a66844;border-radius:0}
+body.art-laboratory .recipe-option{border:0;border-bottom:1px solid #b1a66844;background:none;border-radius:0;padding:15px 0}
+body.art-laboratory .recipe-option summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+body.art-laboratory table{background:#11281bd9;color:#dfe5ce}
+body.art-laboratory th{background:#223823f5;color:#d7d7b3;font-size:12px;padding:12px}
+body.art-laboratory td{border-bottom-color:#a6b18033;padding:13px 12px;font-size:13px}
+body.art-laboratory .badge{border-radius:2px;font-size:10px}
+body.art-laboratory .empty{background:none;border-color:#b1a66844;color:#aab99b;font-size:13px;line-height:1.9}
+body.art-laboratory .callout,body.art-laboratory .error-note{border-radius:0}
+body.art-laboratory .footer{background:none;border-top:1px solid #b1a66845;padding:22px 4px;color:#9dae8e;font-size:10px;gap:20px}
+body.art-laboratory dialog{background:#14291c;border-color:#bca26788;border-radius:2px;color:#e5dfc7}
+body.art-laboratory .dialog-header{background:#203523;border-color:#bca26755}
+body.art-laboratory dialog h2{font-family:'Laboratory Title',Pretendard,sans-serif;font-weight:700}
+body.art-laboratory .dialog-actions{border-color:#bca26755}
+@media(max-width:1400px){body.art-laboratory .dashboard-layout{grid-template-columns:245px minmax(0,1fr) 205px;gap:25px}body.art-laboratory .studio-topbar{gap:25px;padding-inline:28px}body.art-laboratory .studio-topbar .brand{min-width:135px}.studio-topbar>nav[aria-label="연금 메뉴"]{gap:17px}body.art-laboratory .concept-switch{gap:3px!important}body.art-laboratory .concept-switch a{min-width:62px;font-size:12px}body.art-laboratory .workspace{padding-inline:28px}.job-reagents{gap:135px 165px}.job-orbit{width:235px;height:235px}.job-core{width:140px}body.art-laboratory .job-title strong{font-size:24px}.lab-work-notes{padding-inline:19px}}
+@media(max-width:1150px){body.art-laboratory .dashboard-layout{grid-template-columns:230px minmax(0,1fr);gap:27px}.lab-work-notes{grid-column:1/-1;display:flex;align-items:center;gap:22px;transform:none;clip-path:none;padding:20px;background:#cab78cdd}.lab-work-notes .notes-kicker{display:none}.lab-work-notes:before{display:none}body.art-laboratory .lab-work-notes h2{font-size:20px;border:0;margin:0;padding:0;white-space:nowrap}.lab-work-notes section{display:flex;gap:10px;align-items:center;padding:0;border:0}.lab-work-notes section>p{display:none}.lab-work-notes strong{font-size:27px;margin:0}.lab-work-notes>p{display:none}.lab-work-notes>a{margin:0 0 0 auto}.studio-topbar{flex-wrap:wrap;gap:8px 20px!important}.studio-topbar>nav[aria-label="연금 메뉴"]{order:3;width:100%;gap:25px}.studio-topbar>.concept-switch{margin-left:auto}body.art-laboratory .app-header{padding-top:9px}.job-reagents{gap:135px 190px}}
+@media(max-width:850px){body.art-laboratory .workspace{padding-inline:20px}body.art-laboratory .dashboard-layout{grid-template-columns:1fr}.lab-work-notes{display:block;padding:25px}.lab-work-notes section{margin-top:18px}.lab-work-notes>a{margin-top:18px}body.art-laboratory .goals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 25px}.job-reagents{gap:135px 180px}body.art-laboratory .app-header h1{font-size:31px}body.art-laboratory .stats{gap:15px}body.art-laboratory .layout-two:not(.dashboard-layout){grid-template-columns:1fr}.studio-topbar>nav[aria-label="연금 메뉴"]{gap:17px}body.art-laboratory .studio-topbar{padding-inline:20px}body.art-laboratory .product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

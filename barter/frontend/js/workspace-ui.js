@@ -84,7 +84,7 @@ export function initWorkspaceUI() {
     inventoryTier = button.dataset.inventoryTier;
     for (const tab of document.querySelectorAll('[data-inventory-tier]')) tab.setAttribute('aria-pressed', String(tab === button));
     applyInventoryFilters();
-    document.getElementById('inventory-root').scrollTop = 0;
+    document.getElementById('mainPanel').scrollTop = 0;
   });
   showView('session');
 }

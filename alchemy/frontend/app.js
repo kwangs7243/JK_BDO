@@ -48,6 +48,7 @@ let state,
   offset = 0,
   query = "",
   preferencesLoaded = false,
+  displayCatalogVersion = null,
   job,
   backup,
   fullCatalog,
@@ -165,6 +166,12 @@ async function load() {
   $("#content").setAttribute("aria-busy", "true");
   [state, catalog] = await Promise.all([api("/state"), api("/catalog")]);
   remember(catalog.products);
+  if (displayCatalogVersion !== catalog.version) {
+    for (let itemOffset = 0; itemOffset < catalog.item_count; itemOffset += 200) {
+      remember((await api(`/items?limit=200&offset=${itemOffset}`)).items);
+    }
+    displayCatalogVersion = catalog.version;
+  }
   if (!preferencesLoaded) {
     query = state.settings.inventory_filter ?? "";
     preferencesLoaded = true;
@@ -172,7 +179,7 @@ async function load() {
   if (["dashboard", "detail"].includes(page))
     plans = (await api("/plans")).plans;
   $("#page-title").textContent = {
-    dashboard: "제작 대시보드",
+    dashboard: "제작 현황",
     detail: "제작 대상 상세",
     inventory: "공통 재고",
     history: "제작·재고 기록",
@@ -271,8 +278,9 @@ function goalForm(id) {
   return `<form id="goal-form" data-protect><div class="form-row"><label class="wide">제작 대상<select name="item_id">${id ? `<option value="${esc(id)}">${esc(name(id))}</option>` : catalog.products.map((i) => `<option value="${i.item_id}">${esc(i.name)}</option>`).join("")}</select></label><label>목표 수량<input type="number" min="1" max="1000000000" name="quantity" value="${goal?.quantity ?? 100}" required></label><label>목표 기준<select name="mode"><option value="held">최종 보유량</option><option value="additional" ${goal?.mode === "additional" ? "selected" : ""}>현재 보유량에 추가 제작</option></select></label><label>우선순위 · 작은 수 먼저<input type="number" min="0" name="priority" value="${goal?.priority ?? state.goals.length}" required></label><button type="submit" class="primary">${goal ? "목표 저장" : "목표 등록"}</button></div><p class="hint">계획은 실제 재고를 변경하지 않습니다. 활성 목표는 우선순위대로 공통 재고를 예약합니다.</p></form>`;
 }
 function jobs() {
-  return `<section class="panel"><div class="panel-heading"><h2>진행 중인 제작 ${state.jobs.length}</h2><span class="hint">재료 차감 완료 · 산출물 미반영</span></div>${state.jobs.length ? state.jobs.map((j) => `<div class="job"><div><strong>${icon(j.recipe.output_item_id)}${esc(name(j.recipe.output_item_id))}</strong><p>${fmt(j.calls)}회 · ${esc(j.recipe.method)} · ${date(j.created_at)}</p></div><div class="job-actions"><button type="button" data-finish="${j.job_id}">결과 입력</button><button type="button" class="small danger" data-cancel="${j.job_id}">미실행 취소</button></div></div>`).join("") : '<div class="empty">진행 중인 제작이 없습니다. 재료를 확인한 뒤 제작을 시작하세요.</div>'}</section>`;
+  return `<section class="panel jobs-panel"><div class="panel-heading"><h2>진행 중인 제작 ${state.jobs.length}</h2><span class="hint">재료 차감 완료 · 산출물 미반영</span></div>${state.jobs.length ? state.jobs.map((j) => `<div class="job"><div class="job-title"><strong>${icon(j.recipe.output_item_id)}${esc(name(j.recipe.output_item_id))}</strong><p>${fmt(j.calls)}회 · ${esc(j.recipe.method)} · ${date(j.created_at)}</p></div><div class="job-visual"><div class="job-orbit" aria-hidden="true"><span>✧</span></div><div class="job-core" aria-hidden="true">${icon(j.recipe.output_item_id, true)}<span>진행 중인 작업</span><strong>${fmt(j.calls)}<small>회</small></strong></div><ul class="job-reagents">${(j.inputs_per_call ?? j.recipe.inputs ?? []).map((i) => `<li>${icon(i.item_id, true)}<strong>${esc(name(i.item_id))}</strong><span>회당 ${fmt(i.quantity)}개</span></li>`).join("")}</ul></div><div class="job-actions"><button type="button" data-finish="${j.job_id}">결과 입력</button><button type="button" class="small danger" data-cancel="${j.job_id}">미실행 취소</button></div></div>`).join("") : '<div class="empty">진행 중인 제작이 없습니다. 재료를 확인한 뒤 제작을 시작하세요.</div>'}</section>`;
 }
+
 function productCards(items) {
   return items
     .map(
@@ -284,7 +292,7 @@ function productCards(items) {
 function dashboard() {
   goal = null;
   $("#content").innerHTML =
-    `<div class="intro"><div><h2>제작 현황</h2><p class="muted">보유한 재료부터 확인하고, 실제 제작 결과를 기록하세요.</p></div></div><div class="stats">${[
+    `<div class="intro dashboard-intro"><div><h2>제작 현황</h2><p class="muted">보유한 재료부터 확인하고, 실제 제작 결과를 기록하세요.</p></div></div><div class="stats">${[
       ["활성 제작 목표", state.goals.filter((g) => g.active).length],
       ["제작 진행 중", state.jobs.length],
       [
@@ -299,7 +307,7 @@ function dashboard() {
       )
       .join(
         "",
-      )}</div><section class="panel"><h2>새 제작 목표</h2>${goalForm()}</section><div class="layout-two"><section class="panel"><div class="panel-heading"><h2>나의 제작 목표</h2><span class="hint">예약은 실제 차감이 아닙니다.</span></div><div class="goals">${
+      )}</div><div class="layout-two dashboard-layout"><section class="panel goals-panel"><div class="panel-heading"><h2>나의 제작 목표</h2><span class="hint">예약은 실제 차감이 아닙니다.</span></div><div class="goals">${
       state.goals.length
         ? state.goals
             .toSorted((a, b) => a.priority - b.priority)
@@ -309,7 +317,7 @@ function dashboard() {
             })
             .join("")
         : '<div class="empty">아직 제작 목표가 없습니다. 위에서 목표를 등록하세요.</div>'
-    }</div></section>${jobs()}</div><section class="panel"><div class="panel-heading"><h2>제작품 카탈로그</h2><input type="search" id="catalog-search" placeholder="제작품 찾기" aria-label="제작품 찾기"></div><div class="product-grid" id="products">${productCards(catalog.products)}</div></section>`;
+    }</div></section>${jobs()}<aside class="lab-work-notes"><span class="notes-kicker">WORK NOTES</span><h2>작업 메모</h2><section><span>진행 중</span><strong>${state.jobs.length}<small>건</small></strong><p>제작 시작 시 재료가 차감됩니다.</p></section><section><span>등록한 목표</span><strong>${state.goals.length}<small>개</small></strong><p>계획은 실제 재고와 구분됩니다.</p></section><p>완료 시 실제 산출량을 입력하세요.</p><a href="/alchemy/history">제작 기록 보기 ↗</a></aside></div><section class="panel goal-registration"><h2>새 제작 목표</h2>${goalForm()}</section><section class="panel"><div class="panel-heading"><h2>제작품 카탈로그</h2><input type="search" id="catalog-search" placeholder="제작품 찾기" aria-label="제작품 찾기"></div><div class="product-grid" id="products">${productCards(catalog.products)}</div></section>`;
 }
 function yieldBasis(r) {
   const h = r.yield_history;

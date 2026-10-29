@@ -60,7 +60,7 @@ async function selectItem(id, backward = false) {
     $("#source").href = item.source;
     $("#data-date").textContent = `자료 확인 ${String(item.sourceFetchedAt || item.fetchedAt).slice(0,10)}`;
     $("#recipe-count").textContent = item.recipes.length ? `${item.recipes.length}가지 제작 방법` : "획득 방법 확인";
-    $("#recipe-area").hidden = !item.recipes.length; $("#no-recipe").hidden = !!item.recipes.length;
+    $("#recipe-area").hidden = false; $("#recipe-area").classList.toggle("without-recipe", !item.recipes.length); $("#no-recipe").hidden = !!item.recipes.length;
     $("#back").disabled = !navigation.length;
     renderRecipes(); renderFavorite(); renderList(); renderCalculation(); renderRelated(); status("");
   } catch (error) { if (request === loading) status(error.message); }
