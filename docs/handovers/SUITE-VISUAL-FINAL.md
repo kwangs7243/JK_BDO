@@ -122,6 +122,8 @@ Start-Process -FilePath 'D:/BDO/BDO 실행.lnk' -WindowStyle Hidden
 
 Windows UAC는 기존 바로가기 설정에 따라 사용자가 직접 승인해야 할 수 있다. 승인 대기라면 설치·푸시와 실행 검증을 구분해 보고하고, 사용자 승인 후 verify만 이어간다. UAC를 우회하거나 실패한 실행을 성공으로 보고하지 않는다.
 
+**재실행 명령은 샌드박스 밖 실제 사용자 계정에서 실행한다.** Codex의 기본 샌드박스 안에서 `Start-Process`를 호출하면 앱이 `CodexSandboxOffline` 계정으로 떠서 운영 DB 접근에 실패할 수 있다. `require_escalated`로 기존 바로가기를 실행하고 프로세스 소유자가 실제 사용자 계정인지 확인한다. 정상 종료 응답 후에는 기존 앱 프로세스까지 완전히 종료된 것을 확인한 다음 실행한다. 종료 직후 바로 실행하면 단일 실행 mutex가 남아 “이미 실행 중” 안내가 뜰 수 있다. 최종 완료 기준은 `/suite-health`와 `/api/health` 모두 정상이며 `release.py verify`가 통과하는 것이다.
+
 ## 6. 커밋·푸시를 요청받은 경우
 
 현재 브랜치 기본값은 `codex/barter-warehouse-briefing-ui-20261026`이고 준비 기준 HEAD는 `8f65257f59e460550d1496923022b5c25fcce5af`다. 현재 값을 다시 확인한다.
