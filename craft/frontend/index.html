@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>제작노트 · BDO Suite</title><link rel="stylesheet" href="/craft/assets/style.css"><link rel="icon" href="/portal-assets/bdo.svg"></head>
-<body>
-  <header class="topbar"><a href="/" class="brand"><span class="brand-mark">✳</span> BDO <span>CRAFT NOTE</span></a><a href="/">작업실 홈 ↗</a></header>
+<body class="craft-final">
+  <header class="topbar"><a href="/" class="brand"><span class="brand-mark">✳</span> BDO <span>CRAFT NOTE</span></a><nav class="concept-switch" aria-label="앱 이동"><a href="/">통합 메인 ↗</a><a href="/barter/">물교 ↗</a><a href="/alchemy/">연금 ↗</a><a href="/craft/" class="active" aria-current="page">제작노트</a></nav></header>
   <main class="workspace">
-    <aside class="library"><div class="library-head"><span class="eyebrow">YOUR MATERIAL LIBRARY</span><h1>제작의 모든 연결.</h1><p>찾고, 펼치고, 필요한 만큼.</p></div>
+    <aside class="library"><div class="library-head"><span class="eyebrow">RECIPE LIBRARY</span><h1>품목 목록</h1></div>
       <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="어떤 아이템을 만들까요?" aria-label="품목 검색"><kbd>/</kbd></label>
       <nav id="categories" aria-label="품목 분류"></nav>
       <div class="list-heading"><span id="result-count">품목을 불러오는 중</span><button id="favorites-only" aria-pressed="false">☆ 즐겨찾기</button></div>
@@ -11,9 +11,8 @@
       <footer class="library-footer"><span class="status-dot"></span><span>공유 재고 · 계산은 독립적으로</span><button id="refresh-stock" aria-label="공유 재고 새로고침">↻</button></footer>
     </aside>
     <section class="desk" aria-label="제작 계산">
-      <header class="manuscript-banner"><span class="book-stamp" aria-hidden="true">製作<br>祕笈</span><div><span class="eyebrow">THE ARTISAN'S CODEX</span><h2>장인의 비급서</h2><p>재료의 쓰임을 적고, 제작의 길을 펼치다.</p></div></header>
       <div id="status" role="status" aria-live="polite"></div>
-      <div id="welcome" class="welcome"><div class="illustration" aria-hidden="true"><span class="sheet sheet-back"></span><span class="sheet sheet-front"><i></i><i></i><i></i><b>✳</b></span><span class="floating-dot"></span></div><span class="eyebrow">A LITTLE PLANNING. A BETTER CRAFT.</span><h2>만들고 싶은 것부터<br>시작해 보세요.</h2><p>제작 횟수 하나로 필요한 재료를 정리합니다.<br>재료를 선택하면 다음 제작 과정으로 이어집니다.</p><div class="suggestions"><button data-start="9213">🍺 맥주</button><button data-start="4077">강철</button><button data-start="5301">맑은 액체 시약</button></div><span class="welcome-note">7,745개 품목 · 연금부터 요리, 가공과 공방까지</span></div>
+      <div id="welcome" class="welcome"><div class="illustration" aria-hidden="true"><span class="sheet sheet-back"></span><span class="sheet sheet-front"><i></i><i></i><i></i><b>✳</b></span><span class="floating-dot"></span></div><span class="eyebrow">CRAFT NOTE</span><h2>제작노트</h2><p>품목을 선택하면 제작식과 필요한 재료를 확인할 수 있습니다.</p><div class="suggestions"><button data-start="9213">🍺 맥주</button><button data-start="4077">강철</button><button data-start="5301">맑은 액체 시약</button></div><span class="welcome-note">7,745개 품목 · 연금부터 요리, 가공과 공방까지</span></div>
       <article id="detail" hidden>
         <div class="detail-topline"><button id="back" class="text-button">← 이전 품목</button><a id="source" target="_blank" rel="noopener noreferrer">자료 원문 ↗</a></div>
         <div class="item-hero"><div class="hero-icon" id="hero-icon"></div><div><span id="item-category" class="eyebrow"></span><h2 id="item-name"></h2><p id="recipe-count"></p></div><button id="favorite" class="favorite" aria-label="즐겨찾기 추가">☆</button></div>

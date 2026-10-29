@@ -39,3 +39,73 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 #detail{padding:22px 24px;background:linear-gradient(90deg,#cbb48720,transparent 30px),#faf2de;border:1px solid #bfa97e;box-shadow:3px 3px 0 #e4d5b5,4px 4px 0 #bba47a,7px 7px 0 #e4d5b5,8px 8px 0 #bba47a,0 12px 24px #59431f20;position:relative}.detail-topline{margin-bottom:24px}.hero-icon{border:1px solid #b89b69;outline:1px solid #d9c6a2;outline-offset:4px;background:#eee1c5;border-radius:2px}.item-hero h2{color:#4e3825}.material{background:linear-gradient(130deg,#fff9e9,#f0e5cb);border-color:#c3ac82;box-shadow:inset 0 0 0 3px #f9f0dc,0 2px 3px #79531e12}.material img{background:#e8d5b2;border-color:#bea16b}.counter-panel{background:linear-gradient(105deg,#e8d8b6,#efe2c7);border:1px solid #bfa06d;border-left:4px solid #984232;box-shadow:inset 0 0 0 3px #f6ead0}.recipe-tabs button[aria-pressed=true]{background:#9e4937;color:#fff4df;border-color:#7b3326}.section-heading h3{font-family:Batang,serif;color:#513c29}.section-heading h3:before{content:'◆';font-size:10px;color:#a14d35;margin-right:9px}.shopping{border-top:3px double #b89a68}.primary{background:linear-gradient(#ac5841,#83392d);border:1px solid #713025;box-shadow:inset 0 1px #d28c7355}.welcome{min-height:480px}.sheet{background:#f9edcf;border-color:#bba170;box-shadow:2px 8px 12px #573d3029}.sheet-back{background:#c7aa79}.sheet b{border:1px solid #9d493a;padding:0 7px}.related button{background:#e8d9b9;border:1px solid #c9b58d}
 @media(max-width:1000px){.manuscript-banner{margin:-28px -23px 24px;padding:24px;min-height:160px}.manuscript-banner h2{font-size:29px}#detail{padding:20px 16px}}
 @media(max-width:680px){.library{border-right:0;border-bottom:3px double #ae8a52}.manuscript-banner{margin:-20px -18px 24px;min-height:150px;padding:20px}.manuscript-banner h2{font-size:26px}.manuscript-banner p{max-width:200px;font-size:11px}.book-stamp{font-size:15px}.desk{padding-bottom:30px}.material-bottom{flex-wrap:wrap}.detail-topline{font-size:11px}}
+
+/* Approved final visual design. Keep data and event handlers unchanged. */
+.concept-switch{display:flex;align-items:center;gap:7px}.concept-switch a{padding:8px 13px;border:1px solid #c5a46a66;border-radius:7px;font:500 12px/1.5 Pretendard,Craft,sans-serif;white-space:nowrap;text-decoration:none;color:#dec797;background:linear-gradient(145deg,#ffffff0c,#0002);box-shadow:inset 0 1px #fff1}
+.concept-switch a.active{background:linear-gradient(#dfc58e,#b58e4d);color:#282217;border-color:#e8d1a1;box-shadow:inset 0 1px #fff6,0 2px 6px #0003}
+.concept-switch a:hover{border-color:#d7bb80}
+button{min-height:34px}button.primary{border-radius:7px;box-shadow:inset 0 1px #fff8,0 3px 7px #0003}
+
+
+.manuscript-banner{min-height:156px}.manuscript-banner h2{font-size:34px;letter-spacing:.06em;margin:6px 0}.manuscript-banner p{display:none}.book-stamp{font-size:16px}.topbar .concept-switch a{min-height:32px;font-size:12px}.topbar{padding-inline:28px}.topbar .brand>span:last-child{letter-spacing:.15em}
+.library{background:repeating-linear-gradient(90deg,transparent,transparent 3px,#ffffff03 4px),linear-gradient(110deg,#3f3227,#29261f)}.library-head h1{font-size:26px}.library-head p{display:none}.library-head .eyebrow{font-size:10px;color:#d7bd8b}.library .search{border-radius:7px;box-shadow:inset 0 2px 5px #0003}.list-heading button{border:1px solid #937a50;border-radius:30px;padding:5px 9px;color:#ddc79a;background:linear-gradient(#57472f,#3d3426)}
+#detail{border-radius:2px 11px 11px 2px;border-left:4px double #a98a56}.recipe-tabs button{border-radius:6px;background:linear-gradient(#f9efd5,#e5d4ad);border-color:#b79b6e;box-shadow:inset 0 1px #fff9;color:#715334}.recipe-tabs button[aria-pressed=true]{background:linear-gradient(#b65f46,#8e3d2d);color:#fff3d5;border-color:#73372a;box-shadow:inset 0 1px #e9aa7a77,0 3px 6px #743b2326}
+.stepper button{border:1px solid #b5945b;background:linear-gradient(#fff8e1,#dcc7a0);box-shadow:inset 0 1px #fff,0 2px 3px #79551c2b;border-radius:7px;width:36px;height:36px;color:#6b4d2a}.quick-counts{gap:7px}.quick-counts button{border-radius:30px;background:#f9f0db;border-color:#bfa16e;color:#84613a;padding:5px 12px}.quick-counts button[data-count][aria-pressed='true']{background:linear-gradient(#a6503c,#81392b);border-color:#7e372b;color:#fff2cf;box-shadow:inset 0 1px #fff3}
+.secondary{background:linear-gradient(#f9edcf,#e2cea5);border:1px solid #b39762;color:#6d4f2b;border-radius:6px;box-shadow:inset 0 1px #fff9,0 2px 4px #79551c22}.expand-button{border:1px solid #c1ab7f;border-radius:30px;padding:5px 9px;background:linear-gradient(#fff8e9,#eee0c0);color:#8b4c36;font-size:10px}.material{border-radius:8px}.owned-input{border-radius:4px;background:#fff9eb}.material .need{font-size:12px;color:#954936}.favorite{width:38px;height:38px;min-height:0;border:1px solid #b69a65;background:linear-gradient(#fff6dc,#e3d0a8);border-radius:50%;font-size:23px;box-shadow:inset 0 1px #fff8,0 2px 4px #79551c22;color:#866339}
+
+
+body{position:relative;isolation:isolate;background:transparent}body:before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,#58402a28,#a67c4122),url('/craft/assets/art/manuscript.png') center/cover no-repeat}.manuscript-banner{display:none}.topbar{background:linear-gradient(90deg,#33261fe8,#443024bd);border-bottom-color:#bda06e}.library{background:linear-gradient(110deg,#342a21ed,#24221edb);border-right-color:#be9d6c;box-shadow:inset -8px 0 14px #0003}.desk{background:transparent;border-left:0;padding-top:24px;padding-inline:clamp(26px,4vw,60px)}.desk>#status:empty{min-height:0;margin-bottom:0}#detail{background:linear-gradient(100deg,#fff5dff5,#fff5dfee);border-color:#a88a55;box-shadow:3px 3px 0 #dac39b,4px 4px 0 #92703f,7px 7px 0 #cdb58b,8px 8px 0 #92703f,0 12px 35px #24180d45;backdrop-filter:none}.item-hero{margin-bottom:18px}.material{background:linear-gradient(130deg,#fff9e8e8,#eee0c2e6)}.counter-panel{background:linear-gradient(105deg,#e8d5aebf,#f4e9cdcf)}.detail-topline{margin-bottom:20px}.description{margin-bottom:18px}.hero-icon{background:#e9d5ad;box-shadow:inset 0 1px #fff8}.welcome{margin-top:15px;padding:30px;background:#fff4dce8;border:1px solid #c1a374;box-shadow:3px 4px 0 #c4a879,0 10px 30px #34200a33}
+
+/* Visual proposal only. No product files are changed. */
+button,input,select,textarea{font-variant-numeric:tabular-nums}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #f1d69c;outline-offset:3px}
+
+.session-heading h2,.briefing-heading h2,.panel-heading h2{font-family:Pretendard,'Malgun Gothic',sans-serif;font-weight:600}
+body.barter-final:before{background-image:linear-gradient(90deg,#061723c2,#061c3366),url('/assets/art/voyage.png')}
+.barter-final .app-header{background:#081b27e8}.barter-final .app-sidebar{background:#081b25ec}
+.barter-final .trade-list-scroll{background:#102330ed;backdrop-filter:none;border-color:#6d858c}
+.barter-final .trade-session-table th{background:#203946}.barter-final .trade-row:nth-child(even):not(:hover):not(:focus-within){background:#24414d66}
+.barter-final .session-toolbar{background:linear-gradient(110deg,#243d46f5,#142c35f2)}
+.barter-final .session-heading{background:transparent}.barter-final .session-input-actions button.danger{background:#242c2ecf;color:#e0b1a7;border-color:#805e57;box-shadow:none}
+.barter-final .tier-section{background:#102330f5;border-color:#71848777;border-radius:9px}.barter-final .tier-heading{background:#213945;border-bottom-color:#b69c6466}
+.barter-final .inventory-row{background:linear-gradient(130deg,#203a46,#152c39);border-color:#54717b66;border-radius:7px;box-shadow:inset 0 2px color-mix(in srgb,var(--inventory-tier) 45%,transparent)}
+.barter-final .inventory-row input{background:#0f2430;border-color:#67818b88;color:#f1f4ed;font-size:15px}
+.barter-final .inventory-row .quantity-step{border-color:#5b788488;background:linear-gradient(#284653,#1b313d);border-radius:5px}
+.barter-final .inventory-null-hint{color:#c5d4d4}.barter-final .inventory-null-hint,.barter-final .inventory-toolbar,.barter-final .inventory-tier-tabs{background:#10212ee8;padding:9px 12px;margin:0;border-inline:1px solid #72858c55}
+.barter-final .inventory-tier-tabs{padding-bottom:10px}.barter-final .inventory-null-hint{border-radius:0 0 7px 7px;margin-bottom:15px;font-size:12px}
+.barter-final .sortie-card{background:#102330f5;border-radius:9px}.barter-final .sortie-heading{background:linear-gradient(100deg,#2c434c,#1b303c)}
+.barter-final .schedule-columns h3{background:#15303eea;border-color:#70878088}.barter-final .mode-settlement{background:#102431f2}
+.barter-final .route-step-number{color:#f0d59f}.barter-final .briefing-command{padding:12px 16px;background:#102331ee;border:1px solid #71818466;border-radius:9px}
+.barter-final .briefing-heading h2{font-size:25px}.barter-final .route-exchange-items{font-size:14px}.barter-final .sortie-metrics strong{font-size:14px}
+.barter-final .briefing-menu>summary{background:linear-gradient(#2c4554,#1a2d3a);border-color:#577280;color:#d8e4e9}
+.barter-final .mv-window{background:#112733;border-color:#a68d59;box-shadow:0 20px 65px #0009;border-radius:10px}
+.barter-final .mv-window button{background:linear-gradient(#294653,#1b303c);border-color:#506d7b;color:#dce7df}.barter-final .mv-window .mv-select{background:#162b36;color:#ecedde;border-color:#677c80}
+.barter-final .app-dialog{background:#132a36;border-color:#a38b58}.barter-final dialog::backdrop{background:#020e18aa;backdrop-filter:none}
+.barter-final .concept-switch a{font-size:12px}
+.alchemy-final .sidebar{background:#141910ee;border-right-color:#8a754c88}.alchemy-final .app-header{background:#171d14ed}
+.alchemy-final .panel{background:linear-gradient(120deg,#252b20f7,#182118f5);backdrop-filter:none;border-color:#b39a687d;border-radius:9px}
+.alchemy-final .stats>div{background:linear-gradient(130deg,#2e3326f7,#1e271ef5);border-color:#b39a687d}
+.alchemy-final .stats strong{font-family:Pretendard,sans-serif;font-size:29px;font-weight:550}
+.alchemy-final .panel h2,.alchemy-final .panel h3{font-family:Pretendard,sans-serif;font-weight:600;color:#ead7ae}
+.alchemy-final .goal-card,.alchemy-final .recipe-option,.alchemy-final .tree-node{background:#17251af5;border-color:#6e7956;border-radius:7px}
+.alchemy-final .panel button:not(.primary):not(.danger){color:#dce1c9}.alchemy-final .muted,.alchemy-final .hint,.alchemy-final small{color:#c0c5ad}
+.alchemy-final table{background:#19261bf5}.alchemy-final th{background:#2c3826;color:#d9d9ba}.alchemy-final td{border-bottom-color:#53634a88}
+.alchemy-final input,.alchemy-final select,.alchemy-final textarea{background:#111e15;color:#f0eadc;border-color:#7b8965}
+.alchemy-final .intro{padding-top:2px}.alchemy-final #status{background:#152116ed;color:#c4cdb3;font-size:13px}
+.alchemy-final .panel button.danger{background:#2c2920;color:#e6bbae;border-color:#8d6857}
+.alchemy-final .panel button:disabled{opacity:.5}.alchemy-final .form-row{align-items:end}
+.alchemy-final .footer{background:#152116eb}.alchemy-final .plan-summary{background:#19281be8;border-color:#778260}
+.alchemy-final .tree-actions button{padding:6px 11px;font-size:13px}.alchemy-final .tree-actions{gap:9px}
+.craft-final #detail{background:#fff4ddf7;backdrop-filter:none}.craft-final .material{background:linear-gradient(#fff9e9,#f0e2c3);border-color:#b89a65}
+.craft-final .calculation-hint,.craft-final .material .unit,.craft-final .shopping p,.craft-final .detail-footer,.craft-final .description{color:#6f5c40}
+.craft-final .material-bottom,.craft-final .material-bottom label{font-size:12px;color:#6f5c40}.craft-final .expand-button{font-size:11px;min-height:30px}
+.craft-final .favorite[aria-pressed=true]{background:linear-gradient(#b45b42,#843728);color:#fff0ce;border-color:#7e372a}
+@media(max-width:1200px){.session-input-actions{max-width:100%}.session-heading{flex-wrap:wrap}.session-heading .session-input-actions{margin-left:0}.session-input-actions button{font-size:12px!important}.briefing-command{padding:10px!important}}
+
+
+/* Preserve compact screens: artwork never reserves a grid row. */
+@media(max-width:900px){body.barter-final{grid-template-rows:56px minmax(0,1fr)}}
+@media(max-height:700px){body.barter-final{grid-template-rows:56px minmax(0,1fr)}}
+@media(max-width:760px){.concept-switch{flex-wrap:wrap}.concept-switch a{padding:6px 9px}.craft-final .topbar{height:auto;min-height:68px;gap:12px;flex-wrap:wrap;padding:12px 18px}.craft-final .library{height:auto;position:relative}.craft-final .desk{padding:20px 18px}.craft-final #detail{padding:18px 14px}}
+.craft-final .topbar .concept-switch>a:last-child{border:1px solid #e8d1a1;padding:8px 13px;color:#282217;background:linear-gradient(#dfc58e,#b58e4d)}
+.concept-switch a[aria-current="page"]{cursor:default}

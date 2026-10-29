@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/alchemy/assets/alchemy.css" />
     <script type="module" src="/alchemy/assets/app.js"></script>
   </head>
-  <body>
+  <body class="alchemy-final">
     <a class="skip-link" href="#content">작업 영역으로 이동</a>
     <aside class="sidebar">
       <a class="brand" href="/"
@@ -38,7 +38,7 @@
         >
       </nav>
       <div class="sidebar-bottom">
-        <a href="/barter/">물교 작업실 ↗</a><a href="/">통합 메인으로</a>
+        <nav class="concept-switch" aria-label="앱 이동"><a href="/barter/">물교 ↗</a><a href="/alchemy/" class="active" aria-current="page">연금</a><a href="/craft/">제작노트 ↗</a></nav><a href="/">통합 메인으로</a>
         <p>내 PC에 저장 · 실제 수량 기준</p>
       </div>
     </aside>
@@ -53,10 +53,6 @@
           ><button type="button" id="refresh">새로 불러오기</button>
         </div>
       </header>
-      <section class="laboratory-banner" aria-label="연금 작업실">
-        <div><span class="laboratory-kicker">ARS ALCHEMICA · THE WORKSHOP</span><h2>재료에 담긴 가능성을 깨우다.</h2><p>작은 시약 한 방울에서, 새로운 완성까지.</p></div>
-        <span class="laboratory-seal" aria-hidden="true">☉</span>
-      </section>
       <div id="status" role="status" aria-live="polite">
         저장 상태를 불러오는 중입니다.
       </div>

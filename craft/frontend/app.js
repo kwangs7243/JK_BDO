@@ -109,6 +109,10 @@ function renderRelated() {
 }
 function stockFor(id) { return Object.hasOwn(owned,id) ? owned[id] : inventory[id] ?? null; }
 function renderCalculation() {
+  const countValue = Number($("#count").value);
+  for (const preset of document.querySelectorAll("[data-count]")) {
+    preset.setAttribute("aria-pressed", String(Number.isSafeInteger(countValue) && countValue > 0 && Number(preset.dataset.count) === countValue));
+  }
   const recipe = current?.recipes[recipeIndex]; if (!recipe) return;
   let plan;
   try { plan = calculate(recipe, Number($("#count").value), expansions, $("#use-stock").checked ? {...inventory, ...owned} : {}); }

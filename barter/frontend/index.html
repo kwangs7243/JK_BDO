@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="/assets/css/workspace.css">
   <link rel="stylesheet" href="/assets/css/notifications.css">
 </head>
-<body>
+<body class="barter-final">
   <a class="skip-link" href="#app-content">작업 영역으로 이동</a>
   <aside class="app-sidebar" aria-label="주 메뉴">
     <div class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 3 28 10v12L16 29 4 22V10Z"/><path d="m21 10-3 9-7 3 3-9Z"/><path d="m14 13 4 6"/></svg></span><div><h1>BDO 물교</h1><span>항해 작업실</span></div></div>
@@ -28,7 +28,7 @@
       <button type="button" data-open-tool="open-map-speed"><svg class="nav-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="M10 1v4m0 10v4M1 10h4m10 0h4m-3-8-2 5-5 2 2-5Z"/></svg>지도·항로</button>
     </nav>
     <div class="sidebar-capture"><p class="nav-caption">화면 가져오기</p><button type="button" data-open-tool="open-trade-capture">물교 캡처 <kbd>F10</kbd></button><button type="button" data-open-tool="open-warehouse-scan">창고 스캔</button><p>게임에서 캡처한 뒤<br>필요한 값만 확인하세요.</p></div>
-    <div class="sidebar-footer"><a href="/alchemy/" class="portal-home">연금 작업실 ↗</a><a href="/" class="portal-home">통합 메인으로</a><button type="button" data-open-tool="open-settings">선박·교섭력 설정</button><span>로컬 저장 · 수동 적용</span></div>
+    <div class="sidebar-footer"><nav class="concept-switch" aria-label="앱 이동"><a href="/barter/" class="active" aria-current="page">물교</a><a href="/alchemy/">연금 ↗</a><a href="/craft/">제작노트 ↗</a></nav><a href="/" class="portal-home">통합 메인으로</a><button type="button" data-open-tool="open-settings">선박·교섭력 설정</button><span>로컬 저장 · 수동 적용</span></div>
   </aside>
   <header class="app-header">
     <div class="workspace-location"><span>항해 작업실</span><span aria-hidden="true">/</span><strong id="workspace-title">현재 회차</strong></div>
@@ -46,13 +46,9 @@
       </details>
     </div>
   </header>
-  <section class="voyage-banner" aria-label="항해 작업실">
-    <div><span class="world-kicker">THE MERCHANT'S VOYAGE</span><h2>바다 너머, 다음 교역으로.</h2><p>항로를 살피고, 짐을 싣고, 새로운 섬으로.</p></div>
-    <span class="world-seal" aria-hidden="true">N<span>✧</span>S</span>
-  </section>
   <main id="app-content" aria-busy="true" class="workspace" data-view="session" tabindex="-1">
     <section class="panel session-panel" id="trade-session-panel">
-      <div class="panel-heading session-heading"><div><h2>현재 회차</h2><span id="session-trade-count" class="hint">회차 없음</span></div><div class="session-input-actions"><button id="open-trade-capture" class="primary" type="button">물교 화면 가져오기</button><button id="open-json-import" type="button">JSON 입력</button><button id="add-manual-trade" type="button">행 추가</button><details class="session-management"><summary>회차 관리</summary><div class="session-management-actions"><button id="toggle-all-trades" type="button">전체 비활성</button><button id="reset-session" class="danger" type="button">회차 초기화</button></div></details></div></div>
+      <div class="panel-heading session-heading"><div><h2>현재 회차</h2><span id="session-trade-count" class="hint">회차 없음</span></div><div class="session-input-actions"><button id="open-trade-capture" class="primary" type="button">물교 가져오기</button><button id="open-json-import" class="secondary" type="button">JSON 입력</button><button id="add-manual-trade" class="secondary" type="button">+ 행 추가</button><span class="action-divider" aria-hidden="true"></span><button id="toggle-all-trades" class="soft-action" type="button">전체 비활성</button><button id="reset-session" class="danger" type="button">회차 초기화</button></div></div>
       <div class="session-toolbar"><div class="session-budget"><label for="remaining-parley">남은 교섭력</label><input id="remaining-parley" type="number" min="0" step="1"></div><div class="session-plan-actions"><span class="session-action-label">계획</span><button id="open-schedule" class="primary" type="button">출항 브리핑</button></div><div class="session-map-actions"><span class="session-action-label">지도</span><button id="open-map-speed" type="button">쾌속 지도</button><button id="open-map-balance" type="button">균형 지도</button></div><span id="trade-import-status" class="status-note" role="status"></span></div>
       <div class="list-filter-bar"><label for="trade-search">교환 찾기</label><input id="trade-search" type="search" placeholder="섬 또는 품목 검색"><label for="trade-visibility" class="sr-only">교환 상태</label><select id="trade-visibility"><option value="all">모든 교환</option><option value="active">사용 중</option><option value="excluded">제외·삭제됨</option></select><span id="trade-filter-summary" role="status"></span></div>
       <div id="trade-list-root" class="trade-list-scroll"></div>
