@@ -1,3 +1,4 @@
+import { confirmAction, notice } from "/portal-assets/feedback.js";
 import { api } from "./api.js";
 const $ = (s, root = document) => root.querySelector(s);
 const esc = (v) =>
@@ -133,15 +134,16 @@ function updatePanel() {
 function status(text, kind = "info") {
   $("#status").textContent = text;
   $("#status").dataset.kind = kind;
+  if (text && (kind === "error" || kind === "success")) notice(text, kind);
 }
 const report = (error) => status(error.message, "error");
 function hasDraft() {
   for (const f of dirty) if (!f.isConnected) dirty.delete(f);
   return dirty.size > 0;
 }
-function leave() {
+async function leave() {
   return (
-    !hasDraft() || confirm("저장하지 않은 입력이 있습니다. 변경을 버릴까요?")
+    !hasDraft() || await confirmAction("저장하지 않은 입력이 있습니다. 변경을 버릴까요?")
   );
 }
 function guard() {
@@ -885,24 +887,24 @@ document.addEventListener("click", async (event) => {
     a.target !== "_blank" &&
     hasDraft()
   ) {
-    if (!leave()) {
-      event.preventDefault();
-      return;
-    }
+    event.preventDefault();
+    if (!(await leave())) return;
     dirty.clear();
+    location.assign(a.href);
+    return;
   }
   const b = event.target.closest("button");
   if (!b || b.type === "submit") return;
   try {
     if (b.matches("[data-close]") || b.id === "close-dialog") {
-      if (leave()) {
+      if (await leave()) {
         dirty.clear();
         $("#work-dialog").close();
       }
       return;
     }
     if (b.id === "refresh") {
-      if (leave() && !pending) {
+      if ((await leave()) && !pending) {
         dirty.clear();
         cache.clear();
         await load();
@@ -933,7 +935,7 @@ document.addEventListener("click", async (event) => {
     if (b.dataset.cancel) {
       if (
         guard() &&
-        confirm(
+        await confirmAction(
           "실제 제작을 전혀 진행하지 않았나요? 차감한 재료를 전부 반환합니다. 일부 제작했다면 결과 입력에서 수행 횟수를 입력하세요.",
         )
       )
@@ -947,7 +949,7 @@ document.addEventListener("click", async (event) => {
     if (b.dataset.delete) {
       if (
         guard() &&
-        confirm("목표를 삭제할까요? 실제 재고와 제작 기록은 유지합니다.")
+        await confirmAction("목표를 삭제할까요? 실제 재고와 제작 기록은 유지합니다.")
       )
         await save("goal", { goal_id: b.dataset.delete, delete: true });
       return;
@@ -1008,22 +1010,22 @@ document.addEventListener("click", async (event) => {
     if (
       b.id === "restore-backup" &&
       guard() &&
-      confirm("미리보기에서 확인한 연금 백업으로 복원할까요?")
+      await confirmAction("미리보기에서 확인한 연금 백업으로 복원할까요?")
     )
       await save("restore", { backup });
     if (
       b.id === "import-catalog" &&
       guard() &&
-      confirm("확인한 카탈로그를 적용할까요?")
+      await confirmAction("확인한 카탈로그를 적용할까요?")
     )
       await save("catalog", { catalog: fullCatalog });
   } catch (error) {
     report(error);
   }
 });
-$("#work-dialog").addEventListener("cancel", (event) => {
-  if (!leave()) event.preventDefault();
-  else dirty.clear();
+$("#work-dialog").addEventListener("cancel", async (event) => {
+  event.preventDefault();
+  if (await leave()) { dirty.clear(); $("#work-dialog").close(); }
 });
 window.addEventListener("beforeunload", (event) => {
   if (hasDraft() || busy || pending) {

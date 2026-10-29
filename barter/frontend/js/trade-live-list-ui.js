@@ -1,3 +1,4 @@
+import { confirmAction } from "/portal-assets/feedback.js";
 import { state } from "./state.js";
 import { PreviewRegistry } from "./capture.js";
 import { saveTradeCorrections } from "./trade-recognition-client.js";
@@ -268,7 +269,10 @@ export function createTradeLiveListUI({ elements, getCatalog, getUnusedPolicy = 
     const apply = async (mode, button) => {
       if (getPending() || button.disabled) return;
       const includedRows = prepareRows(result).map(({row}) => row).filter((row) => !row.excluded);
-      if (mode === "new" && state.session.scannedTrades !== null && !window.confirm("현재 회차를 이 최종 물교 목록으로 바꿀까요?")) return;
+      const confirmationRevision = state.sessionRevision;
+      const confirmationSession = JSON.stringify(state.session.scannedTrades);
+      if (mode === "new" && state.session.scannedTrades !== null && !await confirmAction("현재 회차를 이 최종 물교 목록으로 바꿀까요?")) return;
+      if (getPending() || confirmationRevision !== state.sessionRevision || confirmationSession !== JSON.stringify(state.session.scannedTrades)) { tradeRecognitionStatus.textContent = "확인 중 회차가 바뀌었습니다. 다시 시도하세요."; return; }
       button.disabled = true;
       setPending(true);
       updateApplyState();

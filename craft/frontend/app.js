@@ -1,3 +1,4 @@
+import { notice } from "/portal-assets/feedback.js";
 import { calculate } from "./calculator.js";
 
 const $ = selector => document.querySelector(selector);
@@ -7,7 +8,7 @@ let items = [], categories = {}, inventory = {}, preferences = {revision:0, favo
 let current = null, recipeIndex = 0, category = "all", favoritesOnly = false, visible = 36, loading = 0;
 let expansions = {}, owned = {}, lastPlan = null, navigation = [], favoritePending = false;
 const cache = new Map();
-const status = message => { $("#status").textContent = message; };
+const status = (message, kind = "info") => { $("#status").textContent = message; if (message && kind === "error") notice(message, kind); };
 async function api(path, options = {}) {
   const response = await fetch(`/api/craft/${path}`, { credentials:"same-origin", ...options });
   const data = await response.json();
@@ -63,7 +64,7 @@ async function selectItem(id, backward = false) {
     $("#recipe-area").hidden = false; $("#recipe-area").classList.toggle("without-recipe", !item.recipes.length); $("#no-recipe").hidden = !!item.recipes.length;
     $("#back").disabled = !navigation.length;
     renderRecipes(); renderFavorite(); renderList(); renderCalculation(); renderRelated(); status("");
-  } catch (error) { if (request === loading) status(error.message); }
+  } catch (error) { if (request === loading) status(error.message, "error"); }
 }
 function renderRecipes() {
   const list = $("#recipes"); list.replaceChildren();
@@ -120,7 +121,7 @@ function renderCalculation() {
     lastPlan = null; $("#copy").disabled = true;
     $("#materials").replaceChildren(el("p", "calculation-hint", "유효한 제작 횟수를 입력하면 재료를 계산합니다."));
     $("#shopping-list").replaceChildren(); $("#material-count").textContent = "—";
-    status(error.message); return;
+    status(error.message, "error"); return;
   }
   lastPlan = plan; $("#copy").disabled = false; status("");
   $("#material-count").textContent = `${plan.rows.length}종`;
@@ -170,11 +171,11 @@ async function openExpansion(row) {
       const value = Number(input.value);
       const candidate = {...expansions, [row.id]:{recipe:item.recipes[Number(select.value)], yield:value}};
       try { calculate(current.recipes[recipeIndex], Number($("#count").value), candidate, $("#use-stock").checked ? {...inventory,...owned}:{}); }
-      catch (error) { status(error.message); return; }
+      catch (error) { status(error.message, "error"); return; }
       expansions=candidate; host.hidden=true; renderCalculation();
     }, "primary");
     host.append(select,label,apply,el("p", "", "원본에 1회 산출량이 없어 직접 입력합니다. 요리·연금·가공의 실제 산출량은 달라질 수 있습니다. 원재료 보유분은 전체 계산에서 한 번만 반영합니다.")); status("");
-  } catch (error) { status(error.message); }
+  } catch (error) { status(error.message, "error"); }
 }
 $("#search").addEventListener("input", () => { visible=36; renderList(); });
 $("#more").addEventListener("click", () => { visible+=36; renderList(); $("#items").scrollTop=0; });
@@ -189,7 +190,7 @@ for (const node of document.querySelectorAll("[data-count]")) node.addEventListe
 for (const node of document.querySelectorAll("[data-start]")) node.addEventListener("click", () => void selectItem(node.dataset.start));
 $("#refresh-stock").addEventListener("click", async () => {
   try { const data=await api("bootstrap"); inventory=data.inventory; preferences=data.preferences; renderCalculation(); if(current) renderFavorite(); renderList(); status("공유 재고를 다시 불러왔습니다."); }
-  catch(error) { status(error.message); }
+  catch(error) { status(error.message, "error"); }
 });
 $("#favorite").addEventListener("click", async () => {
   if(favoritePending || !current) return; favoritePending=true; $("#favorite").disabled=true;
@@ -197,7 +198,7 @@ $("#favorite").addEventListener("click", async () => {
     const id=current.id, favorites=preferences.favorites.includes(id) ? preferences.favorites.filter(key=>key!==id) : [...preferences.favorites,id];
     preferences=await api("preferences",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({revision:preferences.revision,favorites})});
     renderFavorite(); renderList(); status("즐겨찾기를 저장했습니다.");
-  } catch(error) { status(error.message); }
+  } catch(error) { status(error.message, "error"); }
   finally { favoritePending=false; $("#favorite").disabled=false; }
 });
 $("#copy").addEventListener("click", async () => {
@@ -213,4 +214,4 @@ try {
   }
   renderList();
   const initial=new URL(location.href).searchParams.get("item"); if(initial && /^\d{1,10}$/.test(initial)) void selectItem(initial);
-} catch(error) { status(error.message); }
+} catch(error) { status(error.message, "error"); }

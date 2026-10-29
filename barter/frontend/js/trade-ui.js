@@ -1,3 +1,4 @@
+import { confirmAction } from "/portal-assets/feedback.js";
 import { reviewExcludedTrades } from "./trade-import-review.js";
 import { state } from "./state.js";
 import { applyTradeFilters } from "./workspace-ui.js";
@@ -26,12 +27,15 @@ function describeResult(result) {
   return parts.length ? parts.join(" · ") : "추가된 항목이 없습니다.";
 }
 function showImportFailure(result) { const status = document.querySelector("#trade-import-status"); status.textContent = `${result.kind === "json_parse" ? "JSON 파싱 실패" : result.kind === "unsupported_structure" ? "지원하지 않는 구조" : "필수 필드 누락"}: ${result.message}`; status.dataset.kind = "error"; }
-function applyInput(mode) {
+async function applyInput(mode) {
   if (window.__bdoScheduleRuntime?.pending) { setStatusFn("완료 저장을 먼저 확인하거나 재시도하세요.", "error"); return; }
   const parsed = parseTradeJsonText(document.querySelector("#trade-json-input").value);
   if (!parsed.ok) { showImportFailure(parsed); return; }
   if (mode === "append" && state.session.scannedTrades === null) { showImportFailure({ kind: "required_field", message: "먼저 새 회차를 시작하세요." }); return; }
-  if (mode === "new" && state.session.scannedTrades !== null && !window.confirm("현재 회차를 새 물교 목록으로 바꿀까요?")) return;
+  const confirmationRevision = state.sessionRevision;
+  const confirmationSession = JSON.stringify(state.session.scannedTrades);
+  if (mode === "new" && state.session.scannedTrades !== null && !await confirmAction("현재 회차를 새 물교 목록으로 바꿀까요?")) return;
+  if (window.__bdoScheduleRuntime?.pending || confirmationRevision !== state.sessionRevision || confirmationSession !== JSON.stringify(state.session.scannedTrades)) { setStatusFn("확인 중 회차가 바뀌었습니다. 다시 시도하세요.", "error"); return; }
   const previous = mode === "append" ? state.session.scannedTrades : [];
   const result = processParsedTrades(parsed.rows, previous, catalog);
   const commit = (result) => {
@@ -204,7 +208,10 @@ export async function initTradeSessionUI(setStatus) {
     });
     document.querySelector("#reset-session").addEventListener("click", async () => {
       if (window.__bdoScheduleRuntime?.pending) { setStatusFn("완료 저장을 먼저 확인하거나 재시도하세요.", "error"); return; }
-      if (state.session.scannedTrades === null || !window.confirm("현재 회차를 초기화할까요? 영구 재고·설정과 저장 슬롯은 유지됩니다.")) return;
+      const confirmationRevision = state.sessionRevision;
+      const confirmationSession = JSON.stringify(state.session.scannedTrades);
+      if (state.session.scannedTrades === null || !await confirmAction("현재 회차를 초기화할까요? 영구 재고·설정과 저장 슬롯은 유지됩니다.", {title:"회차 초기화", acceptLabel:"초기화", danger:true})) return;
+      if (window.__bdoScheduleRuntime?.pending || confirmationRevision !== state.sessionRevision || confirmationSession !== JSON.stringify(state.session.scannedTrades)) { setStatusFn("확인 중 회차가 바뀌었습니다. 다시 시도하세요.", "error"); return; }
       try { setStatusFn("현재 회차를 초기화하는 중입니다.", "saving"); await resetWorkingSession(); renderTradeList(); document.querySelector("#col-speed").replaceChildren(); document.querySelector("#col-balance").replaceChildren(); setStatusFn("현재 회차를 초기화했습니다. 영구 재고·설정과 슬롯은 유지됩니다.", "success"); }
       catch (error) { setStatusFn(`회차를 초기화하지 못했습니다: ${error.message}`, "error"); }
     });
