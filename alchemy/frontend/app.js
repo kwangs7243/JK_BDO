@@ -39,6 +39,8 @@ const names = new Map(),
   icons = new Map(),
   cache = new Map(),
   dirty = new Set();
+const startStocks = new Map();
+let stockConflict = false;
 let state,
   catalog,
   plans = [],
@@ -136,12 +138,16 @@ function status(text, kind = "info") {
   $("#status").dataset.kind = kind;
   if (text && (kind === "error" || kind === "success")) notice(text, kind);
 }
-const report = (error) => status(error.message, "error");
+const report = (error) => { if (!error.reported) status(error.message, "error"); };
 function hasDraft() {
   for (const f of dirty) if (!f.isConnected) dirty.delete(f);
   return dirty.size > 0;
 }
 async function leave() {
+  if (busy || pending) {
+    status("저장 중이거나 결과 확인이 필요합니다. 저장 결과를 먼저 확인하세요.", "error");
+    return false;
+  }
   return (
     !hasDraft() || await confirmAction("저장하지 않은 입력이 있습니다. 변경을 버릴까요?")
   );
@@ -207,7 +213,7 @@ async function load() {
   $("#content").setAttribute("aria-busy", "false");
   status("저장 상태를 확인했습니다. 미확인 재고는 0개와 구분합니다.");
 }
-async function save(action, fields, form) {
+async function save(action, fields, form, keepStart = false) {
   if (busy) return;
   for (const f of dirty)
     if (f.isConnected && f !== form)
@@ -220,6 +226,7 @@ async function save(action, fields, form) {
   pending ??= {
     signature,
     action,
+    keepStart,
     body: {
       ...fields,
       mutationId: crypto.randomUUID(),
@@ -231,6 +238,7 @@ async function save(action, fields, form) {
     .querySelectorAll("button[type=submit]")
     .forEach((b) => (b.disabled = true));
   status("트랜잭션을 저장하는 중입니다.");
+  if ($("#start-form")) startPreview();
   try {
     const result = await api("/mutations/" + action, pending.body);
     pending = null;
@@ -238,8 +246,10 @@ async function save(action, fields, form) {
     if (form) dirty.delete(form);
     cache.clear();
     fullCatalog = null;
-    $("#work-dialog").close();
+    if (keepStart) startStocks.clear();
+    else $("#work-dialog").close();
     await load();
+    if (keepStart) dirty.add(form);
     status("저장을 확인했습니다. 제작 계획을 다시 계산했습니다.", "success");
     if (result.previous_backup_id) {
       const a = document.createElement("a");
@@ -265,15 +275,20 @@ async function save(action, fields, form) {
     } else {
       pending = null;
       $("#retry-area").hidden = true;
-      if (error.status === 409) state = await api("/state");
+      if (error.status === 409) {
+        if (keepStart) stockConflict = true;
+        state = await api("/state");
+      }
       report(error);
     }
+    error.reported = true;
     throw error;
   } finally {
     busy = false;
     document
       .querySelectorAll("button[type=submit]")
       .forEach((b) => (b.disabled = false));
+    if ($("#start-form")) startPreview();
   }
 }
 function goalForm(id) {
@@ -534,6 +549,8 @@ async function startModal(id, rid, calls = 1) {
   const r =
     jobDetail.recipes.find((r) => r.recipe_id === rid) ?? jobDetail.recipes[0];
   if (!r) throw Error("제작식이 없는 외부 수급 품목입니다.");
+  startStocks.clear();
+  stockConflict = false;
   const planned = goal
     ? plans
         .find((p) => p.goal_id === goal.goal_id)
@@ -546,7 +563,7 @@ async function startModal(id, rid, calls = 1) {
     calls = "";
   modal(
     name(id) + " · 제작 시작",
-    `<form id="start-form" class="dialog-form" data-protect><div class="form-row"><label class="wide">제작 경로<select name="recipe_id" id="start-recipe">${jobDetail.recipes.map((v) => `<option value="${v.recipe_id}" ${v.recipe_id === r.recipe_id ? "selected" : ""}>${esc(v.method)} · ${v.output_quantity}개 단위</option>`).join("")}</select></label><label>제작할 횟수<input type="number" name="calls" min="1" max="1000000000" value="${calls}" placeholder="직접 입력" required></label></div><div id="start-ingredients"></div><div class="callout">시작하면 재료를 차감합니다. 완료 후 실제 수행 횟수와 나온 개수를 입력하면 DB에 누적되고 다음 계획의 수율에 반영됩니다.</div>${modalButtons("재료 차감하고 제작 시작")}</form>`,
+    `<form id="start-form" class="dialog-form" data-protect><div class="form-row"><label class="wide">제작 경로<select name="recipe_id" id="start-recipe">${jobDetail.recipes.map((v) => `<option value="${v.recipe_id}" ${v.recipe_id === r.recipe_id ? "selected" : ""}>${esc(v.method)} · ${v.output_quantity}개 단위</option>`).join("")}</select></label><label>제작할 횟수<input type="number" name="calls" min="1" max="1000000000" value="${calls}" placeholder="직접 입력" required></label></div><div id="start-ingredients"></div><div class="start-stock-actions"><div><strong>재료 재고 바로 확인</strong><p class="hint">게임에서 확인한 실제 보유량을 입력하세요. 빈칸은 미확인, 0은 확인한 0개입니다.</p><p id="start-stock-status" role="status"></p></div><div class="actions"><button type="button" id="save-start-stock">변경한 재고 저장</button><button type="button" id="reload-start-stock">입력 취소·최신 재고</button><button type="button" id="retry-start-stock" hidden>저장 결과 재확인</button></div></div><div class="callout">시작하면 재료를 차감합니다. 완료 후 실제 수행 횟수와 나온 개수를 입력하면 DB에 누적되고 다음 계획의 수율에 반영됩니다.</div>${modalButtons("재료 차감하고 제작 시작")}</form>`,
   );
   startIngredients();
 }
@@ -559,32 +576,58 @@ function startIngredients() {
       .map((i) => {
         const chosen =
           goal?.substitutions?.[r.recipe_id + ":" + i.item_id] ?? i.item_id;
-        return `<tr><td><span data-input-icon>${icon(chosen)}</span><select data-substitute="${i.item_id}" aria-label="${esc(name(i.item_id))} 소비 재료">${[{ item_id: i.item_id, quantity: i.quantity }, ...(i.alternatives ?? [])].map((v) => `<option value="${v.item_id}" data-quantity="${v.quantity}" ${chosen === v.item_id ? "selected" : ""}>${esc(name(v.item_id))} · 1회 ${v.quantity}개</option>`).join("")}</select></td><td class="num" data-current></td><td class="num" data-consume></td><td data-ready></td></tr>`;
+        return `<tr><td><span data-input-icon>${icon(chosen)}</span><select data-substitute="${i.item_id}" aria-label="${esc(name(i.item_id))} 소비 재료">${[{ item_id: i.item_id, quantity: i.quantity }, ...(i.alternatives ?? [])].map((v) => `<option value="${v.item_id}" data-quantity="${v.quantity}" ${chosen === v.item_id ? "selected" : ""}>${esc(name(v.item_id))} · 1회 ${v.quantity}개</option>`).join("")}</select></td><td class="num"><input type="number" min="0" max="1000000000" step="1" data-start-stock placeholder="미확인"></td><td class="num" data-consume></td><td data-ready></td></tr>`;
       })
       .join(
         "",
       )}</tbody></table></div>${r.verification !== "verified" || jobDetail.errors.some((v) => v.recipe_id === r.recipe_id) ? '<p class="error-note">검증 필요 또는 순환 참조가 있는 제작식입니다. 제작을 시작할 수 없습니다.</p>' : ""}`;
   startPreview();
 }
+function startStockChanges() {
+  return [...startStocks].map(([item_id, raw]) => ({item_id, quantity: raw === "" ? null : qty(raw)}))
+    .filter(v => v.quantity !== (state.inventory[v.item_id] ?? null));
+}
 function startPreview() {
-  const rawCalls = $("#start-form [name=calls]").value;
-  const calls = rawCalls === "" ? null : qty(rawCalls);
-  $("#start-form button[type=submit]").disabled = calls == null || calls < 1;
-  for (const s of document.querySelectorAll("[data-substitute]")) {
+  const form = $("#start-form"), rawCalls = $("[name=calls]", form).value;
+  const calls = /^\d+$/.test(rawCalls) && Number(rawCalls) >= 1 && Number(rawCalls) <= 1e9 ? Number(rawCalls) : null;
+  const totals = new Map();
+  for (const s of form.querySelectorAll("[data-substitute]"))
+    totals.set(s.value, (totals.get(s.value) ?? 0) + Number(s.selectedOptions[0].dataset.quantity) * calls);
+  let enough = calls !== null;
+  for (const s of form.querySelectorAll("[data-substitute]")) {
     const tr = s.closest("tr"),
       needed = Number(s.selectedOptions[0].dataset.quantity) * calls,
       current = state.inventory[s.value];
     $("[data-input-icon]", tr).innerHTML = icon(s.value);
-    $("[data-current]", tr).textContent = fmt(current);
+    const input = $("[data-start-stock]", tr);
+    input.dataset.item = s.value;
+    input.setAttribute("aria-label", `${name(s.value)} 실제 보유량`);
+    if (input !== document.activeElement)
+      input.value = startStocks.has(s.value) ? startStocks.get(s.value) : current ?? "";
     $("[data-consume]", tr).textContent =
       calls == null ? "횟수 입력" : fmt(needed);
     $("[data-ready]", tr).innerHTML =
       calls == null
         ? ""
         : badge(
-            current == null ? "unknown" : current >= needed ? "ready" : "short",
+            current == null ? "unknown" : current >= totals.get(s.value) ? "ready" : "short",
           );
+    if (current == null || !Number.isSafeInteger(totals.get(s.value)) || current < totals.get(s.value)) enough = false;
   }
+  let changes = [], invalid = [...form.querySelectorAll("[data-start-stock]")].some(input => input.validity.badInput);
+  try { changes = startStockChanges(); } catch { invalid = true; }
+  $("#start-stock-status").textContent = stockConflict
+    ? "다른 창에서 재고가 변경됐습니다. 최신 재고를 불러온 뒤 다시 확인하세요."
+    : invalid ? "보유량은 0~10억 사이 정수로 입력하세요."
+    : changes.length ? `저장 전 ${changes.length}종 · ${changes.map(v => `${name(v.item_id)} ${fmt(v.quantity)}`).join(" / ")}`
+    : "저장된 재고로 비교하고 있습니다.";
+  $("#save-start-stock").disabled = busy || !!pending || stockConflict || invalid || !changes.length;
+  $("#reload-start-stock").disabled = busy || !!pending;
+  $("#retry-start-stock").hidden = !pending;
+  $("#retry-start-stock").disabled = busy;
+  $("button[type=submit]", form).disabled = busy || !!pending || stockConflict || invalid || !!changes.length || !enough
+    || startRecipe().verification !== "verified" || jobDetail.errors.some(v => v.recipe_id === startRecipe().recipe_id);
+  for (const input of form.querySelectorAll("input, select")) input.disabled = busy || !!pending;
 }
 async function finishModal(id, correct = false) {
   if (!guard()) return;
@@ -739,6 +782,8 @@ async function submit(form) {
     );
   }
   if (form.id === "start-form") {
+    if (stockConflict || startStockChanges().length)
+      throw Error("수정한 재고를 먼저 저장하거나 최신 재고를 불러오세요.");
     const r = startRecipe(),
       substitutions = { ...(goal?.substitutions ?? {}) };
     for (const s of form.querySelectorAll("[data-substitute]"))
@@ -838,7 +883,8 @@ document.addEventListener("input", (event) => {
     );
   if (event.target.id === "plan-search")
     tree(plans.find((p) => p.goal_id === goal.goal_id));
-  if (event.target.closest("#start-form") && event.target.name === "calls") {
+  if (event.target.matches("[data-start-stock]")) startStocks.set(event.target.dataset.item, event.target.value);
+  if (event.target.closest("#start-form") && (event.target.name === "calls" || event.target.matches("[data-start-stock]"))) {
     try {
       startPreview();
     } catch (error) {
@@ -911,9 +957,22 @@ document.addEventListener("click", async (event) => {
       }
       return;
     }
-    if (b.id === "retry" && pending) {
+    if ((b.id === "retry" || b.id === "retry-start-stock") && pending) {
       const task = pending;
-      await save(task.action, JSON.parse(task.signature).fields, [...dirty][0]);
+      await save(task.action, JSON.parse(task.signature).fields, task.keepStart ? $("#start-form") : [...dirty][0], task.keepStart);
+      return;
+    }
+    if (b.id === "save-start-stock") {
+      const changes = startStockChanges();
+      if (!stockConflict && changes.length) await save("inventory", {changes}, $("#start-form"), true);
+      return;
+    }
+    if (b.id === "reload-start-stock") {
+      if (busy || pending) return;
+      await load();
+      startStocks.clear();
+      stockConflict = false;
+      startPreview();
       return;
     }
     if (b.dataset.start) {
