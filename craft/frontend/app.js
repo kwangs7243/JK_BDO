@@ -4,9 +4,9 @@ import { calculate } from "./calculator.js";
 const $ = selector => document.querySelector(selector);
 const fmt = value => value === null ? "미확인" : Number(value).toLocaleString("ko-KR");
 const el = (tag, cls, text) => { const node = document.createElement(tag); if (cls) node.className = cls; if (text !== undefined) node.textContent = text; return node; };
-let items = [], categories = {}, inventory = {}, preferences = {revision:0, favorites:[]};
+let items = [], categories = {}, preferences = {revision:0, favorites:[]};
 let current = null, recipeIndex = 0, category = "all", favoritesOnly = false, visible = 36, loading = 0;
-let expansions = {}, owned = {}, lastPlan = null, navigation = [], favoritePending = false;
+let expansions = {}, lastPlan = null, navigation = [], favoritePending = false;
 const cache = new Map();
 const status = (message, kind = "info") => { $("#status").textContent = message; if (message && kind === "error") notice(message, kind); };
 async function api(path, options = {}) {
@@ -50,8 +50,8 @@ async function selectItem(id, backward = false) {
     const item = await getItem(id);
     if (request !== loading) return;
     if (current && !backward && current.id !== id) navigation = [...navigation.slice(-19), current.id];
-    current = item; recipeIndex = 0; expansions = {}; owned = {};
-    $("#count").value = "1"; $("#use-stock").checked = false; $("#expansion").hidden = true;
+    current = item; recipeIndex = 0; expansions = {};
+    $("#count").value = "1"; $("#expansion").hidden = true;
     const url = new URL(location.href); url.searchParams.set("item", id); history.replaceState(null, "", url);
     $("#welcome").hidden = true; $("#detail").hidden = false;
     $("#item-name").textContent = item.name;
@@ -108,7 +108,6 @@ function renderRelated() {
   }
   render();
 }
-function stockFor(id) { return Object.hasOwn(owned,id) ? owned[id] : inventory[id] ?? null; }
 function renderCalculation() {
   const countValue = Number($("#count").value);
   for (const preset of document.querySelectorAll("[data-count]")) {
@@ -116,7 +115,7 @@ function renderCalculation() {
   }
   const recipe = current?.recipes[recipeIndex]; if (!recipe) return;
   let plan;
-  try { plan = calculate(recipe, Number($("#count").value), expansions, $("#use-stock").checked ? {...inventory, ...owned} : {}); }
+  try { plan = calculate(recipe, Number($("#count").value), expansions); }
   catch (error) {
     lastPlan = null; $("#copy").disabled = true;
     $("#materials").replaceChildren(el("p", "calculation-hint", "유효한 제작 횟수를 입력하면 재료를 계산합니다."));
@@ -131,29 +130,17 @@ function renderCalculation() {
     text.append(button(row.name, () => void selectItem(row.id), "item-link"), el("span", "unit", row.expanded ? `하위 제작 ${fmt(row.batches)}회` : `필요 총량 ${fmt(row.total)}개`));
     const amount = el("span", "amount", fmt(row.need)); if (row.need !== null) amount.append(el("small", "", "개"));
     top.append(picture(row.icon), text, amount);
-    const bottom = el("div", "material-bottom"), stock = el("label", "", "보유 ");
-    const input = el("input", "owned-input"); input.type = "number"; input.min = "0"; input.step = "1";
-    input.placeholder = Object.hasOwn(inventory, row.id) ? "미확인" : "미등록"; input.value = stockFor(row.id) ?? "";
-    input.setAttribute("aria-label", `${row.name} 계산용 보유량`);
-    input.addEventListener("change", () => {
-      const value = Number(input.value);
-      if (!input.value.trim()) delete owned[row.id];
-      else if (!Number.isSafeInteger(value) || value < 0) { status("보유량은 0 이상의 정수로 입력하세요."); return; }
-      else owned[row.id] = value;
-      $("#use-stock").checked = true; renderCalculation();
-    });
-    stock.append(input);
+    const bottom = el("div", "material-bottom");
     const action = button(row.expanded ? "하위 제작 접기 −" : "하위 제작 펼치기 +", () => {
       if (row.expanded) { delete expansions[row.id]; $("#expansion").hidden = true; renderCalculation(); }
       else void openExpansion(row);
     }, "expand-button");
-    bottom.append(stock, action); card.append(top, bottom); materials.append(card);
+    bottom.append(action); card.append(top, bottom); materials.append(card);
   }
   const shopping = $("#shopping-list"); shopping.replaceChildren();
   for (const row of plan.leaves) {
     const node = el("div", "shopping-row");
     node.append(el("span", "", row.name));
-    if ($("#use-stock").checked && row.owned === null) node.append(el("small", "", "보유 미확인 · 필요 총량"));
     node.append(el("span", "quantity", row.need === null ? "수량 확인 필요" : `${fmt(row.need)}개`)); shopping.append(node);
   }
 }
@@ -170,11 +157,11 @@ async function openExpansion(row) {
     const apply = button("계산에 반영", () => {
       const value = Number(input.value);
       const candidate = {...expansions, [row.id]:{recipe:item.recipes[Number(select.value)], yield:value}};
-      try { calculate(current.recipes[recipeIndex], Number($("#count").value), candidate, $("#use-stock").checked ? {...inventory,...owned}:{}); }
+      try { calculate(current.recipes[recipeIndex], Number($("#count").value), candidate); }
       catch (error) { status(error.message, "error"); return; }
       expansions=candidate; host.hidden=true; renderCalculation();
     }, "primary");
-    host.append(select,label,apply,el("p", "", "원본에 1회 산출량이 없어 직접 입력합니다. 요리·연금·가공의 실제 산출량은 달라질 수 있습니다. 원재료 보유분은 전체 계산에서 한 번만 반영합니다.")); status("");
+    host.append(select,label,apply,el("p", "", "원본에 1회 산출량이 없어 직접 입력합니다. 요리·연금·가공의 실제 산출량은 달라질 수 있습니다. 선택한 산출 기준으로 하위 재료 필요량을 계산합니다.")); status("");
   } catch (error) { status(error.message, "error"); }
 }
 $("#search").addEventListener("input", () => { visible=36; renderList(); });
@@ -185,13 +172,8 @@ $("#back").addEventListener("click", () => { const id=navigation.pop(); if(id) v
 $("#count").addEventListener("input", renderCalculation);
 $("#minus").addEventListener("click", () => { $("#count").value=Math.max(1,Number($("#count").value)-1); renderCalculation(); });
 $("#plus").addEventListener("click", () => { $("#count").value=Math.min(1_000_000,Number($("#count").value)+1); renderCalculation(); });
-$("#use-stock").addEventListener("change", renderCalculation);
 for (const node of document.querySelectorAll("[data-count]")) node.addEventListener("click", () => { $("#count").value=node.dataset.count; renderCalculation(); });
 for (const node of document.querySelectorAll("[data-start]")) node.addEventListener("click", () => void selectItem(node.dataset.start));
-$("#refresh-stock").addEventListener("click", async () => {
-  try { const data=await api("bootstrap"); inventory=data.inventory; preferences=data.preferences; renderCalculation(); if(current) renderFavorite(); renderList(); status("공유 재고를 다시 불러왔습니다."); }
-  catch(error) { status(error.message, "error"); }
-});
 $("#favorite").addEventListener("click", async () => {
   if(favoritePending || !current) return; favoritePending=true; $("#favorite").disabled=true;
   try {
@@ -208,7 +190,7 @@ $("#copy").addEventListener("click", async () => {
 });
 document.addEventListener("keydown", event => { if(event.key==="/" && !event.target.closest("input,textarea,select")) { event.preventDefault(); $("#search").focus(); } });
 try {
-  const [catalog, data]=await Promise.all([api("catalog"),api("bootstrap")]); items=catalog.items; categories=catalog.categories; inventory=data.inventory; preferences=data.preferences;
+  const [catalog, savedPreferences]=await Promise.all([api("catalog"),api("preferences")]); items=catalog.items; categories=catalog.categories; preferences=savedPreferences;
   for (const [id,name] of [["all","전체"],...Object.entries(categories)]) {
     const node=button(name,()=>{category=id;visible=36;for(const child of $("#categories").children) child.setAttribute("aria-pressed",String(child===node));renderList();}); node.setAttribute("aria-pressed",String(id==="all")); $("#categories").append(node);
   }

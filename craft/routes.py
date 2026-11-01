@@ -33,7 +33,10 @@ def item(item_id):
 
 
 @craft_api.put("/preferences")
+@craft_api.get("/preferences")
 def preferences():
+    if request.method == "GET":
+        return jsonify(current_app.extensions["craft_storage"].preferences())
     body = request.get_json()
     if not isinstance(body, dict) or set(body) != {"revision", "favorites"}:
         raise ValueError("즐겨찾기 저장 내용을 확인하세요.")

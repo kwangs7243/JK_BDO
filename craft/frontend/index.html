@@ -8,7 +8,7 @@
       <nav id="categories" aria-label="품목 분류"></nav>
       <div class="list-heading"><span id="result-count">품목을 불러오는 중</span><button id="favorites-only" aria-pressed="false">☆ 즐겨찾기</button></div>
       <div id="items" class="item-list" aria-label="품목 목록"></div><div class="list-heading"><button id="previous" class="load-more" disabled>← 이전</button><button id="more" class="load-more" hidden>다음 →</button></div>
-      <footer class="library-footer"><span class="status-dot"></span><span>공유 재고 · 계산은 독립적으로</span><button id="refresh-stock" aria-label="공유 재고 새로고침">↻</button></footer>
+      <footer class="library-footer"><span class="status-dot"></span><span>제작 횟수별 재료 계산</span></footer>
 
     </aside>
     <section class="desk" aria-label="제작 계산">
@@ -20,8 +20,8 @@
         <details class="description"><summary>아이템 설명과 획득 방법</summary><p id="description"></p></details>
         <section class="book-left-controls"><div class="section-heading"><h3>제작 방법</h3><span>한 가지 경로를 선택하세요</span></div><div id="recipes" class="recipe-tabs"></div>
           <div class="counter-panel"><div><h3>제작 횟수</h3><p>완성품 개수와 구분되는 제작 횟수입니다.</p></div><div class="counter-controls"><div class="stepper"><button id="minus" aria-label="제작 횟수 줄이기">−</button><input id="count" type="number" min="1" max="1000000" step="1" value="1" aria-label="제작 횟수"><button id="plus" aria-label="제작 횟수 늘리기">+</button><span>회</span></div><div class="quick-counts"><button data-count="1">1회</button><button data-count="10">10회</button><button data-count="100">100회</button><button data-count="1000">1,000회</button></div></div></div>
-          </section></section><section class="book-right-sheet"><section class="book-right-materials"><div class="section-heading"><h3>필요한 재료 <span id="material-count"></span></h3><label class="stock-switch"><input type="checkbox" id="use-stock"> 보유량 반영</label></div>
-          <p class="calculation-hint">보유량은 연금 재고를 읽어옵니다. 직접 입력한 수량은 이 계산에만 사용합니다.</p><div id="materials" class="materials"></div>
+          </section></section><section class="book-right-sheet"><section class="book-right-materials"><div class="section-heading"><h3>필요한 재료 <span id="material-count"></span></h3></div>
+          <p class="calculation-hint">입력한 제작 횟수에 필요한 총수량입니다.</p><div id="materials" class="materials"></div>
           <div id="expansion" class="expansion" hidden></div>
           <section class="shopping"><div class="section-heading"><div><h3>모아야 할 재료</h3></div><button id="copy" class="secondary">목록 복사 ↗</button></div><p>선택한 하위 제작을 합산합니다. 산출량이 변하는 제작은 입력한 산출 기준으로 계산합니다.</p><div id="shopping-list"></div></section>
         </section><div id="no-recipe" class="no-recipe" hidden>수량이 있는 제작식이 없습니다. 위 설명에서 채집·구매 등의 획득 방법을 확인하세요.</div></section></div>

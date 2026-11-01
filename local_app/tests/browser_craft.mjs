@@ -20,13 +20,15 @@ try {
   assert.ok(ready,'isolated craft server ready');
   browser=await chromium.launch({executablePath:process.env.BDO_CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
   const page=await browser.newPage({viewport:{width:1540,height:1050}});
-  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  const errors=[],requests=[];page.on('pageerror',error=>errors.push(error.message));
+  page.on('request',r=>requests.push(new URL(r.url()).pathname));
   // External item artwork is replaced locally; arithmetic and application APIs remain real.
   await page.route('https://www.korbdo.co.kr/png/**',route=>route.fulfill({path:join(root,'craft/frontend/item.svg'),contentType:'image/svg+xml'}));
   await page.goto(base+'/craft/');
   await page.getByRole('button',{name:'🍺 맥주',exact:true}).click();
   await page.locator('#item-name').filter({hasText:'맥주'}).waitFor();
   await page.locator('[data-count="100"]').click();
+  assert.equal(await page.locator('#use-stock, #refresh-stock, .owned-input').count(),0,'notebook has no stock controls');
   assert.match(await page.locator('#shopping-list').innerText(),/밀[\s\S]*500개/);
   assert.match(await page.locator('#shopping-list').innerText(),/요리용 생수[\s\S]*600개/);
   await page.locator('#count').fill('0');
@@ -54,6 +56,7 @@ try {
   await page.screenshot({path:join(out,'craft-mobile.png'),fullPage:true});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'no mobile horizontal overflow');
   assert.deepEqual(errors,[]);
+  assert.equal(requests.some(path=>path==='/api/craft/bootstrap'||path.startsWith('/api/alchemy/')),false,'notebook never reads shared inventory');
   await writeFile(join(out,'browser-result.json'),JSON.stringify({passed:true,countsVerified:true,favoritesPersisted:true,invalidCountsBlocked:true,desktop:true,mobile:true,errors},null,2));
   console.log(JSON.stringify({passed:true,output:out,errors}));
 } finally {

@@ -30,6 +30,7 @@ class CraftTests(unittest.TestCase):
 
     def test_notebook_shares_inventory_without_writing_existing_tables(self):
         before = self.shared_state()
+        self.assertEqual(self.client.get("/api/craft/preferences").get_json(), {"revision": 0, "favorites": []})
         data = self.client.get("/api/craft/bootstrap").get_json()
         self.assertEqual(data["inventory"]["5301"],17)
         item = self.client.get("/api/craft/items/9213").get_json()
