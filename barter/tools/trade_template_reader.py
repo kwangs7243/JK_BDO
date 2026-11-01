@@ -9,7 +9,7 @@ import numpy as np
 from PIL import Image
 
 VERSION = "trade-field-binary-exact-v1"
-BANK_SHA256 = "ca303ce69f63f4a376b16d8b08dfa46c619c84c5c9164c485e9d4da95c467634"
+BANK_SHA256 = "8d350a7e512eb174babece2af9da1ef5767323725cd94f4df903c2e6327f682d"
 
 def _canonical(value):
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -54,6 +54,25 @@ def text_mask(crop, module):
     return result
 
 
+def count_suffix_mask(crop, module):
+    mask = text_mask(crop, module)
+    if mask is None:
+        return None
+    columns = np.flatnonzero(mask.any(axis=0))
+    groups = np.split(columns, np.where(np.diff(columns)>1)[0]+1)
+    for group in reversed(groups):
+        if group[0] < 60 or len(group)>3:
+            continue
+        ys = np.flatnonzero(mask[:,group].any(axis=1))
+        parts = np.split(ys,np.where(np.diff(ys)>1)[0]+1)
+        if len(parts)!=2 or not all(1<=len(p)<=3 for p in parts) or not 4<=parts[1][0]-parts[0][-1]<=10:
+            continue
+        suffix = mask[:,group[-1]+1:]; active = np.flatnonzero(suffix.any(axis=0))
+        if len(active) and 12<=active[-1]-active[0]+1<=45:
+            return suffix[:,active[0]:active[-1]+1]
+    return None
+
+
 def quantity_mask(row, field, module):
     """Outline extraction with a wider guard against omitted digits."""
     import cv2
@@ -78,7 +97,7 @@ def quantity_mask(row, field, module):
     guard_bounds = (.270, .45, .350, .99) if field == "reqAmount" else (.645, .45, .745, .99)
     guard = module._crop(row, guard_bounds)
     grgb = np.asarray(guard.convert("RGB"), dtype=np.int16)
-    gwhite = (grgb.min(axis=2)>155) & (grgb.max(axis=2)-grgb.min(axis=2)<55)
+    gwhite = (grgb.min(axis=2)>100) & (grgb.max(axis=2)-grgb.min(axis=2)<80)
     gcount, _, gstats, _ = cv2.connectedComponentsWithStats(gwhite.astype(np.uint8), 8)
     cx, cy = round(bounds[0]*row.width), round(bounds[1]*row.height)
     gx, gy = round(guard_bounds[0]*row.width), round(guard_bounds[1]*row.height)
@@ -99,7 +118,12 @@ def quantity_mask(row, field, module):
 def quantity_context_key(row, field, module):
     # Keep every bright component in the wider band, including a digit joined to artwork.
     bounds = (.270, .40, .350, .99) if field == "reqAmount" else (.645, .40, .745, .99)
-    return feature_key(module._ink(module._crop(row, bounds), numeric=True))
+    rgb = np.asarray(module._crop(row, bounds).convert("RGB"), dtype=np.int16)
+    low, high = rgb.min(axis=2), rgb.max(axis=2)
+    masks = [(low>100) & (high-low<80), (low>155) & (high-low<55)]
+    if not masks[1].any():
+        return None
+    return f"{rgb.shape[0]}x{rgb.shape[1]}:" + hashlib.sha256(b"".join(np.packbits(m).tobytes() for m in masks)).hexdigest()
 
 
 def get_features(kind, crop, module, *, row=None, field=None):
@@ -136,17 +160,87 @@ def lookup(bank, kind, features, group_count, modes=("native", "scaled", "contex
                 continue
             matched.append((value, refs, mode))
     labels = {_canonical(x[0]) for x in matched}
-    if ambiguous or len(labels) != 1:
+    if ambiguous or len(labels) != 1 or kind == "quantity" and not any(mode == "context" for _, _, mode in matched):
         return None
     value = matched[0][0]
     refs = {r["referenceId"]: r for _, items, _ in matched for r in items}
-    return {"value": value, "references": list(refs), "modes": sorted({x[2] for x in matched})}
+    if kind == "unsupportedOutput" and any(r.get("source", {}).get("verification") != "ORIGINAL_IMAGE_AUDIT" for r in refs.values()):
+        return None
+    return {"value": value, "references": list(refs), "modes": sorted({x[2] for x in matched}),
+            **({"sourceVerification":"ORIGINAL_IMAGE_AUDIT"} if kind == "unsupportedOutput" else {})}
+
+
+def packed_mask(mask):
+    return {"height": mask.shape[0], "width": mask.shape[1], "bits": np.packbits(mask).tobytes().hex()}
+
+
+def unpacked_mask(value):
+    height, width = value["height"], value["width"]
+    if type(height) is not int or type(width) is not int or not 3 <= height <= 120 or not 3 <= width <= 1600:
+        raise ValueError("invalid complete name mask")
+    bits = np.unpackbits(np.frombuffer(bytes.fromhex(value["bits"]), dtype=np.uint8))
+    if len(bits) != ((height * width + 7) // 8) * 8:
+        raise ValueError("invalid name mask length")
+    return bits[:height * width].reshape(height, width).astype(bool)
+
+
+class IslandPixelIndex:
+    """Bounded complete-field variation with separation from competing labels."""
+    def __init__(self, bank, kind="island", *, mask_key=None):
+        references = {r["referenceId"]: r for key, refs in bank["lookup"].items() if key.startswith(kind+"|") for r in refs}
+        self.groups = {}
+        self.padded = {}
+        self.counter_suffix = mask_key == "countSuffixMasks"
+        for entry in bank.get(mask_key or ("islandMasks" if kind == "island" else "countMasks"), []):
+            ref = references[entry["referenceId"]]
+            mask = unpacked_mask(entry)
+            self.groups.setdefault(mask.shape, []).append((mask, ref))
+
+    def match(self, mask, allowed):
+        if mask is None:
+            return None
+        candidates = {}
+        for shape, entries in self.groups.items():
+            if any(abs(a-b) > 1 for a, b in zip(shape, mask.shape)):
+                continue
+            h, w = max(shape[0], mask.shape[0])+2, max(shape[1], mask.shape[1])+2
+            queries = []
+            for y in range(3):
+                for x in range(3):
+                    canvas = np.zeros((h, w), dtype=bool)
+                    canvas[y:y+mask.shape[0], x:x+mask.shape[1]] = mask
+                    queries.append(int.from_bytes(np.packbits(canvas).tobytes(), "big"))
+            for ref_mask, ref in entries:
+                if allowed is not None and ref["value"] not in allowed:
+                    continue
+                cache_key = (ref["referenceId"], h, w)
+                if cache_key not in self.padded:
+                    canvas = np.zeros((h,w), dtype=bool)
+                    canvas[1:1+shape[0],1:1+shape[1]] = ref_mask
+                    self.padded[cache_key] = int.from_bytes(np.packbits(canvas).tobytes(), "big")
+                distance = min((query ^ self.padded[cache_key]).bit_count() for query in queries)
+                if ref["value"] not in candidates or distance < candidates[ref["value"]][0]:
+                    candidates[ref["value"]] = (distance, ref)
+        ordered = sorted(candidates.values(), key=lambda entry: entry[0])
+        limit = 2 if self.counter_suffix else min(16, max(4, round(mask.size*.01)))
+        if not ordered or ordered[0][0] > limit:
+            return None
+        best, reference = ordered[0]
+        next_distance = ordered[1][0] if len(ordered) > 1 else None
+        required_margin = 4 + 2*best if self.counter_suffix else 12 + 4*best
+        if next_distance is not None and next_distance - best < required_margin:
+            return None
+        return {"value": reference["value"], "references": [reference], "modes": ["bounded-native-pixels"],
+                "pixelDifference": best, "nextLabelDifference": next_distance}
 
 
 class TemplateReader:
     def __init__(self, path, *, ink, crop):
         self.extractor = SimpleNamespace(_ink=ink, _crop=crop)
         self.bank = None
+        self.island_index = None
+        self.count_index = None
+        self.count_suffix_index = None
         self.enabled = False
         self.stats = {"bankVersion": VERSION, "bankSha256": BANK_SHA256,
                       "available": False, "attempts": 0, "hits": 0, "byKind": {}, "lookupSeconds": 0.0}
@@ -158,8 +252,13 @@ class TemplateReader:
             if bank.get("version") != VERSION or not isinstance(bank.get("lookup"), dict):
                 raise ValueError("unsupported bank")
             self.bank = bank
+            self.island_index = IslandPixelIndex(bank)
+            self.count_index = IslandPixelIndex(bank, "count")
+            self.count_suffix_index = IslandPixelIndex(bank, "count", mask_key="countSuffixMasks")
             self.stats.update(available=True, referenceCount=bank["referenceCount"])
         except (OSError, ValueError, KeyError, TypeError):
+            self.bank = None
+            self.island_index = None
             self.stats["fallbackReason"] = "bank_missing_or_invalid"
 
     def configure(self, image, metadata):
@@ -177,6 +276,12 @@ class TemplateReader:
         try:
             features, groups = get_features(kind, crop, self.extractor, row=row, field=field)
             hit = lookup(self.bank, kind, features, groups, allowed=allowed)
+            if hit is None and kind == "island" and self.island_index is not None:
+                hit = self.island_index.match(text_mask(crop, self.extractor), allowed)
+            if hit is None and kind == "count" and self.count_index is not None:
+                hit = self.count_index.match(text_mask(crop, self.extractor), allowed)
+            if hit is None and kind == "count" and self.count_suffix_index is not None:
+                hit = self.count_suffix_index.match(count_suffix_mask(crop, self.extractor), allowed)
         except Exception:
             self.stats["lookupErrors"] = self.stats.get("lookupErrors", 0) + 1
             return None
@@ -189,5 +294,8 @@ class TemplateReader:
         return {"rawOCR": "", "corrected": hit["value"], "reviewRequired": False,
                 "confidence": None, "valueSource": "VERIFIED_TEMPLATE", "variants": [],
                 "templateEvidence": {"bankVersion": VERSION, "bankSha256": BANK_SHA256,
-                                     "references": hit["references"], "modes": hit["modes"]},
+                                     **({"fieldKind":"unsupportedOutput", "sourceVerification":hit["sourceVerification"]}
+                                        if kind == "unsupportedOutput" else {}),
+                                     "references": hit["references"], "modes": hit["modes"],
+                                     **{k:hit[k] for k in ("pixelDifference", "nextLabelDifference") if k in hit}},
                 **({"masterMatch": "RESOLVED"} if kind in ("island", "item") else {})}

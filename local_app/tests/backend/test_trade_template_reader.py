@@ -13,6 +13,15 @@ from barter.tools.trade_live_ocr import _crop, _ink
 
 
 class TradeTemplateReaderTests(unittest.TestCase):
+    def test_unsupported_output_needs_original_image_verification(self):
+        reference = {'referenceId':'unused', 'value':'[대양] 관측 보고서', 'source':{'verification':'UNVERIFIED'}}
+        bank = {'lookup':{'unsupportedOutput|native|whole':[reference]}}
+        self.assertIsNone(templates.lookup(bank, 'unsupportedOutput', {'native':'whole'}, None))
+        reference['source']['verification'] = 'ORIGINAL_IMAGE_AUDIT'
+        hit = templates.lookup(bank, 'unsupportedOutput', {'native':'whole'}, None)
+        self.assertEqual(hit['sourceVerification'], 'ORIGINAL_IMAGE_AUDIT')
+        self.assertEqual(hit['references'], ['unused'])
+
     def test_repository_bank_matches_pinned_runtime_integrity(self):
         path = Path(__file__).resolve().parents[3] / 'barter/recognition_data/trade-templates.json'
         reader = templates.TemplateReader(path, ink=_ink, crop=_crop)
@@ -21,9 +30,33 @@ class TradeTemplateReaderTests(unittest.TestCase):
         references = {r['referenceId'] for refs in reader.bank['lookup'].values() for r in refs}
         self.assertEqual(reader.stats['referenceCount'], len(references))
         for key, refs in reader.bank['lookup'].items():
-            self.assertTrue(key.startswith(('item|native|', 'item|scaled|', 'island|native|', 'island|scaled|')))
+            self.assertTrue(key.startswith(('item|native|', 'item|scaled|', 'island|native|', 'island|scaled|', 'count|native|', 'count|scaled|', 'quantity|', 'unsupportedOutput|')))
             for reference in refs:
                 self.assertEqual(reference['source']['fontPolicy'], 'OCR_PRIMARY_20261027')
+                if key.startswith(('count|', 'quantity|')):
+                    self.assertEqual(reference['source']['verification'], 'ORIGINAL_IMAGE_AUDIT')
+
+    def test_island_tolerance_keeps_all_components_and_rejects_close_labels(self):
+        mask = np.zeros((16, 50), dtype=bool)
+        mask[2:14, 1:8] = True
+        mask[3:13, 24:45] = True
+        ref = {'referenceId': 'one', 'value': 'island-a'}
+        bank = {'lookup': {'island|native|x':[ref]},
+                'islandMasks': [{'referenceId':'one', **templates.packed_mask(mask)}]}
+        index = templates.IslandPixelIndex(bank)
+        changed = mask.copy(); changed[2, 1] = False
+        self.assertEqual(index.match(changed, {'island-a'})['value'], 'island-a')
+        self.assertIsNone(index.match(changed, {'island-b'}))
+        changed[2:5, 1] = False; changed[3, 2] = False
+        self.assertEqual(index.match(changed, None)['value'], 'island-a')
+        changed[2:14, 2] = False
+        self.assertIsNone(index.match(changed, None))
+        extra = np.pad(mask, ((0,0),(0,10))); extra[2:14,-5:] = True
+        self.assertIsNone(index.match(extra, None))
+        competitor = mask.copy(); competitor[2,2] = False
+        bank['lookup']['island|native|y'] = [{'referenceId':'two', 'value':'island-b'}]
+        bank['islandMasks'].append({'referenceId':'two', **templates.packed_mask(competitor)})
+        self.assertIsNone(templates.IslandPixelIndex(bank).match(mask, None))
 
     def test_whole_field_does_not_match_substring_or_clipped_edge(self):
         glyph = np.zeros((20, 40, 3), dtype=np.uint8)
@@ -56,7 +89,9 @@ class TradeTemplateReaderTests(unittest.TestCase):
         bank = {'lookup': {'quantity|native|key': refs}}
         self.assertIsNone(templates.lookup(bank, 'quantity', {'native': 'key'}, 1))
         self.assertIsNone(templates.lookup(bank, 'quantity', {'native': 'key'}, 2, allowed={2, 3}))
-        self.assertEqual(templates.lookup(bank, 'quantity', {'native': 'key'}, 2)['value'], 12)
+        self.assertIsNone(templates.lookup(bank, 'quantity', {'native': 'key'}, 2))
+        bank['lookup']['quantity|context|whole'] = refs
+        self.assertEqual(templates.lookup(bank, 'quantity', {'native': 'key','context':'whole'}, 2)['value'], 12)
         refs.append({'value': 2, 'referenceId': 'b'})
         self.assertIsNone(templates.lookup(bank, 'quantity', {'native': 'key'}, 2))
         bank = {'lookup': {'item|native|a': [{'value': 'one', 'referenceId': 'a'}],

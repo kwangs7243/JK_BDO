@@ -1,9 +1,22 @@
-"""Whole-number neural recognition; no fixed-width digit cells or glyph templates."""
+"""Original-pixel numeric evidence first; OCR supplies unverified proposals."""
 from __future__ import annotations
 
 import re
+import hashlib
+import json
+from pathlib import Path
 import numpy as np
 from PIL import Image, ImageOps
+
+
+def warehouse_number_key(image):
+    # Preserve the entire slot at two thresholds, including every possible leading digit.
+    rgb = np.asarray(image.convert("RGB"), dtype=np.int16)
+    if rgb.shape != (43, 43, 3):
+        return None
+    low, high = rgb.min(axis=2), rgb.max(axis=2)
+    masks = [(low > 100) & (high-low < 80), (low > 145) & (high-low < 55)]
+    return "43x43:" + hashlib.sha256(b"".join(np.packbits(mask).tobytes() for mask in masks)).hexdigest()
 
 
 def number_views(image, *, warehouse=False):
@@ -28,7 +41,8 @@ def number_views(image, *, warehouse=False):
         b = stats[i]
         if abs(int(b[1] + b[3] - a[1] - a[3])) > 2 or b[0] + b[2] > a[0] + a[2] + 1:
             continue
-        if left - (b[0] + b[2]) > 3:
+        # A narrow '1' leaves four blank columns before the next digit in the current font.
+        if left - (b[0] + b[2]) > max(3, round(a[3] * .4)):
             break
         selected.append(i); left = min(left, int(b[0]))
     keep = np.isin(labels, selected)
@@ -45,8 +59,8 @@ def number_views(image, *, warehouse=False):
     return views
 
 
-def decide_number(readings, *, minimum=0, maximum=9999):
-    variants, votes, methods = [], {}, {}
+def decide_number(readings, *, minimum=0, maximum=9999, require_whole=False):
+    variants, votes, methods, whole = [], {}, {}, set()
     for method, (text, confidence) in readings:
         match = re.fullmatch(r"[^\w+\-]*([0-9]+(?:[,. ][0-9]+)*)[^\w+\-]*", text)
         token = re.sub(r"[,. ]", "", match[1]) if match else ""
@@ -54,12 +68,16 @@ def decide_number(readings, *, minimum=0, maximum=9999):
         if value is not None and not minimum <= value <= maximum:
             value = None
         variants.append({"text": text, "confidence": confidence, "method": method})
+        if value is not None and method.split(":")[-1] == "whole" and confidence >= .80:
+            whole.add(value)
         if value is not None and confidence >= .85:
             votes.setdefault(value, []).append(confidence)
             methods.setdefault(value, set()).add(method.split(":")[-1])
     agreed = [value for value in votes if len(methods[value]) >= 2]
     strong = {value for value, scores in votes.items() if max(scores) >= .97}
-    accepted = len(agreed) == 1 and not (strong - set(agreed))
+    accepted = len(agreed) == 1 and not (strong - set(agreed)) and not (whole - set(agreed))
+    if require_whole:
+        accepted = accepted and bool(whole & set(agreed))
     value = agreed[0] if accepted else None
     return {"status": "QUANTITY_MATCH" if accepted else "QUANTITY_UNKNOWN", "value": value,
             "rawOCR": variants[0]["text"] if variants else "", "variants": variants,
@@ -69,20 +87,113 @@ def decide_number(readings, *, minimum=0, maximum=9999):
 
 
 class NumericOCR:
-    def __init__(self, reader):
+    def __init__(self, reader, *, template_bank_path=None):
         self.reader = reader
+        self.template_bank_path = template_bank_path
+        self.warehouse_bank = None
+        self.warehouse_bank_sha = None
+        self.template_hits = 0
+        self.glyph_hits = 0
+        self.bank_data = None
+        self.visual = None
+        self.non_items = []
+
+    def _load_bank(self):
+        if self.bank_data is None:
+            from .trade_template_reader import BANK_SHA256
+            from .visual_numbers import VisualNumbers
+            self.bank_data = {}
+            try:
+                path = self.template_bank_path or Path(__file__).resolve().parents[1] / "recognition_data/trade-templates.json"
+                data = Path(path).read_bytes()
+                if hashlib.sha256(data).hexdigest() == BANK_SHA256:
+                    self.bank_data = json.loads(data)
+                    self.warehouse_bank_sha = BANK_SHA256
+            except (OSError, ValueError, TypeError):
+                pass
+            self.visual = VisualNumbers(self.bank_data.get("digitGlyphs", []))
+            import zlib
+            self.non_items = [(entry, np.frombuffer(zlib.decompress(bytes.fromhex(entry["pixels"])), dtype=np.uint8).reshape(43,43,3))
+                              for entry in self.bank_data.get("warehouseNonItems", [])
+                              if entry.get("verification") == "ORIGINAL_IMAGE_AUDIT"]
+        return self.bank_data
+
+    def visual_result(self, evidence, *, minimum=0, maximum=9999):
+        if evidence is None or not minimum <= evidence["value"] <= maximum:
+            return None
+        self.glyph_hits += 1
+        return {"status":"QUANTITY_MATCH", "value":evidence["value"], "rawOCR":"", "variants":[],
+                "confidence":None, "method":"audited-complete-numeric-glyphs", "valueSource":"VERIFIED_NUMERIC_GLYPHS",
+                "numericEvidence":{"bankSha256":self.warehouse_bank_sha, **evidence}}
+
+    def trade(self, row, field, extractor):
+        self._load_bank()
+        return self.visual_result(self.visual.trade(row, field, extractor), minimum=1)
+
+    def non_item(self, image):
+        pixels = np.asarray(image.convert("RGB"), dtype=np.int16)
+        if pixels.shape != (43,43,3):
+            return None
+        self._load_bank()
+        for entry, reference in self.non_items:
+            difference = np.abs(pixels-reference)
+            if difference.max() <= 3 and np.mean(difference.astype(float)**2) <= .36:
+                return {"kind":entry["kind"], "referenceId":entry["referenceId"], "bankSha256":self.warehouse_bank_sha}
+            if (pixels.max(axis=2)-pixels.min(axis=2)).max() <= 12 and (reference.max(axis=2)-reference.min(axis=2)).max() <= 12:
+                if all(np.array_equal(pixels.min(axis=2)>level, reference.min(axis=2)>level) for level in (65,95)):
+                    return {"kind":entry["kind"], "referenceId":entry["referenceId"], "bankSha256":self.warehouse_bank_sha,
+                            "method":"neutral-control-two-mask-exact"}
+        return None
+
+    def _warehouse_templates(self):
+        if self.warehouse_bank is None:
+            self.warehouse_bank = self._load_bank().get("warehouseLookup", {})
+        return self.warehouse_bank
 
     def read_many(self, images, *, warehouse=False, minimum=0, maximum=9999):
-        groups = [number_views(image, warehouse=warehouse) for image in images]
+        matches, pending, indices = {}, [], []
+        bank = self._warehouse_templates() if warehouse else {}
+        for index, image in enumerate(images):
+            refs = bank.get(warehouse_number_key(image), []) if warehouse else []
+            values = {r["value"] for r in refs}
+            if len(values) == 1 and type(next(iter(values))) is int and minimum <= next(iter(values)) <= maximum:
+                value = next(iter(values)); self.template_hits += 1
+                matches[index] = {"status":"QUANTITY_MATCH", "value":value, "rawOCR":"", "variants":[],
+                                  "confidence":None, "method":"whole-slot-two-mask-exact", "valueSource":"VERIFIED_TEMPLATE",
+                                  "templateEvidence":{"bankSha256":self.warehouse_bank_sha,"references":refs}}
+            else:
+                self._load_bank()
+                evidence = self.visual.warehouse(image) if warehouse else self.visual.isolated(image)
+                visual = self.visual_result(evidence, minimum=minimum, maximum=maximum)
+                if visual:
+                    matches[index] = visual
+                    continue
+                indices.append(index); pending.append(image)
+        if not pending:
+            return [matches[index] for index in range(len(images))]
+        groups = [number_views(image, warehouse=warehouse) for image in pending]
         values = iter(self.reader.read_many([image for group in groups for _, image in group]))
         results = []
-        for group in groups:
+        for source_image, group in zip(pending, groups):
             readings = [(method, next(values)) for method, _ in group]
-            result = decide_number(readings, minimum=minimum, maximum=maximum)
+            result = decide_number(readings, minimum=minimum, maximum=maximum, require_whole=warehouse)
             if result["value"] is None:
-                for method, image in group:
+                for method, view_image in group:
                     if method in {"whole", "tight-color"}:
-                        readings.append(("full-width:" + method, self.reader.read(image)))
-                result = decide_number(readings, minimum=minimum, maximum=maximum)
+                        readings.append(("full-width:" + method, self.reader.read(view_image)))
+                result = decide_number(readings, minimum=minimum, maximum=maximum, require_whole=warehouse)
+            visual = self.visual.outlined_warehouse(source_image) if warehouse else None
+            if visual and result['value'] == visual['value']:
+                whole = [(text,score) for method,(text,score) in readings if method.split(':')[-1]=='whole']
+                if any(text.strip()==str(visual['value']) and score>=.90 for text,score in whole):
+                    hit = self.visual_result(visual, minimum=minimum, maximum=maximum)
+                    hit.update(rawOCR=result['rawOCR'], variants=result['variants'])
+                    hit['numericEvidence']['method'] = 'outlined-glyphs-and-whole-ocr'
+                    results.append(hit)
+                    continue
+            # Multiple OCR views share the same model and can agree on the same wrong digit.
+            result.update(candidate=result["value"], value=None, status="QUANTITY_UNKNOWN",
+                          reason="numeric_visual_evidence_missing", valueSource="NUMERIC_OCR_CANDIDATE")
             results.append(result)
-        return results
+        matches.update(zip(indices, results))
+        return [matches[index] for index in range(len(images))]

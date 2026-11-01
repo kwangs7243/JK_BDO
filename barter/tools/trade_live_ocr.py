@@ -684,33 +684,35 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
         icons = ItemIconReader()
     except (OSError, ValueError, KeyError, TypeError):
         icons = None
-    numeric = NumericOCR(reader)
+    numeric = NumericOCR(reader, template_bank_path=template_bank_path)
     icon_hits = 0
 
     def name(crop, candidates, literal_candidates=(), *, kind="item"):
         return (templates.match(kind, crop, allowed=set(candidates) | set(literal_candidates))
                 or read_catalog_name(reader, crop, candidates, literal_candidates))
 
+    def unused_output(crop):
+        hit = templates.match("unsupportedOutput", crop)
+        return hit if hit and hit["corrected"] not in items else None
+
     def count(crop):
-        return templates.match("count", crop) or read_count(reader, crop)
+        hit = templates.match("count", crop)
+        if hit:
+            return hit
+        result = read_count(reader, crop)
+        return {**result, "reviewRequired": True, "valueSource": "NUMERIC_OCR_CANDIDATE",
+                "reviewReason": "남은 교환 횟수를 확인할 정답 이미지가 없습니다."}
 
     def quantity(row, field, allowed=None, destination=None, fast=None):
-        if field == "reqAmount" or allowed is not None:
-            try:
-                isolated = _outlined_quantity_image(row, field)
-            except Exception:
-                isolated = None
-            if isolated is not None:
-                result = fast if fast is not None else numeric.read_many([isolated[0]], minimum=1)[0]
-                value = result["value"]
-                if value is not None and len(str(value)) == isolated[1] and (allowed is None or value in allowed):
-                    return {"rawOCR": result["rawOCR"], "corrected": value, "reviewRequired": False,
-                            "confidence": result["confidence"], "variants": result["variants"],
-                            "valueSource": "NUMERIC_OCR_CONSENSUS", **({"allowedValues": list(allowed)} if allowed else {})}
-        # Trade overlays need their artwork/context guard; the warehouse's glyph isolation is unsuitable here.
+        hit = templates.match("quantity", None, row=row, field=field, allowed=allowed)
+        if hit:
+            return hit
+        result = fast or (numeric.trade(row, field, templates.extractor) if templates.enabled else None)
+        if result and (allowed is None or result["value"] in allowed):
+            return {**result, "corrected": result["value"], "reviewRequired": False}
         result = read_requirement(reader, row) if field == "reqAmount" else read_yield(reader, row, allowed, destination)
-        result.setdefault("valueSource", "NUMERIC_OCR_CONTEXT")
-        return result
+        return {**result, "reviewRequired": True, "valueSource": "NUMERIC_OCR_CANDIDATE",
+                "reviewReason": "숫자 전체를 확인할 정답 이미지 근거가 부족합니다."}
 
     try:
         catalog = json.loads((Path(__file__).resolve().parents[1] / "frontend/data/trade-catalog.json").read_text(encoding="utf-8"))
@@ -747,9 +749,10 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
                 else:
                     try:
                         crop = _crop(row, bounds[field])
-                        cached = templates.match("item", crop, allowed=set(items))
+                        cached = templates.match("item", crop, allowed=set(items)) or (unused_output(crop) if field == "toItem" else None)
                         if cached:
                             name_results[ordinal, field] = cached
+                            preliminary[field] = cached
                         else:
                             prewarm.extend(_name_images(crop))
                     except Exception:
@@ -757,7 +760,7 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
             for field in ("island", "count"):
                 try:
                     crop = _crop(row, bounds[field])
-                    cached = templates.match("island", crop, allowed=set(islands)) if field == "island" else None
+                    cached = templates.match("island", crop, allowed=set(islands)) if field == "island" else templates.match("count", crop)
                     if cached:
                         name_results[ordinal, field] = cached
                     else:
@@ -767,18 +770,18 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
             apply_trade_rules(preliminary, item_stages)
             source, destination = trade_stages(preliminary, item_stages)
             for field in ("reqAmount", "yield"):
-                if preliminary[field].get("valueSource") == "TRADE_RULE" or field == "yield" and (source, destination) not in {(1, 2), (2, 3)}:
+                if preliminary[field].get("valueSource") == "TRADE_RULE":
                     continue
                 try:
-                    isolated = _outlined_quantity_image(row, field)
+                    verified = numeric.trade(row, field, templates.extractor) if templates.enabled else None
                 except Exception:
-                    isolated = None
-                if isolated is not None:
-                    fast_keys.append((ordinal, field)); fast_images.append(isolated[0])
+                    verified = None
+                if verified:
+                    fast_keys.append((ordinal, field)); fast_images.append(verified)
         # Acceleration failures fall back to the guarded per-field path below.
         try:
             reader.read_many(prewarm, compact=False)
-            fast_results = dict(zip(fast_keys, numeric.read_many(fast_images, minimum=1)))
+            fast_results = dict(zip(fast_keys, fast_images))
         except Exception:
             fast_results = {}
         capture_results.append({"captureId": capture["captureId"], "rows": len(boxes),
@@ -793,7 +796,7 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
                     if field == "reqAmount":
                         crop = _requirement_crop(row)
                     if field == "count":
-                        fields[field] = count(crop)
+                        fields[field] = name_results.get((ordinal, field)) or count(crop)
                     elif field in NUMERIC:
                         apply_trade_rules(fields, item_stages)
                         if fields[field].get("valueSource") == "TRADE_RULE":

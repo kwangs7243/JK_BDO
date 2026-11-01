@@ -170,6 +170,13 @@ function markUnregisteredCandidate(row, catalog) {
   const items = [...Object.values(catalog.masterData).flat(), ...catalog.specialItems];
   if (!field.corrected || field.reviewDraft !== undefined
       || getSafeUniqueItemMatch(field.corrected, items).status !== "unmatched") return;
+  if (field.valueSource === "VERIFIED_TEMPLATE" && field.templateEvidence?.fieldKind === "unsupportedOutput"
+      && field.templateEvidence.references?.length
+      && field.templateEvidence.sourceVerification === "ORIGINAL_IMAGE_AUDIT") {
+    Object.assign(field, {supportStatus:"UNREGISTERED_CANDIDATE", reviewRequired:true, importReview:true,
+      reviewReason:"원본 이미지로 확인된 미지원 획득품입니다. 자동제외 설정을 따릅니다."});
+    return;
+  }
   const readings = (field.variants?.length ? field.variants : [{text:field.rawOCR, confidence:field.confidence}])
     .filter(reading => reading.text && reading.confidence >= .75);
   const agreeing = readings.filter(reading => getSafeUniqueItemMatch(

@@ -153,21 +153,26 @@ class LiveApiTests(unittest.TestCase):
         self.assertEqual(details["snapshot"]["rows"], result["rows"])
         self.assertEqual(details["collection"]["missingFields"][0]["reason"], "USER_FEEDBACK")
 
-    def test_icon_names_and_accepted_numeric_ocr_do_not_collect_images(self):
+    def test_only_uncovered_counter_or_reviewed_numbers_collect_original_images(self):
         batch, result = self.covered_result()
         fields = result["rows"][0]["fields"]
         for name in ("fromItem", "toItem"):
             fields[name].update(valueSource="VERIFIED_ICON", iconEvidence={"distance": .1, "gap": .1})
-        for name in ("reqAmount", "count", "yield"):
+        for name in ("reqAmount", "yield"):
             fields[name].update(valueSource="NUMERIC_OCR_CONSENSUS")
         self.assertEqual(self.post_result(batch, result).status_code, 200)
         self.assertEqual(self.records(include_automatic=True), [])
         fields["count"].update(valueSource="NUMERIC_OCR_CONTEXT", corrected=3)
         self.assertEqual(self.post_result(batch, result).status_code, 200)
-        self.assertEqual(self.records(include_automatic=True), [])
+        records = self.records(include_automatic=True)
+        self.assertEqual(len(records), 1)
+        self.assertEqual(json.loads(records[0][5])["collection"]["missingFields"],
+                         [{"ordinal":0,"field":"count","reason":"MISSING_COUNTER_TEMPLATE"}])
+        self.assertEqual(self.post_result(batch, result).status_code, 200)
+        self.assertEqual(self.records(include_automatic=True), records)
         fields["count"].update(corrected=None, reviewRequired=True)
         self.assertEqual(self.post_result(batch, result).status_code, 200)
-        self.assertEqual(len(self.records(include_automatic=True)), 1)
+        self.assertEqual(len(self.records(include_automatic=True)), 2)
 
     def test_excluded_unused_row_does_not_collect_name_candidates(self):
         batch, result = self.covered_result()

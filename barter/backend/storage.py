@@ -87,11 +87,17 @@ def _trade_sample_collection(capture, details):
         for name, field in row["fields"].items():
             if field.get("valueSource") in {"USER_REVIEW", "USER_EDIT"}:
                 reason = "USER_FEEDBACK"
+            elif (row.get("excluded") and field.get("valueSource") == "VERIFIED_TEMPLATE"
+                  and field.get("templateEvidence", {}).get("fieldKind") == "unsupportedOutput"
+                  and field.get("templateEvidence", {}).get("sourceVerification") == "ORIGINAL_IMAGE_AUDIT"):
+                continue
             elif field.get("reviewRequired") or field.get("corrected") is None:
                 reason = "REVIEW_REQUIRED"
             elif (not row.get("excluded") and name in {"island", "fromItem", "toItem"}
                   and field.get("valueSource") not in {"VERIFIED_TEMPLATE", "VERIFIED_ICON"}):
                 reason = "MISSING_NAME_TEMPLATE"
+            elif not row.get("excluded") and name == "count" and field.get("valueSource") != "VERIFIED_TEMPLATE":
+                reason = "MISSING_COUNTER_TEMPLATE"
             else:
                 continue
             missing.append({"ordinal": row["ordinal"], "field": name, "reason": reason})
@@ -100,7 +106,7 @@ def _trade_sample_collection(capture, details):
     image_hash = hashlib.sha256(capture["imageBytes"]).hexdigest()
     # Ignore upload IDs, review phase and presentation-only fields when deduplicating evidence.
     evidence_keys = {"rawOCR", "corrected", "reviewRequired", "confidence", "valueSource", "box",
-                     "variants", "recognizedStage", "templateEvidence", "iconEvidence", "masterEvidence", "error", "reviewReason"}
+                     "variants", "recognizedStage", "templateEvidence", "numericEvidence", "iconEvidence", "masterEvidence", "error", "reviewReason"}
     evidence_rows = [{"ordinal": row["ordinal"], "rowBox": row["rowBox"],
                       "excluded": row.get("excluded", False),
                       "fields": {name: {key: value for key, value in field.items() if key in evidence_keys}
@@ -112,7 +118,7 @@ def _trade_sample_collection(capture, details):
                                 for correction in details["corrections"]]}
     fingerprint = hashlib.sha256(json.dumps(evidence, ensure_ascii=False, sort_keys=True,
                                            separators=(",", ":"), allow_nan=False).encode("utf-8")).hexdigest()
-    return {"policyVersion": 2, "imageSha256": image_hash, "fingerprint": fingerprint,
+    return {"policyVersion": 3, "imageSha256": image_hash, "fingerprint": fingerprint,
             "missingFields": missing, "reason": "MISSING_OR_REVIEWED_FIELDS" if rows else "NO_ROWS_OR_LEGACY_FEEDBACK"}
 
 

@@ -496,18 +496,18 @@ def convert(image_path: Path, reference_json: Path, templates_path: Path | None,
     items, references = load_reference(reference_json)
     quantity_reader = icon_reader if icon_reader is not None else QuantityReader(templates_path)
     slots = crop_inner_slots(image, xgrid, ygrid)
-    quantities = None
-    if quantity_ocr is not None:
-        inputs = [Image.fromarray(np.rint(slot["rgb"] * 255).astype(np.uint8)) for slot in slots]
-        quantities = quantity_ocr.read_many(inputs, warehouse=True)
+    pending = []
     slot_results: list[dict[str, Any]] = []
     for slot_index, slot_info in enumerate(slots):
         slot = slot_info.pop("rgb")
         source_size = slot_info.pop("source_size")
         result: dict[str, Any] = dict(slot_info)
         result["slot"] = f"R{result['row']}C{result['column']}"
-        if _is_empty(slot):
-            result.update({"decision": "EMPTY", "quantity": None})
+        slot_image = Image.fromarray(np.rint(slot * 255).astype(np.uint8))
+        non_item = quantity_ocr.non_item(slot_image) if quantity_ocr is not None and hasattr(quantity_ocr, "non_item") else None
+        if _is_empty(slot) or non_item:
+            result.update({"decision": "EMPTY", "quantity": None,
+                           **({"nonItemEvidence":non_item} if non_item else {})})
             slot_results.append(result)
             continue
         scores = quantity_reader.icon_scores(slot, items, references)
@@ -516,7 +516,7 @@ def convert(image_path: Path, reference_json: Path, templates_path: Path | None,
         best, runner_up = items[first], items[second]
         best_score, second_score = float(scores[first]), float(scores[second])
         gap = second_score - best_score
-        quantity = quantities[slot_index] if quantities is not None else quantity_reader.read(slot, source_size)
+        quantity = {"status":"QUANTITY_UNKNOWN", "value":None, "reason":"item_not_eligible"}
         result.update(
             {
                 "bestCandidate": best["programName"],
@@ -534,13 +534,18 @@ def convert(image_path: Path, reference_json: Path, templates_path: Path | None,
         elif not best["inventoryTarget"]:
             result["decision"] = "TIER5_IGNORE"
             result["finalItem"] = best["programName"]
-        elif quantity["status"] != "QUANTITY_MATCH":
+        else:
             result["decision"] = "QUANTITY_UNKNOWN"
             result["finalItem"] = best["programName"]
-        else:
-            result["decision"] = "MATCH"
-            result["finalItem"] = best["programName"]
+            pending.append((result, slot_image, slot, source_size))
         slot_results.append(result)
+
+    quantities = (quantity_ocr.read_many([p[1] for p in pending], warehouse=True) if quantity_ocr is not None
+                  else [quantity_reader.read(slot, size) for _, _, slot, size in pending])
+    for (result, _, _, _), quantity in zip(pending, quantities):
+        result["quantity"] = quantity
+        if quantity["status"] == "QUANTITY_MATCH":
+            result["decision"] = "MATCH"
 
     duplicates: dict[str, list[str]] = {}
     for result in slot_results:
@@ -598,9 +603,12 @@ def convert(image_path: Path, reference_json: Path, templates_path: Path | None,
     }
     if quantity_ocr is not None:
         report["thresholds"] = {"iconScoreMax": ICON_SCORE_MAX, "iconGapMin": ICON_GAP_MIN,
-                                "numericConsensusMin": 2, "numericConfidenceMin": .85, "numericConflictConfidence": .97}
-        report["quantityMethod"] = {"method": "whole-number-onnx-consensus", "externalApi": False,
-                                    "fixedDigitCells": False, "modelCalls": quantity_ocr.reader.model_calls}
+                                "verifiedNumericPixelsRequired": True, "glyphMaxPixelDifference": 2,
+                                "glyphMinClassMargin": 3, "ocrProposalConfidenceMin": .85}
+        report["quantityMethod"] = {"method": "verified-pixels-with-ocr-proposals", "externalApi": False,
+                                    "fixedDigitCells": False, "modelCalls": quantity_ocr.reader.model_calls,
+                                    "verifiedWholeSlotHits": getattr(quantity_ocr, "template_hits", 0),
+                                    "verifiedGlyphHits": getattr(quantity_ocr, "glyph_hits", 0)}
     return patch, report
 
 

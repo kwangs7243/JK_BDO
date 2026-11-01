@@ -546,7 +546,7 @@ class LiveListTests(unittest.TestCase):
         self.assertEqual(field["corrected"], "알 수 없는 새 물품")
         self.assertTrue(field["reviewRequired"])
 
-    def test_translated_layout_keeps_preview_boxes_in_original_image_coordinates(self):
+    def test_unverified_counter_cannot_trigger_layout_acceptance(self):
         mapping=json.loads((FIXTURES / "live-list-mapping.json").read_text(encoding="utf-8"))
         captures=[{"captureId":"one","imagePath":FIXTURES / mapping[0]["image"]}]
         uncertain={"rawOCR":"uncertain","corrected":None,"reviewRequired":True,"confidence":0}
@@ -562,7 +562,7 @@ class LiveListTests(unittest.TestCase):
             with patch("barter.tools.trade_live_ocr.fixed_layout_offset",return_value=3), \
                     patch("barter.tools.trade_live_ocr.read_count",side_effect=lambda *args:confirmed.copy()) as read:
                 stable=recognize_live(captures,Path("unused"),"batch")
-                self.assertEqual(read.call_count,6)
+                self.assertEqual(read.call_count,12)
             conflicting={**uncertain,"variants":[{"text":"2","confidence":.99}]}
             with patch("barter.tools.trade_live_ocr.fixed_layout_offset",return_value=3), \
                     patch("barter.tools.trade_live_ocr.read_count",side_effect=[entry.copy() for _ in range(6) for entry in (conflicting,confirmed)]):
@@ -571,8 +571,9 @@ class LiveListTests(unittest.TestCase):
             self.assertEqual(before["rowBox"],after["rowBox"])
             self.assertEqual(before["captureId"],after["captureId"])
             for name,field in before["fields"].items():
-                self.assertEqual(after["fields"][name]["box"],{**field["box"],"x":field["box"]["x"]+(3 if name=="count" else 0)})
-            self.assertEqual(after["fields"]["count"]["corrected"],3)
+                self.assertEqual(after["fields"][name]["box"],field["box"])
+            self.assertIsNone(after["fields"]["count"]["corrected"])
+            self.assertTrue(after["fields"]["count"]["reviewRequired"])
             self.assertEqual(after["fields"]["count"]["rawOCR"],"uncertain")
         for index,row in enumerate(stable["rows"]):
             self.assertEqual(row["fields"]["count"]["box"],original["rows"][index]["fields"]["count"]["box"])

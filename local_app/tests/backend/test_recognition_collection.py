@@ -10,6 +10,27 @@ from contextlib import closing
 from pathlib import Path
 from PIL import Image
 from local_app.backend.app import create_app
+from barter.backend.storage import _trade_sample_collection
+
+
+class TradeCounterCollectionTests(unittest.TestCase):
+    def test_only_missing_counter_shapes_require_a_new_original(self):
+        details = {"engineId":"test", "modelVersion":"test", "workerVersion":"test", "corrections":[],
+                   "snapshot":{"rows":[{"ordinal":0,"rowBox":{"x":0,"y":0,"width":10,"height":10},
+                                         "fields":{"count":{"corrected":5,"reviewRequired":False,"valueSource":"VERIFIED_TEMPLATE"}}}]}}
+        capture = {"imageBytes":b"original"}
+        self.assertIsNone(_trade_sample_collection(capture, details))
+        details["snapshot"]["rows"][0]["fields"]["count"]["valueSource"] = "OCR"
+        collected = _trade_sample_collection(capture, details)
+        self.assertEqual(collected["policyVersion"], 3)
+        self.assertEqual(collected["missingFields"][0]["reason"], "MISSING_COUNTER_TEMPLATE")
+        details["snapshot"]["rows"][0]["excluded"] = True
+        self.assertIsNone(_trade_sample_collection(capture, details))
+        details["snapshot"]["rows"][0]["fields"]["toItem"] = {"corrected":None,"reviewRequired":True}
+        self.assertIsNotNone(_trade_sample_collection(capture, details))
+        details["snapshot"]["rows"][0]["fields"]["toItem"].update(corrected="known-unused",valueSource="VERIFIED_TEMPLATE",
+            templateEvidence={"fieldKind":"unsupportedOutput","sourceVerification":"ORIGINAL_IMAGE_AUDIT"})
+        self.assertIsNone(_trade_sample_collection(capture, details))
 
 
 class WarehouseCollectionTests(unittest.TestCase):

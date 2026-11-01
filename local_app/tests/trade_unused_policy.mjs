@@ -70,6 +70,15 @@ for(const name of ["[대양] 관측 보고서","[대양] 오색빛 산호 노리
   assert.equal(row.fields.toItem.reviewRequired,true,"restoring an unsupported output requires review");
 }
 const weak=makeRow("[대양] 관측 보고서");prepare([weak]);assert.notEqual(weak.excluded,true,"one reading is not sufficient evidence");
+const imageOnly=makeRow("[대양] 관측 보고서");
+Object.assign(imageOnly.fields.toItem,{rawOCR:"",confidence:null,valueSource:"VERIFIED_TEMPLATE",variants:[],
+  templateEvidence:{fieldKind:"unsupportedOutput",sourceVerification:"ORIGINAL_IMAGE_AUDIT",references:["audited-reference-id"]}});
+const invalidImageProof=structuredClone(imageOnly);invalidImageProof.fields.toItem.templateEvidence.sourceVerification="UNVERIFIED";
+prepare([invalidImageProof]);assert.notEqual(invalidImageProof.excluded,true);
+prepare([imageOnly]);assert.equal(imageOnly.excluded,true,"audited complete output pixels need no repeated OCR vote");
+setTradeRowIncluded(imageOnly,true);prepare([imageOnly]);assert.equal(imageOnly.excluded,false);assert.equal(imageOnly.fields.toItem.reviewRequired,true);
+const knownOutput=structuredClone(imageOnly);knownOutput.fields.toItem.corrected="까마귀 주화";delete knownOutput.inclusionOverride;knownOutput.excluded=false;
+prepare([knownOutput]);assert.notEqual(knownOutput.excluded,true,"a supported output cannot become unused from an old template marker");
 const draft=unregistered("[대양] 관측 보고서");draft.fields.toItem.reviewDraft="까마귀 주화";
 prepare([draft]);assert.notEqual(draft.excluded,true,"an in-progress edit cannot be excluded automatically");
 const typo=unregistered("파도의 블랙스든");prepare([typo]);assert.notEqual(typo.excluded,true,"a supported-item typo is corrected rather than excluded");
