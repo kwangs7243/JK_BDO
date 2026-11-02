@@ -118,7 +118,6 @@ main.workspace { padding:1.35rem 1.6rem; min-height:0; min-width:0; overflow:hid
 .trade-recognition-toolbar { flex-wrap:wrap; }
 .trade-recognition-toolbar h3 { font-size:1rem; }
 .trade-recognition-toolbar p { font-size:.8rem; color:var(--muted); }
-[data-action="recognize-trade"] { background:var(--primary); color:#fff; border-color:var(--primary); }
 .trade-review-row { background:var(--surface); border-color:var(--line); border-left-color:var(--warning); }
 .patch-correction-section td:nth-child(2),.patch-correction-section th:nth-child(2) { text-align:left; }
 .trade-review-fields input { background:var(--surface-input); color:var(--text); border-color:var(--line); }
