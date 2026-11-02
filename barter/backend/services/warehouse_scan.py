@@ -141,7 +141,9 @@ def process_warehouse_upload(
             from hashlib import sha256
             sources = [reference_json, root / "tools" / "warehouse_patch" / "warehouse_patch.py"]
             sources += ([root / "barter/recognition_data/warehouse-icons.npz", root / "barter/tools/numeric_ocr.py",
-                         root / "barter/tools/trade_template_reader.py", root / "barter/recognition_data/trade-templates.json"]
+                         root / "barter/tools/trade_template_reader.py", root / "barter/recognition_data/trade-templates.json",
+                         root / "barter/recognition_profiles.py", root / "barter/tools/numeric_profile.py",
+                         root / "barter/recognition_data/numeric-profile-warehouse.json"]
                         if recognize is not None else [templates_path])
             sources.extend(sorted((root / "reference" / "icons").glob("*.webp")))
             provenance = {"formatVersion": 1, "engine": "icon-and-neural-number-ocr" if recognize else "local-template-matching", "sourceHashes": {str(source.relative_to(root)).replace("\\", "/"): sha256(source.read_bytes()).hexdigest() for source in sources}}

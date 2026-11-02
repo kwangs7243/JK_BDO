@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import numpy as np
 from PIL import Image, ImageOps
+from barter.recognition_profiles import load_numeric_profile, numeric_profile_result
 
 
 def warehouse_number_key(image):
@@ -87,7 +88,7 @@ def decide_number(readings, *, minimum=0, maximum=9999, require_whole=False):
 
 
 class NumericOCR:
-    def __init__(self, reader, *, template_bank_path=None):
+    def __init__(self, reader, *, template_bank_path=None, use_numeric_profiles=True):
         self.reader = reader
         self.template_bank_path = template_bank_path
         self.warehouse_bank = None
@@ -97,6 +98,61 @@ class NumericOCR:
         self.bank_data = None
         self.visual = None
         self.non_items = []
+        self.use_numeric_profiles = use_numeric_profiles
+        self.profile_hits = 0
+        self._profile_readers = {}
+        self._trade_layout = None
+        self._trade_templates = None
+        self._profile_cache = {}
+
+    def _profile_reader(self, kind):
+        if not self.use_numeric_profiles:
+            return None
+        if kind not in self._profile_readers:
+            value = None
+            profile = load_numeric_profile(kind)
+            if profile is not None:
+                try:
+                    if kind == "warehouse":
+                        from .numeric_profile import NumericProfile
+                        value = NumericProfile(profile)
+                    else:
+                        from .trade_numeric_profile import TradeNumericProfile
+                        value = TradeNumericProfile(profile)
+                except (ImportError, ValueError, KeyError, TypeError):
+                    pass
+            self._profile_readers[kind] = value
+        return self._profile_readers[kind]
+
+    def configure_trade(self, image, metadata, templates):
+        self._profile_cache.clear()
+        self._trade_layout = None
+        self._trade_templates = templates
+        if self.use_numeric_profiles and metadata.get("fidelity", {}).get("evidence") == "native-pixels":
+            from .trade_numeric_profile import native_frame_offset
+            self._trade_layout = native_frame_offset(image, metadata)
+
+    def _trade_profile_result(self, row, field, alignment_offset=0):
+        decoder = self._profile_reader("trade")
+        if decoder is None or self._trade_layout is None:
+            return None
+        digest = hashlib.sha256(row.convert("RGB").tobytes()).hexdigest()
+        key = row.size, digest, field, alignment_offset
+        if key not in self._profile_cache:
+            offset = self._trade_layout-alignment_offset
+            raw = decoder.read(row, field, layout_offset=offset)
+            result = numeric_profile_result("trade", field, raw, input_sha256=digest)
+            if result is not None:
+                shift = offset-decoder.profile["layoutOffset"]
+                x, y = (183+shift, 17) if field == "count" else ((283 if field == "reqAmount" else 658)+shift, 12)
+                result["numericEvidence"].update(region={"x":x,"y":y,"width":43,"height":43}, inputSize=list(row.size))
+                self.profile_hits += 1
+            self._profile_cache[key] = result
+        return self._profile_cache[key]
+
+    def trade_count(self, row, alignment_offset=0):
+        result = self._trade_profile_result(row, "count", alignment_offset)
+        return {**result, "corrected":result["value"], "reviewRequired":False} if result else None
 
     def _load_bank(self):
         if self.bank_data is None:
@@ -126,7 +182,14 @@ class NumericOCR:
                 "confidence":None, "method":"audited-complete-numeric-glyphs", "valueSource":"VERIFIED_NUMERIC_GLYPHS",
                 "numericEvidence":{"bankSha256":self.warehouse_bank_sha, **evidence}}
 
-    def trade(self, row, field, extractor):
+    def trade(self, row, field, extractor, *, alignment_offset=0):
+        if self.use_numeric_profiles and self._trade_templates is not None:
+            cached = self._trade_templates.match("quantity", None, row=row, field=field)
+            if cached:
+                return {**cached, "value":cached["corrected"], "status":"QUANTITY_MATCH"}
+            result = self._trade_profile_result(row, field, alignment_offset)
+            if result:
+                return result
         self._load_bank()
         return self.visual_result(self.visual.trade(row, field, extractor), minimum=1)
 
@@ -150,7 +213,9 @@ class NumericOCR:
             self.warehouse_bank = self._load_bank().get("warehouseLookup", {})
         return self.warehouse_bank
 
-    def read_many(self, images, *, warehouse=False, minimum=0, maximum=9999):
+    def read_many(self, images, *, warehouse=False, minimum=0, maximum=9999, source_sizes=None):
+        if source_sizes is not None and len(source_sizes) != len(images):
+            raise ValueError("native source sizes must match image count")
         matches, pending, indices = {}, [], []
         bank = self._warehouse_templates() if warehouse else {}
         for index, image in enumerate(images):
@@ -162,6 +227,17 @@ class NumericOCR:
                                   "confidence":None, "method":"whole-slot-two-mask-exact", "valueSource":"VERIFIED_TEMPLATE",
                                   "templateEvidence":{"bankSha256":self.warehouse_bank_sha,"references":refs}}
             else:
+                decoder = self._profile_reader("warehouse") if warehouse and source_sizes is not None and tuple(source_sizes[index]) == (43,43) else None
+                if decoder is not None:
+                    raw = decoder.read(image)
+                    if raw["value"] is not None and minimum <= raw["value"] <= maximum:
+                        result = numeric_profile_result("warehouse", "quantity", raw,
+                            input_sha256=hashlib.sha256(image.convert("RGB").tobytes()).hexdigest())
+                        if result is not None:
+                            result["numericEvidence"].update(region={"x":0,"y":0,"width":43,"height":43}, inputSize=[43,43])
+                            matches[index] = result
+                            self.profile_hits += 1
+                            continue
                 self._load_bank()
                 evidence = self.visual.warehouse(image) if warehouse else self.visual.isolated(image)
                 visual = self.visual_result(evidence, minimum=minimum, maximum=maximum)

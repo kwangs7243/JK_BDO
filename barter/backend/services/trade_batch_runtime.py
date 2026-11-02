@@ -15,7 +15,7 @@ from typing import Any, Callable
 
 
 ROOT = Path(__file__).resolve().parents[3]
-WORKER_VERSION = "trade-live-worker-v20"
+WORKER_VERSION = "trade-live-worker-v21"
 ENGINE_ID = "paddle-korean-ppocrv5-mobile-onnx-cpu-v1"
 MODEL_ONNX_SHA256 = "92f0b7785e64fc9090106a241cf4c1eb97472824558272751b88a2a4476d3a08"
 MODEL_CONFIG_SHA256 = "f757fa1c40e99edcf27e9cce879b93eb2a51fa46f5ef39095689b8c37dd75998"
@@ -127,9 +127,13 @@ class TradeBatchRuntime:
 
     def status(self) -> dict[str, Any]:
         reason, info = self._integrity()
+        from barter.recognition_profiles import load_numeric_profile, PROFILE_FILES
+        profiles = {kind: load_numeric_profile(kind) for kind in PROFILE_FILES}
         return {"available": reason is None, "engineId": ENGINE_ID, "workerVersion": WORKER_VERSION, "modelReady": info["modelReady"],
                 "reason": reason, "mode": "PACKAGED_LOCAL_RUNTIME" if self.packaged_worker else "LOCAL_DEVELOPMENT_RUNTIME_ONLY",
-                "modelBundleSha256": info.get("hashes", {}).get("bundle", MODEL_BUNDLE_SHA256)}
+                "modelBundleSha256": info.get("hashes", {}).get("bundle", MODEL_BUNDLE_SHA256),
+                "numericProfiles": {kind:{"ready":profile is not None,"fileSha256":PROFILE_FILES[kind][1]}
+                                    for kind,profile in profiles.items()}}
 
 
     def recognize_live(self, batch_id: str, captures: list[dict[str, Any]]) -> dict[str, Any]:

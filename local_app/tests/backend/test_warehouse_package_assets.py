@@ -83,7 +83,7 @@ class WarehousePackageAssetsTests(unittest.TestCase):
         os.environ['BDO_PACKAGE_WAREHOUSE_TEMPLATES'] = str(self.icon_bank())
         assets = self.load_assets()
         package = self.root / 'physical-package'
-        destinations = {'reference', 'reference/icons', 'tools/warehouse_patch', 'barter/tools', 'barter/recognition_data'}
+        destinations = {'reference', 'reference/icons', 'tools/warehouse_patch', 'barter', 'barter/tools', 'barter/recognition_data'}
         for source, destination in assets['datas']:
             if destination not in destinations:
                 continue

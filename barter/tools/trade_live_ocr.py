@@ -664,7 +664,7 @@ def read_catalog_name(reader, crop, candidates, literal_candidates=()):
             **({"recognizedStage": recognized_stage} if recognized_stage is not None else {})}
 
 
-def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_bank_path=None):
+def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_bank_path=None, use_numeric_profiles=True):
     def report(stage, completed, row_completed=0, row_total=0):
         if on_progress is not None:
             try:
@@ -684,7 +684,7 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
         icons = ItemIconReader()
     except (OSError, ValueError, KeyError, TypeError):
         icons = None
-    numeric = NumericOCR(reader, template_bank_path=template_bank_path)
+    numeric = NumericOCR(reader, template_bank_path=template_bank_path, use_numeric_profiles=use_numeric_profiles)
     icon_hits = 0
 
     def name(crop, candidates, literal_candidates=(), *, kind="item"):
@@ -695,19 +695,22 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
         hit = templates.match("unsupportedOutput", crop)
         return hit if hit and hit["corrected"] not in items else None
 
-    def count(crop):
+    def count(crop, row=None, alignment_offset=0):
         hit = templates.match("count", crop)
+        if hit:
+            return hit
+        hit = numeric.trade_count(row, alignment_offset) if row is not None else None
         if hit:
             return hit
         result = read_count(reader, crop)
         return {**result, "reviewRequired": True, "valueSource": "NUMERIC_OCR_CANDIDATE",
                 "reviewReason": "남은 교환 횟수를 확인할 정답 이미지가 없습니다."}
 
-    def quantity(row, field, allowed=None, destination=None, fast=None):
+    def quantity(row, field, allowed=None, destination=None, fast=None, alignment_offset=0):
         hit = templates.match("quantity", None, row=row, field=field, allowed=allowed)
         if hit:
             return hit
-        result = fast or (numeric.trade(row, field, templates.extractor) if templates.enabled else None)
+        result = fast or (numeric.trade(row, field, templates.extractor, alignment_offset=alignment_offset) if templates.enabled else None)
         if result and (allowed is None or result["value"] in allowed):
             return {**result, "corrected": result["value"], "reviewRequired": False}
         result = read_requirement(reader, row) if field == "reqAmount" else read_yield(reader, row, allowed, destination)
@@ -732,6 +735,7 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
         templates.configure(image, capture.get("metadata", {}))
         boxes = detect_live_rows(image)
         offset = fixed_layout_offset(image, capture.get("metadata", {}))
+        numeric.configure_trade(image, capture.get("metadata", {}), templates)
         aligned = image.crop((offset, 0, image.width + offset, image.height)) if offset else image
         report("recognizing", capture_index, 0, len(boxes))
         prepared_rows = [image.crop((0, top, image.width, bottom)) for top, bottom in boxes]
@@ -761,6 +765,8 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
                 try:
                     crop = _crop(row, bounds[field])
                     cached = templates.match("island", crop, allowed=set(islands)) if field == "island" else templates.match("count", crop)
+                    if cached is None and field == "count":
+                        cached = numeric.trade_count(row)
                     if cached:
                         name_results[ordinal, field] = cached
                     else:
@@ -796,7 +802,7 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
                     if field == "reqAmount":
                         crop = _requirement_crop(row)
                     if field == "count":
-                        fields[field] = name_results.get((ordinal, field)) or count(crop)
+                        fields[field] = name_results.get((ordinal, field)) or count(crop, row)
                     elif field in NUMERIC:
                         apply_trade_rules(fields, item_stages)
                         if fields[field].get("valueSource") == "TRADE_RULE":
@@ -826,8 +832,8 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
                         continue
                     allowed = (2, 3) if field == "yield" and (source, destination) in {(1, 2), (2, 3)} else None
                     try:
-                        candidate = (count(_crop(aligned_row, bounds[field])) if field == "count"
-                                     else quantity(aligned_row, field, allowed, destination))
+                        candidate = (count(_crop(aligned_row, bounds[field]), aligned_row, offset) if field == "count"
+                                     else quantity(aligned_row, field, allowed, destination, alignment_offset=offset))
                     except Exception:
                         continue
                     value = candidate["corrected"]
@@ -846,6 +852,12 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
                 right, lower = round(x1 * row.width), round(y1 * row.height)
                 fields[key]["box"] = {"x": left + field_offsets.get(key, 0), "y": top + upper,
                                       "width": right - left, "height": lower - upper}
+                if fields[key].get("valueSource") == "VERIFIED_NUMERIC_PROFILE":
+                    proof = dict(fields[key]["numericEvidence"])
+                    region = proof["region"]
+                    proof["sourceBox"] = {**region, "x":region["x"]+field_offsets.get(key,0), "y":region["y"]+top}
+                    proof["rowBox"] = {"x":0,"y":top,"width":image.width,"height":bottom-top}
+                    fields[key]["numericEvidence"] = proof
             rows.append({"captureId": capture["captureId"], "ordinal": ordinal,
                          "rowBox": {"x": 0, "y": top, "width": image.width, "height": bottom - top},
                          "fields": fields})
@@ -853,5 +865,6 @@ def recognize_live(captures, model_dir, batch_id, *, on_progress=None, template_
         report("recognizing", capture_index + 1)
     report("finalizing", len(captures))
     return {"version": 3, "batchId": batch_id, "rows": rows, "captures": capture_results,
-            "templateMetrics": {**templates.stats, "modelCalls": reader.model_calls, "iconHits": icon_hits},
+            "templateMetrics": {**templates.stats, "modelCalls": reader.model_calls, "iconHits": icon_hits,
+                                "numericProfileHits": numeric.profile_hits},
             "engine": "korean_PP-OCRv5_mobile_rec/ONNX-CPU", "rowDetector": "measured-separator-spacing-v1"}

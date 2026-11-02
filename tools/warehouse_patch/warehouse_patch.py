@@ -540,9 +540,13 @@ def convert(image_path: Path, reference_json: Path, templates_path: Path | None,
             pending.append((result, slot_image, slot, source_size))
         slot_results.append(result)
 
-    quantities = (quantity_ocr.read_many([p[1] for p in pending], warehouse=True) if quantity_ocr is not None
+    quantities = (quantity_ocr.read_many([p[1] for p in pending], warehouse=True, source_sizes=[p[3] for p in pending]) if quantity_ocr is not None
                   else [quantity_reader.read(slot, size) for _, _, slot, size in pending])
     for (result, _, _, _), quantity in zip(pending, quantities):
+        if quantity.get("valueSource") == "VERIFIED_NUMERIC_PROFILE":
+            proof = dict(quantity["numericEvidence"])
+            proof["sourceBox"] = {"x":result["x"]+1,"y":result["y"]+1,"width":43,"height":43}
+            quantity["numericEvidence"] = proof
         result["quantity"] = quantity
         if quantity["status"] == "QUANTITY_MATCH":
             result["decision"] = "MATCH"

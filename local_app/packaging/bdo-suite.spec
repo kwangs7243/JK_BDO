@@ -3,9 +3,11 @@
 from pathlib import Path
 import os
 import json
+import sys
 import numpy as np
 
 ROOT = Path(SPECPATH).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 trade_model = Path(os.environ.get("BDO_PACKAGE_TRADE_MODEL_DIR", ROOT / ".local/models/trade"))
 if not all((trade_model / name).is_file() for name in ("inference.onnx", "inference.yml")):
     raise RuntimeError("The verified local trade OCR model is required for packaging.")
@@ -20,12 +22,13 @@ with np.load(warehouse_templates, allow_pickle=False) as warehouse_data:
 trade_templates = os.environ.get("BDO_PACKAGE_TRADE_TEMPLATES", str(ROOT / "barter/recognition_data/trade-templates.json"))
 if trade_templates:
     import hashlib
-    import sys
-    sys.path.insert(0, str(ROOT))
     from barter.tools.trade_template_reader import BANK_SHA256
     trade_templates = Path(trade_templates)
     if hashlib.sha256(trade_templates.read_bytes()).hexdigest() != BANK_SHA256:
         raise RuntimeError("Trade template bank integrity verification failed.")
+from barter.recognition_profiles import load_numeric_profile, PROFILE_FILES
+if any(load_numeric_profile(kind) is None for kind in PROFILE_FILES):
+    raise RuntimeError("Verified numeric profile integrity verification failed.")
 
 datas = [
     (str(ROOT / "local_app" / "frontend"), "local_app/frontend"),
@@ -39,6 +42,9 @@ datas = [
     (str(ROOT / "barter" / "tools" / "trade_batch_worker.py"), "barter/tools"),
     (str(ROOT / "barter" / "tools" / "numeric_ocr.py"), "barter/tools"),
     (str(ROOT / "barter" / "tools" / "visual_numbers.py"), "barter/tools"),
+    (str(ROOT / "barter" / "recognition_profiles.py"), "barter"),
+    (str(ROOT / "barter" / "tools" / "numeric_profile.py"), "barter/tools"),
+    (str(ROOT / "barter" / "tools" / "trade_numeric_profile.py"), "barter/tools"),
     (str(ROOT / "barter" / "frontend"), "barter/frontend"),
     (str(ROOT / "reference" / "barter_items.json"), "reference"),
     (str(ROOT / "reference" / "icons"), "reference/icons"),
@@ -47,6 +53,8 @@ datas = [
 ]
 if trade_templates:
     datas.append((str(trade_templates), "barter/recognition_data"))
+for filename, digest in PROFILE_FILES.values():
+    datas.append((str(ROOT / "barter/recognition_data" / filename), "barter/recognition_data"))
 datas.append((str(ROOT / "barter/tools/trade_template_reader.py"), "barter/tools"))
 hiddenimports = [
     "barter.tools.trade_template_reader",
@@ -54,6 +62,9 @@ hiddenimports = [
     "barter.tools.trade_live_ocr",
     "barter.tools.numeric_ocr",
     "barter.tools.visual_numbers",
+    "barter.recognition_profiles",
+    "barter.tools.numeric_profile",
+    "barter.tools.trade_numeric_profile",
     "barter.tools.item_icon_reader",
     "onnxruntime",
     "cv2",

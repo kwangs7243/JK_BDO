@@ -81,6 +81,7 @@ def _default_settings(order: dict[str, list[str]]) -> dict[str, Any]:
 
 def _trade_sample_collection(capture, details):
     import hashlib
+    from barter.recognition_profiles import verified_numeric_profile_field
     rows = details.get("snapshot", {}).get("rows", [])
     missing = []
     for row in rows:
@@ -96,7 +97,8 @@ def _trade_sample_collection(capture, details):
             elif (not row.get("excluded") and name in {"island", "fromItem", "toItem"}
                   and field.get("valueSource") not in {"VERIFIED_TEMPLATE", "VERIFIED_ICON"}):
                 reason = "MISSING_NAME_TEMPLATE"
-            elif not row.get("excluded") and name == "count" and field.get("valueSource") != "VERIFIED_TEMPLATE":
+            elif (not row.get("excluded") and name == "count" and field.get("valueSource") != "VERIFIED_TEMPLATE"
+                  and not verified_numeric_profile_field(field, name)):
                 reason = "MISSING_COUNTER_TEMPLATE"
             else:
                 continue
@@ -118,7 +120,7 @@ def _trade_sample_collection(capture, details):
                                 for correction in details["corrections"]]}
     fingerprint = hashlib.sha256(json.dumps(evidence, ensure_ascii=False, sort_keys=True,
                                            separators=(",", ":"), allow_nan=False).encode("utf-8")).hexdigest()
-    return {"policyVersion": 3, "imageSha256": image_hash, "fingerprint": fingerprint,
+    return {"policyVersion": 4, "imageSha256": image_hash, "fingerprint": fingerprint,
             "missingFields": missing, "reason": "MISSING_OR_REVIEWED_FIELDS" if rows else "NO_ROWS_OR_LEGACY_FEEDBACK"}
 
 

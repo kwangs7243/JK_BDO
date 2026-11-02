@@ -1,0 +1,1362 @@
+{
+  "version": "warehouse-palette-sequence-v1",
+  "status": "VERIFIED_ORIGINAL_GLYPHS",
+  "fontProfile": "current-font-audited-warehouse",
+  "slotSize": [
+    43,
+    43
+  ],
+  "foreground": [
+    233,
+    228,
+    228
+  ],
+  "outline": [
+    31,
+    30,
+    30
+  ],
+  "parameters": {
+    "minimumInk": 145,
+    "colorTolerance": 2,
+    "maxGlyphDifference": 3,
+    "minimumTokenMargin": 3,
+    "tops": [
+      27,
+      28,
+      29
+    ],
+    "maximumGap": 6,
+    "rightEnds": {
+      "0": [
+        38,
+        39
+      ],
+      "1": [
+        36,
+        37
+      ],
+      "2": [
+        38,
+        39
+      ],
+      "3": [
+        38,
+        39
+      ],
+      "4": [
+        38,
+        39
+      ],
+      "5": [
+        38,
+        39
+      ],
+      "6": [
+        38,
+        39
+      ],
+      "7": [
+        38,
+        39
+      ],
+      "8": [
+        38,
+        39
+      ],
+      "9": [
+        38,
+        39
+      ]
+    },
+    "maxDigits": 4,
+    "maximumPaths": 256
+  },
+  "glyphs": [
+    {
+      "digit": 3,
+      "mask": [
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0
+        ]
+      ],
+      "source": {
+        "recordId": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa-R1C2",
+        "sourceSha256": "68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "group": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "digitIndex": 0,
+        "box": [
+          22,
+          29,
+          7,
+          11
+        ],
+        "verification": "ORIGINAL_GLYPH_AUDIT",
+        "slotBox": {
+          "x": 61,
+          "y": 6,
+          "width": 43,
+          "height": 43
+        },
+        "imageBox": [
+          83,
+          35,
+          7,
+          11
+        ]
+      },
+      "referenceId": "96705f448a7c74f95d80fce282d77b001837f7682b8905702d23355575f9ea1d"
+    },
+    {
+      "digit": 0,
+      "mask": [
+        [
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      ],
+      "source": {
+        "recordId": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa-R1C2",
+        "sourceSha256": "68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "group": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "digitIndex": 1,
+        "box": [
+          31,
+          29,
+          7,
+          11
+        ],
+        "verification": "ORIGINAL_GLYPH_AUDIT",
+        "slotBox": {
+          "x": 61,
+          "y": 6,
+          "width": 43,
+          "height": 43
+        },
+        "imageBox": [
+          92,
+          35,
+          7,
+          11
+        ]
+      },
+      "referenceId": "d7e8427a5e6f6b55b05603b23d7495be5a4bcd377db874b877f0ce4ca8879e27"
+    },
+    {
+      "digit": 6,
+      "mask": [
+        [
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      ],
+      "source": {
+        "recordId": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa-R1C3",
+        "sourceSha256": "68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "group": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "digitIndex": 1,
+        "box": [
+          31,
+          29,
+          7,
+          11
+        ],
+        "verification": "ORIGINAL_GLYPH_AUDIT",
+        "slotBox": {
+          "x": 112,
+          "y": 6,
+          "width": 43,
+          "height": 43
+        },
+        "imageBox": [
+          143,
+          35,
+          7,
+          11
+        ]
+      },
+      "referenceId": "2a62e37873db885427bbd0659293f5f73761dae2077fae8c7c11d0fd3e068561"
+    },
+    {
+      "digit": 9,
+      "mask": [
+        [
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      ],
+      "source": {
+        "recordId": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa-R1C5",
+        "sourceSha256": "68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "group": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "digitIndex": 1,
+        "box": [
+          31,
+          29,
+          7,
+          11
+        ],
+        "verification": "ORIGINAL_GLYPH_AUDIT",
+        "slotBox": {
+          "x": 214,
+          "y": 6,
+          "width": 43,
+          "height": 43
+        },
+        "imageBox": [
+          245,
+          35,
+          7,
+          11
+        ]
+      },
+      "referenceId": "0504b7315c43306a5b4cb53aaa3999b75866080272ad0aec35cf678262a65f4e"
+    },
+    {
+      "digit": 2,
+      "mask": [
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      ],
+      "source": {
+        "recordId": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa-R1C7",
+        "sourceSha256": "68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "group": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "digitIndex": 0,
+        "box": [
+          22,
+          29,
+          7,
+          11
+        ],
+        "verification": "ORIGINAL_GLYPH_AUDIT",
+        "slotBox": {
+          "x": 316,
+          "y": 6,
+          "width": 43,
+          "height": 43
+        },
+        "imageBox": [
+          338,
+          35,
+          7,
+          11
+        ]
+      },
+      "referenceId": "d973324af827764f081f1bff44aa34b406931b151ed1379f686d1311c58e8c16"
+    },
+    {
+      "digit": 1,
+      "mask": [
+        [
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "source": {
+        "recordId": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa-R2C1",
+        "sourceSha256": "68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "group": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "digitIndex": 1,
+        "box": [
+          32,
+          29,
+          4,
+          11
+        ],
+        "verification": "ORIGINAL_GLYPH_AUDIT",
+        "slotBox": {
+          "x": 10,
+          "y": 57,
+          "width": 43,
+          "height": 43
+        },
+        "imageBox": [
+          42,
+          86,
+          4,
+          11
+        ]
+      },
+      "referenceId": "95371c1e5c6175c2893b8da1ab28a12ea07dde2ec4d6896e48e708e76aa9790f"
+    },
+    {
+      "digit": 4,
+      "mask": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ]
+      ],
+      "source": {
+        "recordId": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa-R2C3",
+        "sourceSha256": "68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "group": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "digitIndex": 0,
+        "box": [
+          21,
+          29,
+          8,
+          11
+        ],
+        "verification": "ORIGINAL_GLYPH_AUDIT",
+        "slotBox": {
+          "x": 112,
+          "y": 57,
+          "width": 43,
+          "height": 43
+        },
+        "imageBox": [
+          133,
+          86,
+          8,
+          11
+        ]
+      },
+      "referenceId": "ac34fc6fb97a57113cd29acbce7115a26e182dc06edebd13297d47f9f8e003af"
+    },
+    {
+      "digit": 8,
+      "mask": [
+        [
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      ],
+      "source": {
+        "recordId": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa-R2C8",
+        "sourceSha256": "68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "group": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "digitIndex": 1,
+        "box": [
+          31,
+          29,
+          7,
+          11
+        ],
+        "verification": "ORIGINAL_GLYPH_AUDIT",
+        "slotBox": {
+          "x": 367,
+          "y": 57,
+          "width": 43,
+          "height": 43
+        },
+        "imageBox": [
+          398,
+          86,
+          7,
+          11
+        ]
+      },
+      "referenceId": "bc62e515ff886258f5c5a425e3fc188de9b61ecbb9c3b1617974ae4b0387df99"
+    },
+    {
+      "digit": 5,
+      "mask": [
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      ],
+      "source": {
+        "recordId": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa-R2C9",
+        "sourceSha256": "68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "group": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "digitIndex": 0,
+        "box": [
+          22,
+          29,
+          7,
+          11
+        ],
+        "verification": "ORIGINAL_GLYPH_AUDIT",
+        "slotBox": {
+          "x": 418,
+          "y": 57,
+          "width": 43,
+          "height": 43
+        },
+        "imageBox": [
+          440,
+          86,
+          7,
+          11
+        ]
+      },
+      "referenceId": "e76ef92973878178c4baea782af480c2871ccc861fe55b006adb1025b857425e"
+    },
+    {
+      "digit": 7,
+      "mask": [
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0
+        ]
+      ],
+      "source": {
+        "recordId": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa-R3C3",
+        "sourceSha256": "68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "group": "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa",
+        "digitIndex": 0,
+        "box": [
+          22,
+          29,
+          7,
+          11
+        ],
+        "verification": "ORIGINAL_GLYPH_AUDIT",
+        "slotBox": {
+          "x": 112,
+          "y": 108,
+          "width": 43,
+          "height": 43
+        },
+        "imageBox": [
+          134,
+          137,
+          7,
+          11
+        ]
+      },
+      "referenceId": "3c21902cdcd608239fca5ca9702c203b9907579da271a26a3ab0e0818392cd06"
+    }
+  ],
+  "trainGroups": [
+    "warehouse-29d743da15a2e82e66a0ed8738aab5da1326fb55b6aa38184098954ed985c96f",
+    "warehouse-3d9be4b09bb5c4eaef2dc1f93921469476714487872acdd27a977d141ff816c0",
+    "warehouse-68edf9ddf06c92a74f27cb6d11aa6ad0b311977dce2f786f6f054f7385ddd8aa"
+  ],
+  "promotedFrom": "c8be8057666081eb6ae42ae071973d798b6f44cde53efa536efd7ae80b15bd0f",
+  "sha256": "6f0777148bc022356f5c582180053f3e283e7519f34e0f8a9b71b028ba67cc07"
+}

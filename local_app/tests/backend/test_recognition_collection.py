@@ -22,7 +22,7 @@ class TradeCounterCollectionTests(unittest.TestCase):
         self.assertIsNone(_trade_sample_collection(capture, details))
         details["snapshot"]["rows"][0]["fields"]["count"]["valueSource"] = "OCR"
         collected = _trade_sample_collection(capture, details)
-        self.assertEqual(collected["policyVersion"], 3)
+        self.assertEqual(collected["policyVersion"], 4)
         self.assertEqual(collected["missingFields"][0]["reason"], "MISSING_COUNTER_TEMPLATE")
         details["snapshot"]["rows"][0]["excluded"] = True
         self.assertIsNone(_trade_sample_collection(capture, details))
