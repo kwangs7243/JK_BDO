@@ -2,6 +2,7 @@
 
 - 공통 서버·실행기·native 수명주기는 `local_app/`, 물교는 `barter/`, 연금은 `alchemy/`, 판독 보조 도구는 `tools/`, 기준 품목은 `reference/`에 있다. 개발·시험·빌드는 저장소 루트에서 실행한다.
 - 현재 동작의 기준은 `docs/CURRENT-PRODUCT-CONTRACT.md`, 검증 방법은 `docs/TESTING.md`다. `docs/archive/`는 과거 기록이며 현재 작업의 승인이나 제품 동작으로 해석하지 않는다.
+- 물교·창고의 실사 분석, 인식 개선, 정답 확장을 시작하기 전에 `docs/agents/RECOGNITION-PATCH.md`를 정독한다. 과거 OCR 중심 지시서만으로 숫자 대조를 되돌리거나 저장 결과를 정답으로 승격하지 않는다.
 - 사용자 요청 없이 commit/push/stash/reset/rebase 또는 사용자 데이터 삭제를 하지 않는다. 서로 다른 목적의 커밋을 분리하고 기존 변경을 보존한다.
 - 모든 인식 출처와 원문·보정값·검수 사유를 보존한다. 후보를 정답으로 승격하거나 unknown을 0으로 채우지 않는다. 정리 작업에 인식 임계값·품목 마스터·배차 계산 변경을 섞지 않는다.
 - 직접·동적 import, worker 실행 경로, 런타임 리소스와 PyInstaller 입력을 함께 확인한다. 검증된 정답 사전과 창고 보정 자료는 `barter/recognition_data/`에서 버전 관리한다.
