@@ -242,6 +242,11 @@ function getAllowedRegions(seedRegion) {
     return [seedRegion]; // 안전장치
 }
 
+function routeCalibrationKey(nameA, nameB) {
+    const canonical = value => String(value).replace(/ (섬|제도)$/, '').replace(/\s+/g, '');
+    return canonical(nameA) + '_' + canonical(nameB);
+}
+
 function applyOceanCurrent(nameA, nameB, dist) {
     if (!nameA || !nameB) return dist;
     
@@ -254,10 +259,17 @@ function applyOceanCurrent(nameA, nameB, dist) {
     // --- [주석 처리 끝] ---
     
     // 동적 보정 (나중에 리스트가 꽉 차서 이걸 다 반영하고 싶을 때 쓰세요!)
-    let routeKey = nameA + '_' + nameB; // ⭐ 방향 구분(정렬 제거) — A→B와 B→A 보정 분리. 해류 비대칭 반영.
-    if (window.routeCalibrations[routeKey]) {
-        dist *= window.routeCalibrations[routeKey].multiplier;
+    const source = window.routeCalibrations;
+    if (!applyOceanCurrent.keys || applyOceanCurrent.source !== source) {
+        applyOceanCurrent.source = source;
+        applyOceanCurrent.keys = new Map();
+        for (const key of Object.keys(source || {})) {
+            const [a,b] = key.split('_');
+            if (a && b) applyOceanCurrent.keys.set(routeCalibrationKey(a,b), key);
+        }
     }
+    const key = applyOceanCurrent.keys.get(routeCalibrationKey(nameA,nameB));
+    if (key && source[key]) dist *= source[key].multiplier;
     
     return dist;
 }
