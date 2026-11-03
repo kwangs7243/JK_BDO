@@ -89,7 +89,7 @@ class StorageApiTests(unittest.TestCase):
         self.assertEqual(snapshot["revision"], 0)
         with closing(sqlite3.connect(self.database)) as db:
             names = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")}
-        self.assertEqual(names, {"inventory", "settings", "app_meta", "working_session", "saved_schedule_slot", "mutation_receipt", "warehouse_scan", "warehouse_feedback", "trade_correction"})
+        self.assertEqual(names, {"inventory", "settings", "app_meta", "working_session", "saved_schedule_slot", "mutation_receipt", "warehouse_scan", "warehouse_feedback", "trade_correction", "schedule_generation"})
 
     def test_inventory_partial_patch_and_restart_persistence(self):
         initial = self.bootstrap()

@@ -153,7 +153,7 @@ def main():
             with closing(sqlite3.connect(databases[0])) as connection:
                 tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
             assert tables == {"inventory", "settings", "app_meta", "working_session", "saved_schedule_slot",
-                              "mutation_receipt", "warehouse_scan", "warehouse_feedback", "trade_correction"}, tables
+                              "mutation_receipt", "warehouse_scan", "warehouse_feedback", "trade_correction", "schedule_generation"}, tables
             duplicate = subprocess.Popen([str(args.exe.resolve())], cwd=temporary, env=environment,
                                          creationflags=subprocess.CREATE_NO_WINDOW)
             assert duplicate.wait(timeout=20) == 0

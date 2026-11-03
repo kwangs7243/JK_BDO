@@ -72,6 +72,7 @@ hiddenimports = [
     "barter.backend.api.maintenance",
     "barter.backend.api.scan",
     "barter.backend.api.state",
+    "barter.backend.schedule_history",
     "barter.backend.services.warehouse_scan",
     "tools.warehouse_patch.warehouse_patch",
     "local_app.native_capture",

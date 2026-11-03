@@ -181,6 +181,8 @@ class Storage:
                     mutation_id TEXT PRIMARY KEY, request_hash TEXT NOT NULL,
                     revision INTEGER NOT NULL UNIQUE
                 )""")
+                from .schedule_history import initialize_history
+                initialize_history(connection)
                 connection.execute("""CREATE TABLE IF NOT EXISTS warehouse_scan (
                     scan_id TEXT PRIMARY KEY, created_at TEXT NOT NULL,
                     image_png BLOB NOT NULL, report_json TEXT NOT NULL, provenance_json TEXT NOT NULL
@@ -344,7 +346,7 @@ class Storage:
                     raise RuntimeError(f"settings section disappeared: {section}")
         return self.mutate(mutation_id, base_revision, request_hash, apply)
 
-    def update_session(self, payload: dict[str, Any] | None, session_revision: int | None, mutation_id: str, base_revision: int, request_hash: str) -> tuple[int, bool]:
+    def update_session(self, payload: dict[str, Any] | None, session_revision: int | None, mutation_id: str, base_revision: int, request_hash: str, *, generation=None) -> tuple[int, bool]:
         """Replace the single working snapshot, or reset it without touching durable data/slots."""
         def apply(connection: sqlite3.Connection) -> None:
             row = connection.execute("SELECT revision FROM working_session WHERE id = 1").fetchone()
@@ -355,6 +357,9 @@ class Storage:
             else:
                 encoded = json.dumps(payload, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
                 connection.execute("INSERT INTO working_session VALUES (1, ?, ?) ON CONFLICT(id) DO UPDATE SET payload_json = excluded.payload_json, revision = excluded.revision", (encoded, base_revision + 1))
+                if generation is not None:
+                    from .schedule_history import try_record_generation
+                    try_record_generation(connection, generation, payload, self.catalog, base_revision)
         return self.mutate(mutation_id, base_revision, request_hash, apply)
 
     def update_slot(self, slot: int, payload: dict[str, Any] | None, mutation_id: str, base_revision: int, request_hash: str) -> tuple[int, bool]:

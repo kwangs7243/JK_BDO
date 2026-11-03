@@ -79,7 +79,7 @@ def session_request(body: Any, catalog: dict[str, int], *, reset: bool = False):
     data = require_object(body, "request")
     mutation_id, revision = validate_envelope(data)
     keys = {"mutationId", "baseRevision", "sessionRevision"} | (set() if reset else {"session"})
-    if set(data) != keys:
+    if set(data) != keys and (reset or set(data) != keys | {"generation"}):
         raise ContractError("unsupported working session request fields")
     session_revision = data["sessionRevision"]
     if session_revision is not None:

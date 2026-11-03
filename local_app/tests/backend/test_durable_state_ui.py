@@ -139,9 +139,9 @@ class DurableStateUiTests(unittest.TestCase):
         self.assertNotIn("remainingParley", snapshot)
         with closing(sqlite3.connect(self.database)) as connection:
             tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-        self.assertEqual(tables, {"inventory", "settings", "app_meta", "working_session", "saved_schedule_slot", "mutation_receipt", "warehouse_scan", "warehouse_feedback", "trade_correction"})
-        rules = {rule.rule for rule in self.app.url_map.iter_rules() if rule.rule.startswith("/api/") and not rule.rule.startswith("/api/alchemy/")}
-        self.assertEqual(rules, {"/api/health", "/api/bootstrap", "/api/inventory", "/api/inventory/order", "/api/settings", "/api/warehouse-scan", "/api/warehouse-dataset", "/api/app/shutdown", "/api/working-session", "/api/working-session/completion", "/api/schedule-slots/<int:slot>", "/api/recognition/trade-runtime", "/api/recognition/trade-live-list", "/api/recognition/trade-corrections", "/api/recognition/trade-progress/<uuid:batch_id>", "/api/native-capture", "/api/native-capture/<capture_id>.png", "/api/native-capture/diagnostics"})
+        self.assertEqual(tables, {"inventory", "settings", "app_meta", "working_session", "saved_schedule_slot", "mutation_receipt", "warehouse_scan", "warehouse_feedback", "trade_correction", "schedule_generation"})
+        rules = {rule.rule for rule in self.app.url_map.iter_rules() if rule.rule.startswith("/api/") and not rule.rule.startswith(("/api/alchemy/", "/api/craft/"))}
+        self.assertEqual(rules, {"/api/health", "/api/bootstrap", "/api/inventory", "/api/inventory/order", "/api/settings", "/api/warehouse-scan", "/api/warehouse-dataset", "/api/app/shutdown", "/api/working-session", "/api/working-session/completion", "/api/schedule-slots/<int:slot>", "/api/schedule-history", "/api/recognition/trade-runtime", "/api/recognition/trade-live-list", "/api/recognition/trade-corrections", "/api/recognition/trade-progress/<uuid:batch_id>", "/api/native-capture", "/api/native-capture/<capture_id>.png", "/api/native-capture/diagnostics"})
         frontend = Path(__file__).resolve().parents[3] / "barter" / "frontend"
         js = "\n".join(path.read_text(encoding="utf-8") for path in frontend.rglob("*.js"))
         self.assertNotIn("localStorage", js)

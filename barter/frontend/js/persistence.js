@@ -72,7 +72,10 @@ export function saveWorkingSession() {
   assertMutable();
   const session = runtime().snapshotWorkingSession(state);
   if (!session) return Promise.resolve();
-  return enqueueMutation((envelope) => api.saveWorkingSession({ ...envelope, session, sessionRevision: state.sessionBaseRevision }), {
+  let generation;
+  try { generation = runtime().scheduleRecordFor?.(session); } catch { /* Recording cannot block the working save. */ }
+  return enqueueMutation((envelope) => api.saveWorkingSession({ ...envelope, session,
+    ...(generation ? {generation} : {}), sessionRevision: state.sessionBaseRevision }), {
     sessionGeneration: state.sessionGeneration,
     onCommitted: (result) => { state.sessionBaseRevision = result.revision; },
   });

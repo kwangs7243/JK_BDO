@@ -11,7 +11,39 @@ let completionStore = async () => { throw new Error("완료 재고 저장기가 
 let scheduleStatus = () => {};
 let pendingCompletion = null;
 let externalSessionMutationPending = false;
+let generatedScheduleRecord = null;
 const sessionMutationPending = () => pendingCompletion || (externalSessionMutationPending ? true : null);
+
+const scheduleRecordCopy = value => JSON.parse(JSON.stringify(value));
+function scheduleRecordTrades(rows) {
+  const keys = ['island','fromItem','toItem','reqAmount','count','yield','disabled','deleted','rawFrom'];
+  return rows.map(row => Object.fromEntries(keys.filter(key => row[key] !== undefined).map(key => [key,row[key]])));
+}
+function compactScheduleRecord(schedule) {
+  const keys = ['island','originalIndex','fromClean','toClean','fromTier','toTier','reqA','mult','execC',
+    'isCoin','isSpec','isRandomCoin','isChained','isJit','isWaypoint','consumed'];
+  return Object.fromEntries(Object.entries(schedule).map(([mode,sorties]) => [mode,sorties.map(sortie => ({
+    trades:sortie.trades.map(trade => Object.fromEntries(keys.filter(key => trade[key] !== undefined).map(key => [key,trade[key]]))),
+    reqItems:sortie.reqItems, startWeight:sortie.startWeight, parleyUsed:sortie.parleyUsed,
+    totalTime:sortie.totalTime, returnTime:sortie.returnTime, returnOver:sortie.returnOver
+  }))]));
+}
+function scheduleRecordInput(appState) {
+  return scheduleRecordCopy({
+    inventory:appState.inventory.map(({programName,tier,stock,target}) => ({programName,tier,stock,target})),
+    scannedTrades:scheduleRecordTrades(appState.session.scannedTrades),
+    config:appState.session.config, remainingParley:Number(document.getElementById('maxParley').value),
+    settings:Object.fromEntries(['tierRules','navigation','tradePolicy'].filter(key => appState.settings[key] !== undefined)
+      .map(key => [key,key === 'navigation' ? {...appState.settings[key],memos:[]} : appState.settings[key]])), inputRevision:appState.revision
+  });
+}
+function scheduleRecordFor(session) {
+  if (!generatedScheduleRecord || session.id !== generatedScheduleRecord.sessionId
+      || session.diagnostics?.generationId !== generatedScheduleRecord.generationId
+      || JSON.stringify(scheduleRecordTrades(session.scannedTrades)) !== JSON.stringify(generatedScheduleRecord.input.scannedTrades)
+      || JSON.stringify(compactScheduleRecord(session.schedule)) !== JSON.stringify(generatedScheduleRecord.output.schedule)) return null;
+  return scheduleRecordCopy(generatedScheduleRecord);
+}
 
 function showToast(message) { scheduleStatus(message, "info"); }
 function openModal() { window.__bdoOpenBriefing?.(); }
@@ -66,6 +98,8 @@ function generateSchedule(appState, setStatus) {
   const mode = appState.session.config.ship.mode || "inner";
   window.APP_CONFIG.ALLOW_OCEAN = mode;
   document.getElementById("maxParley").value = appState.session.remainingParley ?? appState.settings.parley?.defaultBudget ?? 1500000;
+  let recordInput = null;
+  try { recordInput = scheduleRecordInput(appState); } catch (error) { console.warn('Schedule input recording unavailable', error); }
   try {
     if (window.runAlgorithmAllModes(false) === false) return false;
   } catch (error) {
@@ -77,6 +111,18 @@ function generateSchedule(appState, setStatus) {
   window.ACTIVE_TIMERS = appState.session.timers = {};
   window.dispatchEvent(new CustomEvent("bdo:timers-reset"));
   appState.session.diagnostics = { mode, generatedAt: Date.now(), speed: sortiesSpeed.length, balance: sortiesBalance.length, engineDebug: window.ENGINE_DEBUG || null };
+  generatedScheduleRecord = null;
+  if (recordInput) {
+    try {
+      const generationId = crypto.randomUUID();
+      appState.session.diagnostics.generationId = generationId;
+      generatedScheduleRecord = scheduleRecordCopy({version:1, generationId, sessionId:appState.session.id,
+        generatedAt:appState.session.diagnostics.generatedAt, input:recordInput,
+        output:{schedule:compactScheduleRecord(appState.session.schedule),
+          endingInventory:Object.fromEntries(Object.entries(appState.session.schedule).map(([mode,sorties]) =>
+            [mode,forecastWarehouseInventory(sorties, Object.fromEntries(recordInput.inventory.map(item => [item.programName,item])))]))}});
+    } catch (error) { console.warn('Schedule result recording unavailable', error); }
+  }
   appState.session.remainingParley = Number(document.getElementById("maxParley").value) || 0;
   window.dispatchEvent(new CustomEvent("bdo:session-changed"));
   return true;
@@ -252,6 +298,7 @@ function snapshotWorkingSession(appState) {
 
 function restoreWorkingSession(appState, payload, sessionRevision = appState.sessionRevision) {
   if (pendingCompletion) throw new Error("완료 저장이 대기 중입니다. 먼저 저장을 재시도하세요.");
+  generatedScheduleRecord = null;
   appState.sessionBaseRevision = sessionRevision ?? null;
   appState.sessionGeneration = (appState.sessionGeneration || 0) + 1;
   appState.session = payload ? { ...JSON.parse(JSON.stringify(payload)), timers: {}, drag: null } : {
@@ -279,7 +326,7 @@ for (const name of ["routeDrop", "sortieDrop", "adjustTradeCount", "confirmWaypo
   };
 }
 
-window.__bdoScheduleRuntime = { syncLegacyState, generateSchedule, snapshotWorkingSession, restoreWorkingSession, installCompletionAdapters,
+window.__bdoScheduleRuntime = { syncLegacyState, generateSchedule, snapshotWorkingSession, restoreWorkingSession, installCompletionAdapters, scheduleRecordFor,
   retryCompletion: persistPendingCompletion,
   setExternalSessionMutationPending(value) { externalSessionMutationPending = value === true; },
   get pending() { return sessionMutationPending(); } };

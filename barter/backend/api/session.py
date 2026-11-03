@@ -17,7 +17,17 @@ def working_session():
     store = current_app.extensions["bdo_storage"]
     body = request.get_json()
     mutation_id, revision, session_revision, payload = session_request(body, store.catalog, reset=request.method == "DELETE")
-    return response(store.update_session(payload, session_revision, mutation_id, revision, canonical_request_hash(body)))
+    return response(store.update_session(payload, session_revision, mutation_id, revision, canonical_request_hash(body),
+                                         generation=body.get("generation")))
+
+
+@session_api.get("/schedule-history")
+def schedule_history():
+    from ..schedule_history import history_summary
+    store = current_app.extensions["bdo_storage"]
+    from contextlib import closing
+    with closing(store.connect()) as connection:
+        return jsonify({"ok": True, **history_summary(connection)})
 
 
 @session_api.route("/schedule-slots/<int:slot>", methods=["PUT", "DELETE"])
