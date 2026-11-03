@@ -402,9 +402,9 @@ function buildSorties(trades, mode) {
     // ⭐ [수정 2] 대시보드 및 JSON 설정 파일(APP_CONFIG)에서 섬세한 튜닝 변수들을 모두 불러옵니다.
     let t_crow = parseInt(APP_CONFIG.tuneCrow) || 30000;
     let t_spec = parseInt(APP_CONFIG.tuneSpec) || 21000;
-    let t_def = parseInt(APP_CONFIG.tuneDeficit) || 10000;
-    let t_emg = parseInt(APP_CONFIG.tuneEmergency) || 10000;
-    let t_pres = parseInt(APP_CONFIG.tunePreservation) || 10000;
+    let t_def = schedulerNumberOrDefault(APP_CONFIG.DEFICIT_RATIO_BONUS, 10000);
+    let t_emg = schedulerNumberOrDefault(APP_CONFIG.EMERGENCY_BONUS, 10000);
+    let t_pres = schedulerNumberOrDefault(APP_CONFIG.PRESERVATION_BONUS, 10000);
     let t_distPen = schedulerNumberOrDefault(APP_CONFIG.DISTANCE_PENALTY_WEIGHT, 4);
     let t_pathEff = schedulerNumberOrDefault(APP_CONFIG.PATH_EFFICIENCY_BONUS, 15000);
 
@@ -787,12 +787,12 @@ function buildSorties(trades, mode) {
                                ? currentValidRemaining.some(rt => rt.toTier === 'coin') 
                                : false;
 
-        const canSeedExecute = seed => {
+        const canSeedExecute = (seed, reservedParley = vipParleyNeeded) => {
             const regions = getAllowedRegions(getIslandRegion(seed.island));
             // Coin/ocean departures apply their own corridor/JIT gates after seed selection.
             const busDeparture = coinStillExists || (APP_CONFIG.ALLOW_OCEAN === 'ocean' &&
                 currentValidRemaining.some(t => (getIslandCoords(t.island) || {}).isOcean));
-            const initial = { trades: [], cargo: {}, counts: new Map(), parley: 0, vip: vipParleyNeeded, zone: null };
+            const initial = { trades: [], cargo: {}, counts: new Map(), parley: 0, vip: reservedParley, zone: null };
             const copyProbe = probe => ({ ...probe, trades: [...probe.trades], cargo: { ...probe.cargo },
                 counts: new Map(probe.counts) });
             const supply = (trade, wanted, probe, visiting) => {
@@ -840,6 +840,10 @@ function buildSorties(trades, mode) {
             return supply(seed, 1, initial, new Set()) !== null;
         };
 
+        vipParleyNeeded = currentValidRemaining
+            .filter(t => t.toTier === 5 && (t.isUrgent || t.isConsumedByT7) && canSeedExecute(t, 0))
+            .reduce((sum, t) => sum + t.currentC * perTradeP, 0);
+
         let seedTrade = currentValidRemaining.find(t => {
             if (t.boundary !== 1 || t.isCoin || t.isSpec) return false;
             // 까주 대기 중일 때 5단은 씨앗(권역 설정자) 불가
@@ -852,7 +856,7 @@ function buildSorties(trades, mode) {
             // 까주가 있으면 까주를 우선 씨앗으로 삼아 동부/대양 버스를 강제 출차!
             seedTrade = currentValidRemaining.find(t => t.toTier === 'coin' && canSeedExecute(t));
             // 까주마저 없다면 남은 것 중 1등(5단 VIP 등)을 배차
-            if (!seedTrade) seedTrade = currentValidRemaining.find(canSeedExecute);
+            if (!seedTrade) seedTrade = currentValidRemaining.find(t => canSeedExecute(t));
         }
         
         if (seedTrade) {
