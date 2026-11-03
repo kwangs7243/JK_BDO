@@ -232,7 +232,8 @@ for (const reverse of [false,true]) {
     APP_CONFIG.ALLOW_OCEAN='t7_2region';
     const source=masterData[5][0].name, output=masterData[6][0].name;
     inventory={[source]:{stock:10,target:0},[output]:{stock:0,target:1}};
-    scannedTrades=[{island:'하코번',fromItem:source,toItem:output,count:1,reqAmount:1,yield:1}];
+    scannedTrades=[{island:'하코번',fromItem:source,toItem:output,count:1,reqAmount:1,yield:1},
+      {island:'일리야 섬',fromItem:output,toItem:masterData[7][0].name,count:1,reqAmount:1,yield:1}];
     runAlgorithmAllModes(true);
     globalThis.legacyAliasP1=sortiesSpeed.flatMap(s=>s.trades).some(t=>t.island==='하코번'&&t.toTier===6);
   `, ctx);
@@ -254,6 +255,7 @@ for (const reverse of [false,true]) {
     const trades=[
       {island:'아지르 섬',fromTier:4,fromClean:'T4 source',toTier:5,toClean:'T5 source',count:1,reqA:1,mult:1,score:100000},
       {island:'하코번 섬',fromTier:5,fromClean:'T5 source',toTier:6,toClean:'T6 product',count:1,reqA:1,mult:1,score:999999},
+      {island:'소산 주둔지 선착장',fromTier:6,fromClean:'T6 product',toTier:7,toClean:'T7 product',count:1,reqA:1,mult:1,score:999999},
       {island:'알 수 없는 섬',fromTier:3,fromClean:'T3 source',toTier:4,toClean:'T4 product',count:1,reqA:1,mult:1,score:100000}
     ];
     globalThis.t7Return=buildTier7Sorties(trades,'t7_3region','balance').sorties;

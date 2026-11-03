@@ -39,14 +39,16 @@ for(const mode of ['speed','balance']) {
   }
 }
 {
- const extra=[row('푸자라 섬',T4,B,4,5,6),row('아레하자 마을',B,'최고급 감투 상자',5,6,5)];
+ const extra=[row('푸자라 섬',T4,B,4,5,6),row('아레하자 마을',B,'최고급 감투 상자',5,6,5),
+   row('올비아 해안','최고급 감투 상자','금빛 밀가루 포대',6,7,5)];
  const {plan}=run(10,{extra}); const first=plan[0];
  assert.ok(!first.trades.some(t=>t.toTier===5&&t.toClean===A));
  assert.equal(first.trades.find(t=>t.toTier===5&&t.toClean===B).execC,6);
  assert.equal(first.reqItems[A].count,5);
 }
 {
- const {plan}=run(8,{extra:[row('달래나루',A,'최고급 감투 상자',5,6,5)]});
+ const {plan}=run(8,{extra:[row('달래나루',A,'최고급 감투 상자',5,6,5),
+   row('올비아 해안','최고급 감투 상자','금빛 밀가루 포대',6,7,5)]});
  assert.ok(!plan[0].trades.some(t=>t.toTier===5));
  assert.equal(plan[1].trades.find(t=>t.toTier===5).execC,6,'west sees east forecast=3 and may produce');
  assert.equal(plan[0].reqItems[A].count,5);

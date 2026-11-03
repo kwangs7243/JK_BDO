@@ -41,7 +41,8 @@ const results=[];
  vm.runInContext(`APP_CONFIG.ALLOW_OCEAN='t7_3region';inventory={'자수정 파편':{stock:6,target:80},'팔랑나비 박제품':{stock:5,target:5},'102년 묵은 황금초':{stock:10,target:5}};
  function sample(island,fromClean,toClean,fromTier,toTier,count,mult=1){return {island,fromClean,toClean,fromTier,toTier,count,currentC:count,reqA:1,mult,isCoin:toTier==='coin',isSpec:false,isRandomCoin:false,score:100000,lack:99};}
  initial=JSON.parse(JSON.stringify(inventory));
- const rows=[sample('하코번 섬','팔랑나비 박제품','발렌시아 사막 보검',5,6,5),sample('아지르 섬','자수정 파편','102년 묵은 황금초',4,5,6),sample('달래나루','102년 묵은 황금초','최고급 감투 상자',5,6,5),sample('할마드 섬','자수정 파편','까마귀 주화',4,'coin',1,171)];
+ const rows=[sample('하코번 섬','팔랑나비 박제품','발렌시아 사막 보검',5,6,5),sample('아지르 섬','자수정 파편','102년 묵은 황금초',4,5,6),sample('달래나루','102년 묵은 황금초','최고급 감투 상자',5,6,5),sample('할마드 섬','자수정 파편','까마귀 주화',4,'coin',1,171),
+   sample('일리야 섬','발렌시아 사막 보검','최고급 하이델산 포도주',6,7,5),sample('올비아 해안','최고급 감투 상자','금빛 밀가루 포대',6,7,5)];
  plan=buildTier7Sorties(rows,'t7_3region','speed').sorties;`,ctx);
  const amethyst=ctx.plan.reduce((n,s)=>n+(s.reqItems['자수정 파편']?.count||0),0);
  assert.ok(amethyst<=6);assert.equal(ctx.plan[0].reqItems['자수정 파편'].count,1);
@@ -105,7 +106,8 @@ const results=[];
 for(const initial5 of [5,8,20]){
  const {ctx}=environment();ctx.initial5=initial5;vm.runInContext(`APP_CONFIG.ALLOW_OCEAN='t7_3region';inventory={'자수정 파편':{stock:6,target:80},'102년 묵은 황금초':{stock:initial5,target:5}};
  const rows=[{island:'아지르 섬',fromClean:'자수정 파편',toClean:'102년 묵은 황금초',fromTier:4,toTier:5,count:6,origC:6,reqA:1,mult:1,score:100000},
- {island:'달래나루',fromClean:'102년 묵은 황금초',toClean:'최고급 감투 상자',fromTier:5,toTier:6,count:5,reqA:1,mult:1,score:999999}];
+ {island:'달래나루',fromClean:'102년 묵은 황금초',toClean:'최고급 감투 상자',fromTier:5,toTier:6,count:5,reqA:1,mult:1,score:999999},
+ {island:'올비아 해안',fromClean:'최고급 감투 상자',toClean:'금빛 밀가루 포대',fromTier:6,toTier:7,count:5,reqA:1,mult:1,score:999999}];
  plan=buildTier7Sorties(rows,'t7_3region','speed').sorties;`,ctx);
  assert.ok(!ctx.plan[0].trades.some(t=>t.toTier===5));
  assert.equal(ctx.plan[0].reqItems['102년 묵은 황금초'].count,5);

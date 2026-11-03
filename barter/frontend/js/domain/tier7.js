@@ -11,6 +11,12 @@ function buildTier7Sorties(trades, oceanMode, weightMode) {
     const perTradeCrowP = schedulerNumberOrDefault(document.getElementById('parleyCrow').value, 20000);
     
     let usedP = 0;
+    const restoreExecutions = (trade, amount) => {
+        trade.execC -= amount;
+        const original = remaining.find(t => t.island === trade.island && t.fromClean === trade.fromClean && t.toClean === trade.toClean);
+        if (original) original.currentC += amount;
+    };
+    const t7Nodes = ['올비아 해안','에페리아 초소','소산 주둔지 선착장','성전 해안 정찰지','일리야 섬','레마 섬'];
     const regions = { 
         east: ["하코번 섬", "아레하자 마을", "하코번", "아레하자"],
         west: ["해모 섬", "달래나루", "해모"],
@@ -33,18 +39,25 @@ function buildTier7Sorties(trades, oceanMode, weightMode) {
         s.seedRegion = ({ east: '동부 7단', west: '서부 7단', south: '남부 7단' })[regKey] || regKey;
         s.allowedRegions = [s.seedRegion];
         let virtualT6Cargo = {}; let leg1Trades = []; let leg1Groups = [];
-        let regTrades = remaining.filter(t => regions[regKey].includes(t.island) && t.toTier === 6 && t.currentC > 0);
+        const t7Capacity = {};
+        remaining.filter(t => t7Nodes.includes(t.island) && t.toTier === 7).forEach(t => {
+            t7Capacity[t.fromClean] = (t7Capacity[t.fromClean] || 0) + t.currentC * t.reqA;
+        });
+        let regTrades = remaining.filter(t => regions[regKey].includes(t.island) && t.toTier === 6 && t.currentC > 0 && t7Capacity[t.toClean] > 0);
+        let reserved7Parley = 0;
         
-        let maxT6Limit = Math.floor(weightLimit / 2000); 
+        let maxT6Limit = Math.floor(normW / 2000);
         if(maxT6Limit < 1) return;
 
         let execCount = Math.min(maxT6Limit, regTrades.reduce((a, b) => a + b.currentC, 0));
         let needed5T = {}; let tempExec = execCount;
         
+        const projected7Capacity = {...t7Capacity};
         regTrades.forEach(t => {
             if (tempExec <= 0) return;
-            let take = Math.min(t.currentC, tempExec);
+            let take = Math.min(t.currentC, tempExec, projected7Capacity[t.toClean]);
             needed5T[t.fromClean] = (needed5T[t.fromClean] || 0) + take;
+            projected7Capacity[t.toClean] -= take;
             tempExec -= take;
         });
 
@@ -89,13 +102,14 @@ function buildTier7Sorties(trades, oceanMode, weightMode) {
 
         regTrades.forEach(t => {
             if (execCount <= 0) return;
-            let take = Math.min(t.currentC, execCount);
+            let take = Math.min(t.currentC, execCount, t7Capacity[t.toClean]);
             
             let base5TStock = regionalInventory[t.fromClean] ? regionalInventory[t.fromClean].stock : 0;
             let used5T = localUsedWarehouseStock[t.fromClean] || 0;
             let available5T = (base5TStock - used5T) + (virtualT5Cargo[t.fromClean] || 0);
             
             take = Math.min(take, available5T); 
+            if (perTradeP > 0) take = Math.min(take, Math.floor((maxP-usedP-s.parleyUsed-reserved7Parley)/(2*perTradeP)));
             if (take <= 0) return;
 
             let pCost = take * perTradeP;
@@ -116,6 +130,8 @@ function buildTier7Sorties(trades, oceanMode, weightMode) {
             t.currentC -= take; execCount -= take;
             s.parleyUsed += pCost;
             virtualT6Cargo[t.toClean] = (virtualT6Cargo[t.toClean] || 0) + take;
+            t7Capacity[t.toClean] -= take;
+            reserved7Parley += take * perTradeP;
         });
 
         let currentStartW = 0;
@@ -165,7 +181,7 @@ function buildTier7Sorties(trades, oceanMode, weightMode) {
                     take = Math.min(take, maxCoinByW);
                 }
 
-                while (take > 0 && usedP + s.parleyUsed + (take * perTradeCrowP) > maxP) take--;
+                while (take > 0 && usedP + s.parleyUsed + reserved7Parley + (take * perTradeCrowP) > maxP) take--;
                 if (take <= 0) return;
 
                 localUsedWarehouseStock[t.fromClean] = usedCoinMat + (take * t.reqA);
@@ -224,7 +240,6 @@ function buildTier7Sorties(trades, oceanMode, weightMode) {
             leg1Trades = leg1Groups.flat();
         }
 
-        const t7Nodes = ["올비아 해안", "에페리아 초소", "소산 주둔지 선착장", "성전 해안 정찰지", "일리야 섬", "레마 섬"];
         let pending7T = remaining.filter(t => t7Nodes.includes(t.island) && t.toTier === 7 && t.currentC > 0 && virtualT6Cargo[t.fromClean] > 0);
         let t7Arr = [];
         
@@ -239,6 +254,16 @@ function buildTier7Sorties(trades, oceanMode, weightMode) {
             t.currentC -= take;
             virtualT6Cargo[t.fromClean] -= take; 
         });
+
+        for (const trade of [...leg1Trades].reverse()) {
+            if (trade.toTier !== 6) continue;
+            const orphaned = Math.min(trade.execC, virtualT6Cargo[trade.toClean] || 0);
+            if (orphaned > 0) {
+                restoreExecutions(trade, orphaned);
+                s.parleyUsed -= orphaned * perTradeP;
+                virtualT6Cargo[trade.toClean] -= orphaned;
+            }
+        }
 
         if (t7Arr.length > 0) t7Arr = optimizeRouteTSP(t7Arr);
 
@@ -311,26 +336,19 @@ function buildTier7Sorties(trades, oceanMode, weightMode) {
                     let reduced = false;
                     for (let i = s.trades.length - 1; i >= 0; i--) {
                         let t = s.trades[i];
-                        if (t.toTier === 7 && t.execC > 0) {
-                            let originalRef = remaining.find(rt => rt.island === t.island && rt.toClean === t.toClean && rt.fromClean === t.fromClean);
-                            t.execC--; if (originalRef) originalRef.currentC++; reduced = true; break; 
+                        if (t.toTier === 'coin' && t.execC > 0) {
+                            restoreExecutions(t, 1); reduced = true; break;
                         }
                     }
                     if (!reduced) {
                         for (let i = s.trades.length - 1; i >= 0; i--) {
                             let t = s.trades[i];
                             if (t.toTier === 6 && t.execC > 0) {
-                                let originalRef = remaining.find(rt => rt.island === t.island && rt.toClean === t.toClean && rt.fromClean === t.fromClean);
-                                t.execC--; if (originalRef) originalRef.currentC++; reduced = true; break; 
-                            }
-                        }
-                    }
-                    if (!reduced) {
-                        for (let i = s.trades.length - 1; i >= 0; i--) {
-                            let t = s.trades[i];
-                            if (t.toTier === 'coin' && t.execC > 0) {
-                                let originalRef = remaining.find(rt => rt.island === t.island && rt.toClean === t.toClean && rt.fromClean === t.fromClean);
-                                t.execC--; if (originalRef) originalRef.currentC++; reduced = true; break; 
+                                const paired = [...s.trades].reverse().find(next => next.toTier === 7 && next.fromClean === t.toClean && next.execC > 0);
+                                if (!paired) continue;
+                                restoreExecutions(t, 1);
+                                restoreExecutions(paired, 1);
+                                reduced = true; break;
                             }
                         }
                     }
@@ -615,6 +633,16 @@ function buildTier7Sorties(trades, oceanMode, weightMode) {
 
     const validation = validateSortieSequence(sorties);
     if (!validation.valid) throw new Error(`출항별 재고 계산이 맞지 않습니다: ${JSON.stringify(validation.issues[0])}`);
+    for (const sortie of sorties) {
+        const six = {}, seven = {};
+        for (const trade of sortie.trades) {
+            if (trade.toTier === 6) six[trade.toClean] = (six[trade.toClean] || 0) + trade.execC * trade.mult;
+            if (trade.toTier === 7 && trade.fromTier === 6) seven[trade.fromClean] = (seven[trade.fromClean] || 0) + trade.execC * trade.reqA;
+        }
+        if (Object.entries(six).some(([name, count]) => count !== (seven[name] || 0))) {
+            throw new Error('6단 교환과 후속 7단 교환의 수량이 맞지 않습니다.');
+        }
+    }
     return { sorties: sorties };
 }
 
