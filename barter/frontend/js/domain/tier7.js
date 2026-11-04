@@ -29,6 +29,9 @@ function buildTier7Sorties(trades, oceanMode, weightMode) {
     else if (oceanMode === 't7_2region_south') targetRegions = ['east', 'south'];
     else if (oceanMode === 't7_2region_arehazaX') targetRegions = ['west', 'south'];
 
+    if (window.__schedulerExperiment?.regionOrder) {
+        targetRegions.sort((a,b) => window.__schedulerExperiment.regionOrder.indexOf(a) - window.__schedulerExperiment.regionOrder.indexOf(b));
+    }
     targetRegions.forEach(regKey => {
         if (usedP >= maxP) return;
 
@@ -145,6 +148,7 @@ function buildTier7Sorties(trades, oceanMode, weightMode) {
         //    7단 교환을 밀어내던 문제 차단. 이들은 remaining에 남아 finalRemains → buildSorties(Phase 2 재료쌓기)에서만 태운다.
         //    (일반 1회 까주·isOcean 까주는 그대로 본대 고정 노선 유지.)
         let coinTrades = remaining.filter(t => t.toTier === 'coin' && !t.isRandomCoin && t.currentC > 0);
+        if (window.__schedulerExperiment?.coinYield) coinTrades.sort((a,b) => b.mult - a.mult || a.reqA - b.reqA || a.originalIndex - b.originalIndex);
         coinTrades.forEach(t => {
             let c = getIslandCoords(t.island) || {x:0, y:0};
             let isMatch = false;

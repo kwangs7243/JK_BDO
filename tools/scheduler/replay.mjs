@@ -6,13 +6,13 @@ import {createHash} from 'node:crypto';
 import vm from 'node:vm';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
-export function replayCase(record,{sourceRoot=ROOT}={}){
+export function replayCase(record,{sourceRoot=ROOT,experiment=null,postprocess=null}={}){
  const input=structuredClone(record.input),elements=Object.fromEntries(['normalWeight','maxWeight','maxParley','parleyPerTrade','parleyCrow'].map(name=>[name,{value:0}]));
  const notices=[];
  const ctx={console:{log(){},warn(){}},document:{getElementById:id=>elements[id]||null,querySelector:()=>null,querySelectorAll:()=>[]},
   alert:m=>notices.push(m),renderModeColumn(){},CustomEvent:class{},dispatchEvent(){},crypto:globalThis.crypto,
   setTimeout,clearTimeout,setInterval(){},clearInterval(){}};
- ctx.window=ctx;vm.createContext(ctx);
+ ctx.window=ctx;ctx.__schedulerExperiment=experiment;vm.createContext(ctx);
  const files={};
  for(const name of ['constants','routing','scheduler','tier7','schedule-edit','timer-ui','completion','scheduler-runtime']){
   const path='barter/frontend/js/domain/'+name+'.js',code=readFileSync(resolve(sourceRoot,path),'utf8');
@@ -23,6 +23,7 @@ export function replayCase(record,{sourceRoot=ROOT}={}){
  const start=performance.now();
  let ok=false,error=null;
  try{ok=ctx.__bdoScheduleRuntime.generateSchedule(ctx.state,m=>notices.push(m));}catch(e){error=e.message;}
+ if(ok&&postprocess)postprocess(ctx,record);
  const elapsedMs=performance.now()-start,summary={};
  for(const [mode,sorties] of Object.entries(ctx.state.session.schedule||{})){
   const generated={},consumed={},plannedCounts={},issues=[];

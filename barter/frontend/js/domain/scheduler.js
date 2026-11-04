@@ -522,7 +522,9 @@ function buildSorties(trades, mode) {
             // ⭐ [수정 3] 넘사벽 점수(Tier Wall)로 자릿수를 나눈 '재고량 기반 3단계 규칙' 적용
             if (t.toTier === 5 && isT7Mode) {
                 if (lack > 0 || currentVirtualStock <= minReserve) {
-                    t.score = 2000000 + basePrio;
+                    t.score = window.__schedulerExperiment?.balancedRestock
+                        ? (currentVirtualStock <= minReserve ? 500000 + p_pres + p_emg + basePrio : 100000 + lack * (p_def / 10) + basePrio)
+                        : 2000000 + basePrio;
                     t.debugMath = `2,000,000(5단 1순위) + ${basePrio}(티어)`;
                     t.isUrgent = true; t.isWeak = false;
                 } else {
@@ -633,7 +635,8 @@ function buildSorties(trades, mode) {
             }
 
             if (cand.isCoin && APP_CONFIG.CROW_COIN_PRIORITY >= 50000) reserve = 0;
-            if (cand.toTier === 5 && (cand.isUrgent || cand.isConsumedByT7)) reserve = 0;
+            if (cand.toTier === 5 && (cand.isUrgent || cand.isConsumedByT7)
+                && (!window.__schedulerExperiment?.preserveT4 || cand.isConsumedByT7)) reserve = 0;
 
             let baseStock = inventory[cand.fromClean] ? inventory[cand.fromClean].stock : 0;
             let used = globalUsedWarehouseStock[cand.fromClean] || 0;
@@ -653,6 +656,13 @@ function buildSorties(trades, mode) {
             return { maxByMat, blocked: false };
         };
         const executableCount = (cand, execCount, plannedTrades, cargo, plannedParley, zone, reservedParley, isJitSupplier = false) => {
+            if (window.__schedulerExperiment?.targetOnly && cand.toTier >= 1 && cand.toTier <= 4 && !isJitSupplier
+                && !remaining.some(t => t.currentC > 0 && t.fromClean === cand.toClean)) {
+                const projected = forecastWarehouseInventory([...sorties, {trades:plannedTrades}], inventory);
+                const item = projected[cand.toClean];
+                const gap = Math.max(0, (item?.target || 0) - (item?.stock || 0));
+                execCount = Math.min(execCount, Math.ceil(gap / cand.mult));
+            }
             let pCost = cand.isCoin ? perTradeCrowP : perTradeP;
             let isCandVIP = cand.toTier === 5 && (cand.isUrgent || cand.isConsumedByT7);
             let possibleK = 0; let tempSimTime = 0;
