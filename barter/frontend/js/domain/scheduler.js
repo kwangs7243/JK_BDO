@@ -365,6 +365,9 @@ function runAlgorithmAllModes(silent = false) {
             nextBalance = buildSorties(validTrades, 'balance');
         }
 
+        nextSpeed = improveLocalDepartureRoutes(nextSpeed, 'speed', inventory);
+        nextBalance = improveLocalDepartureRoutes(nextBalance, 'balance', inventory);
+
         // 🎴 Display-only merge of adjacent identical trades; engine decisions remain unchanged.
         try {
             let __mNormW = Number(document.getElementById('normalWeight').value) || 14379;

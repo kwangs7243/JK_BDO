@@ -1,4 +1,99 @@
 /* SPEC-005 T005 FUNCTIONS — copied from the selected final definitions in BDO_물교_v1.0.html. */
+function improveLocalDepartureRoutes(original, mode, initialInventory) {
+    const normal = Number(document.getElementById('normalWeight').value);
+    const limit = mode === 'speed' ? normal : Number(document.getElementById('maxWeight').value);
+    const normalCost = Number(document.getElementById('parleyPerTrade').value);
+    const coinCost = Number(document.getElementById('parleyCrow').value);
+    let evaluations = 0;
+    const maxEvaluations = 1600;
+    const protectedTrip = s => s.trades.some(t => t.isWaypoint || t.completed || t.toTier === 6 || t.toTier === 7);
+    const anchor = t => (t.isCoin && !t.isRandomCoin) || getIslandCoords(t.island).isOcean;
+    const signature = plan => JSON.stringify(plan.flatMap(s => s.trades.map(t => JSON.stringify([
+        t.originalIndex,t.island,t.fromClean,t.toClean,t.fromTier,t.toTier,t.execC,t.reqA,t.mult,!!t.isCoin,!!t.isWaypoint
+    ]))).sort());
+    const cost = plan => plan.reduce((n,s) => n+s.trades.reduce((a,t) => a+t.execC*(t.isCoin?coinCost:normalCost),0),0);
+    const rebuild = (s, order) => {
+        const sim = simulateWeightsTemp(order, normal), cargo = getSortieCargoPlan(order);
+        return {...s, trades:order.map((t,i) => ({...t,isChained:!!cargo.chained[i],...sim.stepData[i]})),
+            reqItems:cargo.reqItems,startWeight:sim.startW,totalTime:sim.totalTime,
+            parleyUsed:order.reduce((n,t)=>n+t.execC*(t.isCoin?coinCost:normalCost),0),
+            returnTime:sim.returnTime,returnOver:sim.returnOver,routingLogs:[],
+            seedIsland:order[0]?.island || null,seedRegion:'내해 배차 보완',
+            allowedRegions:[...new Set(order.map(t=>getIslandRegion(t.island)))]};
+    };
+    const validTrip = s => {
+        if (!Number.isFinite(s.totalTime) || !Number.isFinite(s.startWeight) || s.startWeight > normal) return false;
+        for (let i=0;i<s.trades.length;i++) {
+            const t=s.trades[i],before=i?s.trades[i-1].afterW:s.startWeight;
+            if (!Number.isFinite(t.afterW) || t.afterW < -1e-6 || t.afterW > limit) return false;
+            const c=getIslandCoords(t.island),p=i?getIslandCoords(s.trades[i-1].island):{x:0,y:0};
+            if (before>normal && (((t.isCoin||c.isOcean)&&c.x<800&&!t.island.includes('파딕스'))
+                || p.x>=-500&&c.x< -500 || p.x<=500&&c.x>500)) return false;
+        }
+        return !(mode==='speed' && s.returnOver);
+    };
+    try {
+        if (!original.length || !(normal>0) || !(limit>=normal) || !validateSortieSequence(original,initialInventory).valid) return original;
+        const beforeSignature=signature(original),beforeCost=cost(original);
+        let plan=original.slice();
+        const accept = (candidate, previousTime) => {
+            if (++evaluations>maxEvaluations || candidate.length>plan.length) return false;
+            if (candidate.reduce((n,s)=>n+s.totalTime,0)>=previousTime-1e-8) return false;
+            return candidate.every(validTrip) && validateSortieSequence(candidate,initialInventory).valid;
+        };
+        const refine = (index, begin=0) => {
+            for(let pass=0;pass<3 && evaluations<maxEvaluations;pass++) {
+                const s=plan[index],n=s.trades.length,total=plan.reduce((a,v)=>a+v.totalTime,0);
+                let winner=null,bestTime=s.totalTime;
+                for(let i=begin;i<n && evaluations<maxEvaluations;i++)for(let j=begin;j<n && evaluations<maxEvaluations;j++) {
+                    if(i===j)continue;
+                    const orders=[];
+                    const moved=s.trades.slice();moved.splice(j,0,moved.splice(i,1)[0]);orders.push(moved);
+                    if(i<j){const reversed=s.trades.slice();reversed.splice(i,j-i+1,...reversed.slice(i,j+1).reverse());orders.push(reversed);}
+                    for(const order of orders){
+                        const next=rebuild(s,order),candidate=plan.map((v,k)=>k===index?next:v);
+                        if(accept(candidate,total) && next.totalTime<bestTime-1e-8){winner=next;bestTime=next.totalTime;}
+                    }
+                }
+                if(!winner)break;
+                plan[index]=winner;
+            }
+        };
+        for(let i=0;i<plan.length && evaluations<maxEvaluations;i++) {
+            if(protectedTrip(plan[i]))continue;
+            refine(i,plan[i].trades.findLastIndex(anchor)+1);
+        }
+        for(let pass=0;pass<3 && evaluations<maxEvaluations;pass++) {
+            let changed=false;
+            for(let i=0;i<plan.length && !changed && evaluations<maxEvaluations;i++) {
+                if(protectedTrip(plan[i])||plan[i].trades.some(anchor))continue;
+                for(let j=i+1;j<plan.length && !changed && evaluations<maxEvaluations;j++) {
+                    if(protectedTrip(plan[j])||plan[j].trades.some(anchor))continue;
+                    const a=plan[i],b=plan[j],orders=[...a.trades,...b.trades];
+                    const candidates=[orders,[...b.trades,...a.trades]];
+                    if(orders.length<=7)candidates.push(getOptimalRoute(orders,normal));
+                    const total=plan.reduce((n,s)=>n+s.totalTime,0);
+                    let winner=null,bestTime=total;
+                    for(const order of candidates){
+                        const merged=rebuild(a,order),candidate=plan.filter((s,k)=>k!==j).map((s,k)=>k===i?merged:s);
+                        const t=candidate.reduce((n,s)=>n+s.totalTime,0);
+                        if(accept(candidate,total)&&t<bestTime-1e-8){winner=candidate;bestTime=t;}
+                    }
+                    if(winner){plan=winner;refine(i);changed=true;}
+                }
+            }
+            if(!changed)break;
+        }
+        if(signature(plan)!==beforeSignature || cost(plan)!==beforeCost || plan.length>original.length
+            || plan.reduce((n,s)=>n+s.totalTime,0)>original.reduce((n,s)=>n+s.totalTime,0)+1e-8
+            || !validateSortieSequence(plan,initialInventory).valid) return original;
+        return plan;
+    } catch(error) {
+        console.warn('Local route refinement kept the original schedule',error);
+        return original;
+    }
+}
+
 function calculateTravelTime(dist, isOverloaded) {
     const speed = APP_CONFIG.SHIP_SPEED || 100;
     const penalty = isOverloaded ? APP_CONFIG.OVERLOAD_PENALTY : 1.0;
