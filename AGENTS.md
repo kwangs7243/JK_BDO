@@ -1,5 +1,7 @@
 # 저장소 작업 규칙
 
+- 스케줄 후속 개선·수집 회차 검토 전에는 `docs/agents/SCHEDULER-FOLLOWUP.md`를 읽는다. 교환량 보존 내해 보완과 교환 선택 정책 변경을 섞지 않는다.
+
 - 공통 서버·실행기·native 수명주기는 `local_app/`, 물교는 `barter/`, 연금은 `alchemy/`, 판독 보조 도구는 `tools/`, 기준 품목은 `reference/`에 있다. 개발·시험·빌드는 저장소 루트에서 실행한다.
 - 현재 동작의 기준은 `docs/CURRENT-PRODUCT-CONTRACT.md`, 검증 방법은 `docs/TESTING.md`다. `docs/archive/`는 과거 기록이며 현재 작업의 승인이나 제품 동작으로 해석하지 않는다.
 - 물교·창고의 실사 분석, 인식 개선, 정답 확장을 시작하기 전에 `docs/agents/RECOGNITION-PATCH.md`를 정독한다. 과거 OCR 중심 지시서만으로 숫자 대조를 되돌리거나 저장 결과를 정답으로 승격하지 않는다.
