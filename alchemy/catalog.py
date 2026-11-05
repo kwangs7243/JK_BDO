@@ -31,18 +31,24 @@ def validate_catalog(data):
         raise AlchemyError("레시피 데이터 버전이 필요합니다.")
     if not isinstance(data.get("items"), list) or not isinstance(data.get("recipes"), list):
         raise AlchemyError("items와 recipes 배열이 필요합니다.")
+    if any(not isinstance(v, dict) or not isinstance(v.get("item_id"), str) for v in data["items"]):
+        raise AlchemyError("각 품목은 문자열 ID를 가진 객체여야 합니다.")
     items = {v["item_id"]: v for v in data["items"]}
     if any(not isinstance(i, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", i) for i in items):
         raise AlchemyError("품목 ID는 100자 이하의 영문·숫자·밑줄·하이픈을 사용하세요.")
-    if len(items) != len(data["items"]) or any(not v.get("name") for v in items.values()):
+    if len(items) != len(data["items"]) or any(not isinstance(v.get("name"), str) or not v["name"].strip() for v in items.values()):
         raise AlchemyError("품목 ID 중복 또는 이름 누락입니다.")
     if any(v.get("icon") is not None and not re.fullmatch(r"icons/[A-Za-z0-9_-]{1,100}\.(?:png|webp)", str(v["icon"])) for v in items.values()):
         raise AlchemyError("아이콘은 앱에 포함된 icons/*.png 또는 *.webp 경로를 사용하세요.")
+    if any(not isinstance(v.get("aliases", []), list) or any(not isinstance(alias, str) for alias in v.get("aliases", [])) for v in items.values()):
+        raise AlchemyError("품목 별칭은 문자열 배열이어야 합니다.")
     game_ids = [v["game_item_id"] for v in items.values() if "game_item_id" in v]
     if any(type(i) is not int or i <= 0 for i in game_ids) or len(set(game_ids)) != len(game_ids):
         raise AlchemyError("게임 품목 ID는 양의 정수이며 중복될 수 없습니다.")
     recipes = {}
     for r in data["recipes"]:
+        if not isinstance(r, dict):
+            raise AlchemyError("각 제작식은 객체여야 합니다.")
         rid = r.get("recipe_id")
         if not isinstance(rid, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", rid) or rid in recipes or r.get("output_item_id") not in items:
             raise AlchemyError("제작식 ID 중복 또는 산출 품목 누락입니다.")
@@ -53,11 +59,17 @@ def validate_catalog(data):
             raise AlchemyError("빈 제작식은 사용할 수 없습니다.")
         seen = set()
         for ingredient in r["inputs"]:
+            if not isinstance(ingredient, dict):
+                raise AlchemyError("각 투입 재료는 객체여야 합니다.")
             if ingredient.get("item_id") not in items or ingredient["item_id"] in seen:
                 raise AlchemyError("누락되거나 중복된 재료입니다.")
             seen.add(ingredient["item_id"])
             integer(ingredient.get("quantity"), "재료 수량", minimum=1)
+            if not isinstance(ingredient.get("alternatives", []), list):
+                raise AlchemyError("대체 재료는 배열이어야 합니다.")
             for alternative in ingredient.get("alternatives", []):
+                if not isinstance(alternative, dict):
+                    raise AlchemyError("각 대체 재료는 객체여야 합니다.")
                 if alternative.get("item_id") not in items or not alternative.get("source_url"):
                     raise AlchemyError("대체 재료의 품목 또는 검증 출처가 없습니다.")
                 integer(alternative.get("quantity"), "대체 수량", minimum=1)
@@ -71,10 +83,16 @@ def validate_catalog(data):
             raise AlchemyError("자동 배치 그룹은 고정 10개·100개식이어야 합니다.")
         if "output_range" in r:
             bounds = r["output_range"]
+            if not isinstance(bounds, dict):
+                raise AlchemyError("산출 범위는 최소·최대 수량 객체여야 합니다.")
             integer(bounds.get("min"), "최소 산출", minimum=1)
             integer(bounds.get("max"), "최대 산출", minimum=bounds["min"])
         if r.get("source_evidence"):
+            if not isinstance(r["source_evidence"], list):
+                raise AlchemyError("제작식 근거는 배열이어야 합니다.")
             for evidence in r["source_evidence"]:
+                if not isinstance(evidence, dict) or not isinstance(evidence.get("url", ""), str):
+                    raise AlchemyError("제작식 근거의 출처를 확인하세요.")
                 url = urlparse(evidence.get("url", ""))
                 if url.scheme not in {"http", "https"} or not url.netloc or not evidence.get("locator"):
                     raise AlchemyError("개별 제작식 근거 위치와 출처가 필요합니다.")

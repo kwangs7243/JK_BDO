@@ -2,7 +2,6 @@ from contextlib import closing
 from datetime import datetime, timezone
 import json
 from pathlib import Path
-import sqlite3
 import threading
 from urllib.request import Request, urlopen
 

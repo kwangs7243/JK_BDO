@@ -1,3 +1,4 @@
+import { requestJSON } from '/portal-assets/http.js';
 import { notice } from "/portal-assets/feedback.js";
 import { calculate } from "./calculator.js";
 
@@ -12,12 +13,8 @@ let recent = [];
 try { const saved=JSON.parse(localStorage.getItem("craft-recent") || "[]"); if(Array.isArray(saved)) recent=saved.filter(id=>typeof id === "string").slice(0,12); } catch {}
 function renderRecent() { const list=$("#recent-craft");list.replaceChildren(); for(const id of recent) { const item=items.find(i=>i.id===id);if(item)list.append(button(item.name,()=>void selectItem(id))); } list.parentElement.hidden=!list.childElementCount; }
 const status = (message, kind = "info") => { $("#status").textContent = message; if (message && kind === "error") notice(message, kind); };
-async function api(path, options = {}) {
-  const response = await fetch(`/api/craft/${path}`, { credentials:"same-origin", ...options });
-  const data = await response.json();
-  if (!response.ok) throw Error(data.error?.message || "자료를 불러오지 못했습니다.");
-  return data;
-}
+const api = (path, options = {}) => requestJSON(`/api/craft/${path}`, options);
+
 function picture(src, alt = "") {
   const image = el("img"); image.src = src || "/craft/assets/item.svg"; image.alt = alt; image.loading = "lazy";
   image.addEventListener("error", () => { image.src = "/craft/assets/item.svg"; }, {once:true});

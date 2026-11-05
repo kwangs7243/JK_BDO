@@ -1,19 +1,9 @@
-const jsonRequest = async (path, { method = "GET", body } = {}) => {
-  const response = await fetch(path, {
-    method,
-    headers: body === undefined ? {} : { "Content-Type": "application/json" },
-    body: body === undefined ? undefined : JSON.stringify(body),
-    credentials: "same-origin",
-  });
-  const payload = await response.json();
-  if (!response.ok) {
-    const error = new Error(payload?.error?.message || `Request failed: ${response.status}`);
-    error.status = response.status;
-    error.code = payload?.error?.code;
-    throw error;
-  }
-  return payload;
-};
+import { requestJSON } from '/portal-assets/http.js';
+
+const jsonRequest = (path, {method = 'GET', body} = {}) => requestJSON(path, {
+  method, headers: body === undefined ? {} : {'Content-Type': 'application/json'},
+  body: body === undefined ? undefined : JSON.stringify(body),
+});
 
 export const api = Object.freeze({
   health: () => jsonRequest("/api/health"),
@@ -29,15 +19,7 @@ export const api = Object.freeze({
     const blob = capture?.blob instanceof Blob ? capture.blob : capture;
     const form = new FormData();
     form.append("image", blob, capture?.blob ? "capture.png" : (blob?.name || "capture.png"));
-    const response = await fetch("/api/warehouse-scan", { method: "POST", body: form, credentials: "same-origin" });
-    const payload = await response.json();
-    if (!response.ok) {
-      const error = new Error(payload?.error?.message || `Request failed: ${response.status}`);
-      error.status = response.status;
-      error.code = payload?.error?.code;
-      throw error;
-    }
-    return payload;
+    return requestJSON('/api/warehouse-scan', {method: 'POST', body: form});
   },
   inventoryOrder: () => jsonRequest("/api/inventory/order"),
   saveInventoryOrder: (payload) => jsonRequest("/api/inventory/order", { method: "PUT", body: payload }),

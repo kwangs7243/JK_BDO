@@ -11,8 +11,8 @@ const frontend=resolve(dirname(fileURLToPath(import.meta.url)),'../../barter/fro
 const server=createServer(async(req,res)=>{
  try{
   const pathname=new URL(req.url,'http://localhost').pathname;
-  const path=pathname==='/'?resolve(frontend,'index.html'):resolve(frontend,pathname.replace(/^\/assets\//,''));
-  if(!path.startsWith(frontend+sep))throw Error('outside frontend');
+  const path=pathname.startsWith('/portal-assets/')?resolve(frontend,'../../local_app/frontend',pathname.slice('/portal-assets/'.length)):pathname==='/'?resolve(frontend,'index.html'):resolve(frontend,pathname.replace(/^\/assets\//,''));
+  if(!path.startsWith(frontend+sep)&&!path.startsWith(resolve(frontend,'../../local_app/frontend')+sep))throw Error('outside test assets');
   let body=await readFile(path);
   if(pathname==='/')body=body.toString().replace(/<script\b[^>]*>[\s\S]*?<\/script>/g,'');
   res.setHeader('Content-Type',path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':path.endsWith('.json')?'application/json':'text/html');res.end(body);

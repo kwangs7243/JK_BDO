@@ -186,6 +186,8 @@ class AlchemyStorage:
                 raise AlchemyError("1~1,000개의 재고 변경을 입력하세요.")
             seen = set()
             for change in changes:
+                if not isinstance(change, dict):
+                    raise AlchemyError("재고 변경은 품목과 수량을 담은 객체여야 합니다.")
                 item = change.get("item_id")
                 kind = change.get("kind", "audit")
                 if item not in items or item in seen or kind not in {"audit", "gather", "purchase", "use", "adjustment"}:
@@ -243,6 +245,8 @@ class AlchemyStorage:
             if not recipe or recipe.get("verification") != "verified" or recipe.get("update_conflict"):
                 raise AlchemyError("검증되지 않은 제작식은 차감에 사용할 수 없습니다.", 409)
             substitutions = p.get("substitutions", {})
+            if not isinstance(substitutions, dict) or not isinstance(p.get("choices", {}), dict):
+                raise AlchemyError("제작 경로와 대체 재료는 객체여야 합니다.")
             graph(catalog, recipe["output_item_id"], {**p.get("choices", {}), recipe["output_item_id"]: recipe["recipe_id"]}, substitutions)
             calls = integer(p.get("calls"), "제작 횟수", minimum=1)
             inputs = ingredients(recipe, substitutions)
@@ -288,6 +292,10 @@ class AlchemyStorage:
             self._put(db, "jobs", jid, job)
             return {"job": job}
         if action in {"finish", "cancel", "correct"}:
+            if not isinstance(p.get("job_id"), str) or not 1 <= len(p["job_id"]) <= 100:
+                raise AlchemyError("올바른 제작 작업 ID가 필요합니다.")
+            if not isinstance(p.get("baseline_counts", {}), dict):
+                raise AlchemyError("제작 전 보유량은 품목별 수량 객체여야 합니다.")
             raw = db.execute("SELECT data FROM jobs WHERE job_id=?", (p.get("job_id"),)).fetchone()
             if not raw:
                 raise AlchemyError("제작 작업이 없습니다.", 404)

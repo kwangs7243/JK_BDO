@@ -1,3 +1,5 @@
+import {register} from 'node:module';
+register(new URL('./helpers/portal_asset_loader.mjs',import.meta.url));
 import assert from 'node:assert/strict';
 
 globalThis.window = {addEventListener(){}};
