@@ -27,10 +27,10 @@ try{
   page.on('dialog',d=>{errors.push('native '+d.type());void d.dismiss();});
   await page.goto(base+'/alchemy/recipes/'+ids['맑은 액체 시약']);
   await page.waitForFunction(()=>document.querySelector('#content')?.getAttribute('aria-busy')==='false');
-  const open=async()=>{const option=page.locator('.recipe-option').first();if(!await option.evaluate(e=>e.open))await option.locator('summary').click();await page.getByRole('button',{name:'제작 시작 미리보기',exact:true}).first().click();};
+  const open=async()=>{await page.locator('#work-start [data-start]').click();await page.locator('#start-form').waitFor();await page.locator('#track-inventory').check();};
   await open();
   const calls=page.locator('#start-form [name=calls]'),salt=page.locator(`[data-start-stock][data-item="${ids['소금']}"]`);
-  const start=page.getByRole('button',{name:'재료 차감하고 제작 시작',exact:true});
+  const start=page.getByRole('button',{name:'작업 시작',exact:true});
   const save=page.locator('#save-start-stock'),reload=page.locator('#reload-start-stock');
   const stored=()=>page.waitForFunction(()=>document.querySelector('#save-start-stock').disabled&&document.querySelector('#status')?.dataset.kind==='success'&&!document.querySelector('#retry-start-stock').checkVisibility());
   await calls.fill('5');await salt.fill('0');assert.equal(await start.isDisabled(),true);

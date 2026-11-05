@@ -127,49 +127,26 @@ try {
   });
   await page.goto(base + "/alchemy/recipes/" + rage);
   await loaded();
-  await page.locator("#goal-form [name=quantity]").fill("110");
-  await page.getByRole("button", { name: "목표 등록", exact: true }).click();
-  await stored();
-  await page.locator("#batch-policy-form select").selectOption("surplus");
-  await page.getByRole("button", { name: "배치 기준 저장" }).click();
-  await stored();
+  await change('goal', {item_id:rage,quantity:110,mode:'held',batch_policies:{[rage]:'surplus'}});
+  await page.reload();await loaded();
   let plan = (await fetch(base + "/api/alchemy/plans").then((r) => r.json()))
     .plans[0];
   assert.deepEqual(
     plan.rows[0].batches.map((b) => b.planned_output),
     [100, 10],
   );
-  assert.equal(await page.locator("#craft-shortages").count(), 0);
-  await page
-    .locator(
-      `[data-tree="${rage}"] > .branch-slot > .tree-actions > button[data-start]`,
-    )
-    .first()
-    .waitFor();
-  assert.equal(
-    await page
-      .locator(
-        `[data-tree="${rage}"] > .branch-slot > .tree-actions > button[data-start]`,
-      )
-      .count(),
-    2,
-  );
-  await page
-    .locator(
-      `[data-tree="${rage}"] > .branch-slot > .tree-actions > button[data-start]`,
-    )
-    .first()
-    .click();
-  assert.equal(await page.locator("#start-recipe").inputValue(), rage + "-100");
-  assert.equal(
-    await page.locator("#start-form [name=calls]").inputValue(),
-    "1",
-  );
-  await page.getByRole("button", { name: "재료 차감하고 제작 시작" }).click();
+  assert.equal(await page.locator('#goal-form,#plan-tree').count(),0);
+  await page.locator('#work-path').selectOption(String(data.recipes.filter(r=>r.output_item_id===rage).findIndex(r=>r.recipe_id===rage+'-100')));
+  await page.locator('#work-quantity').fill('1');
+  await page.locator('#work-start [data-start]').click();
+  await page.locator('#track-inventory').check();
+  assert.equal(await page.locator('#start-recipe').inputValue(),rage+'-100');
+  assert.equal(await page.locator('#start-form [name=calls]').inputValue(),'1');
+  await page.locator('#start-form button[type=submit]').click();
   await stored();
   assert.equal((await state()).jobs[0].recipe.recipe_id, rage + "-100");
   assert.equal((await state()).goals[0].batch_policies[rage], "surplus");
-  await page.getByRole("button", { name: "결과 입력", exact: true }).click();
+  await page.getByRole("button", { name: /결과 입력/ }).click();
   await page
     .getByRole("spinbutton", { name: "격노의 영약 실제 산출량", exact: true })
     .fill("100");

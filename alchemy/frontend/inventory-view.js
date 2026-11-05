@@ -1,0 +1,11 @@
+export async function inventoryView({api, query, remember, icon, esc, link}) {
+  const data = await api(`/items?q=${encodeURIComponent(query)}&offset=0&limit=200`);
+  const rows = [...data.items];
+  for(let i=200;i<data.total;i+=200) rows.push(...(await api(`/items?q=${encodeURIComponent(query)}&offset=${i}&limit=200`)).items);
+  remember(rows);
+  const groups = [["intermediate", "시약·중간재"], ["product", "비약·완성품"], ["raw", "기본 재료"]];
+  const group = i => i.role === "intermediate" ? "intermediate" : i.craftable ? "product" : "raw";
+  const stockSlot = i => { const tag = i.craftable ? "a" : "div"; return `<div class="stock-slot"><${tag} class="stock-item" ${i.craftable ? `href="${link(i.item_id)}"` : ""}>${icon(i.item_id,true)}<span class="stock-name">${esc(i.name)}</span></${tag}><input type="number" min="0" max="1000000000" value="${i.quantity??""}" data-stock="${esc(i.item_id)}" aria-label="${esc(i.name)} 실제 재고" placeholder="미확인"></div>`; };
+  const html = `<header class="stock-heading"><div><h2>연금 창고</h2><p>필요한 재료의 보유량을 직접 확인하고 수정하세요.</p></div><form id="inventory-search"><input type="search" name="q" value="${esc(query)}" placeholder="창고에서 품목 찾기" aria-label="창고 품목 검색"><button type="submit">검색</button></form></header><nav class="stock-index" aria-label="창고 분류">${groups.map(([key,label])=>`<a href="#stock-${key}">${label}</a>`).join("")}</nav><form id="inventory-form" data-protect>${groups.map(([key,label])=>{const entries=rows.filter(i=>group(i)===key);return entries.length?`<section class="stock-shelves" id="stock-${key}"><header class="stock-shelf-heading"><h3>${label}</h3><span>${entries.length}종</span></header><div class="stock-grid">${entries.map(stockSlot).join("")}</div></section>`:"";}).join("")}${rows.length?"":'<p class="empty">검색한 품목이 없습니다.</p>'}<div class="stock-save-bar"><span>빈칸은 미확인 · 0은 확인한 0개</span><button class="primary" type="submit">변경한 재고 저장</button></div></form><details class="stock-bulk"><summary>여러 품목 한 번에 입력</summary><form id="bulk-form" data-protect><label for="bulk-text">품목명 = 수량</label><textarea id="bulk-text" name="text" placeholder="맑은 액체 시약 = 500" required></textarea><button type="submit">일괄 입력 미리보기</button></form></details>`;
+  return {rows, html};
+}
