@@ -43,7 +43,7 @@ def catalog():
     items, recipes = validate_catalog(data)
     if request.args.get("full") == "1":
         return data
-    return {"version": data["version"], "products": [items[i] for i in data["products"]], "item_count": len(items),
+    return {"version": data["version"], "craftables": [i for i in items.values() if any(r["output_item_id"] == i["item_id"] for r in recipes.values())], "products": [items[i] for i in data["products"]], "item_count": len(items),
             "recipe_count": len(recipes), "official_recipe_count": sum(r.get("source_kind") == "official" for r in recipes.values()), "notes": data.get("notes", [])}
 
 

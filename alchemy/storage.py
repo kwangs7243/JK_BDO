@@ -246,39 +246,44 @@ class AlchemyStorage:
             graph(catalog, recipe["output_item_id"], {**p.get("choices", {}), recipe["output_item_id"]: recipe["recipe_id"]}, substitutions)
             calls = integer(p.get("calls"), "제작 횟수", minimum=1)
             inputs = ingredients(recipe, substitutions)
+            tracking = p.get("track_inventory", True)
+            if type(tracking) is not bool:
+                raise AlchemyError("재고 반영 설정을 확인하세요.")
             stock = self._stock(db)
-            for row in inputs:
-                required = integer(row["quantity"] * calls, "차감량", minimum=1)
-                if stock.get(row["item_id"]) is None or stock[row["item_id"]] < required:
-                    raise AlchemyError(f'{items[row["item_id"]]["name"]}: 재고 부족 또는 미확인입니다.', 409, "insufficient_inventory")
-            # Only this goal may spend its reserved stock. Unassigned work cannot spend other goals' reservations.
-            plans = plan_goals(catalog, stock, self._records(db, "goals"), self._yield_statistics(db))
-            goal_id = p.get("goal_id")
-            if goal_id is not None:
-                target = next((g for g in self._records(db, "goals") if g["goal_id"] == goal_id), None)
-                if target is None:
-                    raise AlchemyError("제작 목표가 없습니다.", 404)
-                if not target["active"]:
-                    raise AlchemyError("보류한 목표입니다. 목표를 활성화한 뒤 제작하세요.", 409)
-                target["choices"] = {**target["choices"], **p.get("choices", {})}
-                if target.get("batch_policies", {}).get(recipe["output_item_id"], "manual") == "manual":
-                    target["choices"][recipe["output_item_id"]] = recipe["recipe_id"]
-                target["substitutions"] = {**target["substitutions"], **substitutions}
-                graph(catalog, target["item_id"], target["choices"], target["substitutions"], target.get("batch_policies"))
-                self._put(db, "goals", goal_id, target)
-                plans = plan_goals(catalog, stock, self._records(db, "goals"), self._yield_statistics(db))
-            reserved = {}
-            for plan in plans:
-                if plan["goal_id"] != goal_id:
-                    for item, q in plan["reservations"].items():
-                        reserved[item] = reserved.get(item, 0) + q
-            for row in inputs:
-                if stock[row["item_id"]] - reserved.get(row["item_id"], 0) < row["quantity"] * calls:
-                    raise AlchemyError("다른 목표에 예약된 재료입니다. 목표의 우선순위·활성을 조정하세요.", 409, "reserved_inventory")
+            if tracking:
+                for row in inputs:
+                    required = integer(row["quantity"] * calls, "차감량", minimum=1)
+                    if stock.get(row["item_id"]) is None or stock[row["item_id"]] < required:
+                        raise AlchemyError(f'{items[row["item_id"]]["name"]}: 재고 부족 또는 미확인입니다.', 409, "insufficient_inventory")
+                # Only this goal may spend its reserved stock. Unassigned work cannot spend other goals' reservations.
+                goal_id = p.get("goal_id")
+                plans = plan_goals(catalog, stock, self._records(db, "goals"), self._yield_statistics(db)) if goal_id is not None or "track_inventory" not in p else []
+                if goal_id is not None:
+                    target = next((g for g in self._records(db, "goals") if g["goal_id"] == goal_id), None)
+                    if target is None:
+                        raise AlchemyError("제작 목표가 없습니다.", 404)
+                    if not target["active"]:
+                        raise AlchemyError("보류한 목표입니다. 목표를 활성화한 뒤 제작하세요.", 409)
+                    target["choices"] = {**target["choices"], **p.get("choices", {})}
+                    if target.get("batch_policies", {}).get(recipe["output_item_id"], "manual") == "manual":
+                        target["choices"][recipe["output_item_id"]] = recipe["recipe_id"]
+                    target["substitutions"] = {**target["substitutions"], **substitutions}
+                    graph(catalog, target["item_id"], target["choices"], target["substitutions"], target.get("batch_policies"))
+                    self._put(db, "goals", goal_id, target)
+                    plans = plan_goals(catalog, stock, self._records(db, "goals"), self._yield_statistics(db))
+                reserved = {}
+                for plan in plans:
+                    if plan["goal_id"] != goal_id:
+                        for item, q in plan["reservations"].items():
+                            reserved[item] = reserved.get(item, 0) + q
+                for row in inputs:
+                    if stock[row["item_id"]] - reserved.get(row["item_id"], 0) < row["quantity"] * calls:
+                        raise AlchemyError("다른 목표에 예약된 재료입니다. 목표의 우선순위·활성을 조정하세요.", 409, "reserved_inventory")
             jid = str(uuid4())
-            for row in inputs:
-                self._change(db, row["item_id"], delta=-row["quantity"] * calls, transaction=transaction, kind="craft_start", job=jid)
-            job = {"job_id": jid, "goal_id": goal_id, "recipe": recipe, "inputs_per_call": inputs, "calls": calls,
+            if tracking:
+                for row in inputs:
+                    self._change(db, row["item_id"], delta=-row["quantity"] * calls, transaction=transaction, kind="craft_start", job=jid)
+            job = {"job_id": jid, "goal_id": p.get("goal_id") if tracking else None, "track_inventory": tracking, "recipe": recipe, "inputs_per_call": inputs, "calls": calls,
                    "status": "in_progress", "created_at": now(), "outputs": {}, "executed_calls": None, "data_version": catalog["version"]}
             self._put(db, "jobs", jid, job)
             return {"job": job}
@@ -307,24 +312,26 @@ class AlchemyStorage:
                 integer(q, "실제 산출량")
                 if executed == 0 and q:
                     raise AlchemyError("수행 횟수 0회에는 산출물을 등록할 수 없습니다.")
-            for item, q in p.get("baseline_counts", {}).items():
-                if item not in allowed or self._stock(db).get(item) is not None:
-                    raise AlchemyError("제작 전 재고 확인은 미확인 산출물에만 입력하세요.")
-                integer(q, "제작 전 확인 재고")
-                self._change(db, item, quantity=q, absolute=True, transaction=transaction, kind="output_baseline", job=job["job_id"])
-            if action != "correct":
-                for row in job["inputs_per_call"]:
-                    refund = row["quantity"] * (job["calls"] - executed)
-                    if refund:
-                        self._change(db, row["item_id"], delta=refund, transaction=transaction, kind="craft_refund", job=job["job_id"])
             before_outputs = job["outputs"] if action == "correct" else {}
-            for item in allowed:
-                difference = outputs.get(item, 0) - before_outputs.get(item, 0)
-                if difference:
-                    try:
-                        self._change(db, item, delta=difference, transaction=transaction, kind="craft_correction" if action == "correct" else "craft_output", job=job["job_id"])
-                    except AlchemyError as error:
-                        raise AlchemyError(f"정정·완료 충돌: {error} 원장을 유지했습니다. 실제 재고를 확인한 뒤 보정 거래로 처리하세요.", 409, "output_conflict") from error
+            if job.get("track_inventory", True):
+                for item, q in p.get("baseline_counts", {}).items():
+                    if item not in allowed or self._stock(db).get(item) is not None:
+                        raise AlchemyError("제작 전 재고 확인은 미확인 산출물에만 입력하세요.")
+                    integer(q, "제작 전 확인 재고")
+                    self._change(db, item, quantity=q, absolute=True, transaction=transaction, kind="output_baseline", job=job["job_id"])
+                if action != "correct":
+                    for row in job["inputs_per_call"]:
+                        refund = row["quantity"] * (job["calls"] - executed)
+                        if refund:
+                            self._change(db, row["item_id"], delta=refund, transaction=transaction, kind="craft_refund", job=job["job_id"])
+                before_outputs = job["outputs"] if action == "correct" else {}
+                for item in allowed:
+                    difference = outputs.get(item, 0) - before_outputs.get(item, 0)
+                    if difference:
+                        try:
+                            self._change(db, item, delta=difference, transaction=transaction, kind="craft_correction" if action == "correct" else "craft_output", job=job["job_id"])
+                        except AlchemyError as error:
+                            raise AlchemyError(f"정정·완료 충돌: {error} 원장을 유지했습니다. 실제 재고를 확인한 뒤 보정 거래로 처리하세요.", 409, "output_conflict") from error
             job.update(status="cancelled" if action == "cancel" else "completed", outputs=outputs, executed_calls=executed, updated_at=now())
             self._put(db, "jobs", job["job_id"], job)
             return {"job": job, "previous_outputs": before_outputs, "reason": str(p.get("reason", ""))[:1000]}
@@ -446,6 +453,8 @@ class AlchemyStorage:
                             integer(value.get("baseline"))
                         graph(data["catalog"], value["item_id"], value.get("choices"), value.get("substitutions"), value.get("batch_policies"))
                     if table == "jobs":
+                        if type(value.get("track_inventory", True)) is not bool:
+                            raise AlchemyError("백업 작업의 재고 반영 설정을 확인하세요.")
                         integer(value["calls"], minimum=1)
                         if value["status"] not in {"in_progress", "completed", "cancelled"}:
                             raise AlchemyError("백업 작업 상태가 잘못됐습니다.")
