@@ -8,6 +8,9 @@ let items = [], categories = {}, preferences = {revision:0, favorites:[]};
 let current = null, recipeIndex = 0, category = "all", favoritesOnly = false, visible = 36, loading = 0;
 let expansions = {}, lastPlan = null, navigation = [], favoritePending = false;
 const cache = new Map();
+let recent = [];
+try { const saved=JSON.parse(localStorage.getItem("craft-recent") || "[]"); if(Array.isArray(saved)) recent=saved.filter(id=>typeof id === "string").slice(0,12); } catch {}
+function renderRecent() { const list=$("#recent-craft");list.replaceChildren(); for(const id of recent) { const item=items.find(i=>i.id===id);if(item)list.append(button(item.name,()=>void selectItem(id))); } list.parentElement.hidden=!list.childElementCount; }
 const status = (message, kind = "info") => { $("#status").textContent = message; if (message && kind === "error") notice(message, kind); };
 async function api(path, options = {}) {
   const response = await fetch(`/api/craft/${path}`, { credentials:"same-origin", ...options });
@@ -51,6 +54,9 @@ async function selectItem(id, backward = false) {
     if (request !== loading) return;
     if (current && !backward && current.id !== id) navigation = [...navigation.slice(-19), current.id];
     current = item; recipeIndex = 0; expansions = {};
+    recent=[String(item.id),...recent.filter(id=>id!==String(item.id))].slice(0,12);
+    try {localStorage.setItem("craft-recent",JSON.stringify(recent));} catch {}
+    renderRecent();
     $("#count").value = "1"; $("#expansion").hidden = true;
     const url = new URL(location.href); url.searchParams.set("item", id); history.replaceState(null, "", url);
     $("#welcome").hidden = true; $("#detail").hidden = false;
@@ -194,6 +200,6 @@ try {
   for (const [id,name] of [["all","전체"],...Object.entries(categories)]) {
     const node=button(name,()=>{category=id;visible=36;for(const child of $("#categories").children) child.setAttribute("aria-pressed",String(child===node));renderList();}); node.setAttribute("aria-pressed",String(id==="all")); $("#categories").append(node);
   }
-  renderList();
+  renderList();renderRecent();
   const initial=new URL(location.href).searchParams.get("item"); if(initial && /^\d{1,10}$/.test(initial)) void selectItem(initial);
 } catch(error) { status(error.message, "error"); }

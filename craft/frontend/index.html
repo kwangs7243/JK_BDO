@@ -5,7 +5,7 @@
   <main class="workspace">
     <aside class="library"><div class="library-head"><span class="eyebrow">INDEX</span><h1>품목 목록</h1></div>
       <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="어떤 아이템을 만들까요?" aria-label="품목 검색"><kbd>/</kbd></label>
-      <nav id="categories" aria-label="품목 분류"></nav>
+      <section class="recent-craft" hidden><h2>최근 확인한 품목</h2><div id="recent-craft"></div></section><nav id="categories" aria-label="품목 분류"></nav>
       <div class="list-heading"><span id="result-count">품목을 불러오는 중</span><button id="favorites-only" aria-pressed="false">☆ 즐겨찾기</button></div>
       <div id="items" class="item-list" aria-label="품목 목록"></div><div class="list-heading"><button id="previous" class="load-more" disabled>← 이전</button><button id="more" class="load-more" hidden>다음 →</button></div>
       <footer class="library-footer"><span class="status-dot"></span><span>제작 횟수별 재료 계산</span></footer>

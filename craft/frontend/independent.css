@@ -125,3 +125,6 @@ body.art-folio .welcome-note{font-size:11px;color:#9b825d}
 @media(max-width:600px){body.art-folio .topbar{height:auto;min-height:90px;flex-wrap:wrap;padding-block:14px;gap:7px}body.art-folio .topbar>.concept-switch{margin-left:auto}body.art-folio .workspace{display:block;padding-inline:14px}body.art-folio .library{height:auto;position:relative;top:0;padding:22px;margin-bottom:20px}body.art-folio .item-list{max-height:230px;min-height:100px}body.art-folio #detail{padding-inline:21px}body.art-folio .library-footer{display:flex}body.art-folio .desk{padding:0}.book-right-materials{min-width:0}}
 
 @media(max-width:1450px){body.art-folio #recipe-area{column-gap:49px}}@media(max-width:1150px){body.art-folio #recipe-area{column-gap:36px}}@media(max-width:850px){body.art-folio #recipe-area{display:block}}
+
+body.art-folio .material img{display:block;width:36px;height:36px;object-fit:contain;flex:none}
+.recent-craft{padding:12px 0;border-bottom:1px solid #96785244}.recent-craft h2{font:500 13px Pretendard,sans-serif;margin:0 0 8px}.recent-craft>div{display:flex;flex-wrap:wrap;gap:6px}.recent-craft button{font-size:12px;padding:5px 8px}
