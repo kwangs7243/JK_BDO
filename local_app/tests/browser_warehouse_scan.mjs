@@ -17,9 +17,9 @@ const scaled = spawnSync(python, ["-B", "-c", "import sys; from PIL import Image
 if (scaled.status !== 0) throw new Error(`Scaled fixture creation failed: ${scaled.stderr}`);
 const sitePackages = process.env.BDO_EXTRA_SITE_PACKAGES;
 const prelude = sitePackages ? `import sys; sys.path.append(${JSON.stringify(sitePackages)}); ` : "";
-const pythonCode = `${prelude}import os,threading; from local_app.backend.app import create_app; app=create_app(r'${database}', testing=True); app.add_url_rule('/__test__/shutdown',view_func=lambda:(threading.Timer(.2,lambda:os._exit(0)).start() or {'ok':True}),methods=['POST']); app.run(host='127.0.0.1', port=18767, use_reloader=False, threaded=True)`;
+const pythonCode = `${prelude}import os,threading; from local_app.backend.app import create_app; app=create_app(r'${database}', testing=True); from tools.warehouse_patch.warehouse_patch import convert; from pathlib import Path; app.extensions['trade_batch_runtime'].recognize_warehouse=lambda path:convert(path,Path('reference/barter_items.json'),Path('tools/warehouse_patch/quantity_templates.npz')); app.add_url_rule('/__test__/shutdown',view_func=lambda:(threading.Timer(.2,lambda:os._exit(0)).start() or {'ok':True}),methods=['POST']); app.run(host='127.0.0.1', port=18767, use_reloader=False, threaded=True)`;
 const external = process.env.BDO_EXTERNAL_APP === "1";
-let server = external ? null : spawn(python, ["-c", pythonCode], { cwd: root, stdio: "ignore", windowsHide: true });
+let server = external ? null : spawn(process.env.BDO_TRADE_OCR_PYTHON ?? python, ["-c", pythonCode], { cwd: root, stdio: "ignore", windowsHide: true });
 let chrome;
 let socket;
 let send;

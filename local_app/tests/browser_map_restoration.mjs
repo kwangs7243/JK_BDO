@@ -113,10 +113,14 @@ try {
   const rawRoute = JSON.parse(await evaluate("import('/assets/js/state.js').then(({state})=>JSON.stringify(state.mapRouteDraft))"));
   if (!rawRoute.length) throw new Error("measurement did not create an in-memory map route");
   const routeRow = "#mv-routes-panel .mv-route-item";
-  await evaluate("window.__mapPromptValues=['240']");
-  await evaluate("window.prompt=()=>window.__mapPromptValues.shift()??null");
+  const dialogDriver = "window.__mapPromptValues=[];window.__mapAutoConfirm=true;\n    new MutationObserver(()=>{const d=document.querySelector('dialog.suite-feedback[open]');if(!d||d.dataset.testAnswered)return;const input=d.querySelector('input,textarea');if(input&&window.__mapPromptValues.length){d.dataset.testAnswered='1';input.value=window.__mapPromptValues.shift();d.querySelector('.suite-feedback-accept').click();}else if(!input&&window.__mapAutoConfirm){d.dataset.testAnswered='1';d.querySelector('.suite-feedback-accept').click();}}).observe(document.body,{childList:true,subtree:true});";
+  await send("Page.addScriptToEvaluateOnNewDocument",{source:"document.addEventListener('DOMContentLoaded',()=>{"+dialogDriver+"},{once:true})"});
+  await evaluate(dialogDriver);
+
   await click(`${routeRow} button`);
-  await waitFor(async () => Object.keys(await readCalibrations()).length > 0, "directional route calibration saved");
+  await waitFor(()=>evaluate("!!document.querySelector('.suite-feedback input')"),"themed route time input");
+  await evaluate("document.querySelector('.suite-feedback input').value='240';document.querySelector('.suite-feedback-accept').click()");
+  await waitFor(async () => (await readCalibrations())[`${rawRoute[0].start}_${rawRoute[0].end}`]?.multiplier > 0, "directional route calibration saved");
   const calibration = await readCalibrations();
   const customRoutes = JSON.parse(await evaluate("import('/assets/js/state.js').then(({state})=>JSON.stringify(state.mapRouteDraft))"));
   const customRoute = customRoutes.find(route=>route.start===rawRoute[0].start&&route.end===rawRoute[0].end);
@@ -139,18 +143,18 @@ try {
   checks.arcMove = { status: "PASS", beforeRadius, afterRadius };
 
   await evaluate("window.__mapPromptValues=['Test Harbor','Test Island','map restoration note']");
-  await evaluate("window.prompt=()=>window.__mapPromptValues.shift()??null");
+
   await clickByText("#mv-memos-panel button", "메모 추가");
   await waitFor(async () => (await evaluate("document.querySelector('#mv-memos-panel')?.innerText.includes('map restoration note')")), "memo saved");
   await evaluate("window.__mapPromptValues=['Test Harbor','Test Island','edited restoration note']");
-  await evaluate("window.prompt=()=>window.__mapPromptValues.shift()??null");
+
   await clickByText("#mv-memos-panel button", "수정");
   await waitFor(async () => await evaluate("document.querySelector('#mv-memos-panel')?.innerText.includes('edited restoration note')"), "memo edit saved");
   await clickByText("#mv-memos-panel button", "삭제");
   await waitFor(async () => !(await evaluate("document.querySelector('#mv-memos-panel')?.innerText.includes('edited restoration note')")), "memo delete saved");
   checks.memo = "PASS: add, edit, delete";
 
-  await evaluate("window.confirm=()=>true");
+  await evaluate("window.__mapAutoConfirm=true");
   await clickByText("#mv-slots-panel .mv-row button", "저장");
   await waitFor(async () => (await readMapSlot("1"))?.routes?.length > 0, "map slot saved");
   await clickByText("#mv-slots-panel .mv-row button", "불러오기");
@@ -221,7 +225,8 @@ try {
 
   await click(".mv-header button"); await click("#map-tools-dialog [data-close-dialog]"); await click("#open-schedule");
   await waitFor(async()=>await evaluate("!document.querySelector('#briefing-panel').hidden&&!!document.querySelector('#free-route-root .mv-free-route')"),"schedule free-route host");
-  await click(".briefing-free-route > summary");
+  await click(".v-settings > summary");await click("#open-free-route");
+  await waitFor(()=>evaluate("document.querySelector('#free-route-dialog').open"),"accessible free-route tool");
   await setValue("#free-route-root input:nth-of-type(1)",pair[0]);await setValue("#free-route-root input:nth-of-type(2)",pair[1]);
   const freeResult=await evaluate("document.querySelector('#free-route-root .mv-free-result').textContent");
   if(!freeResult.includes('거리'))throw new Error(`free route did not calculate distance and time: ${freeResult}`);

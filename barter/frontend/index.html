@@ -81,13 +81,14 @@
       <button id="brief-map-balance" type="button">균형 지도</button>
       <button id="brief-open-tuning" type="button">계산 튜닝</button>
       <button id="open-engine-diagnostics" type="button">결정 과정 보기</button>
+      <button id="open-free-route" type="button">자유 항로</button>
       <button id="v-show-settlement" type="button">창고 결산 보기</button>
     </div>
   </section>
 </div></details><button type="button" id="voyage-focus" hidden>항로만 보기</button></div><p id="schedule-status" role="status"></p></header>
     <div class="briefing-body">
       <div id="schedule-columns" class="schedule-columns" data-mode="both"><section><h3 id="header-speed">⚡ 쾌속 모드</h3><div id="summary-speed" class="mode-settlement" aria-live="polite"></div><div id="col-speed" class="schedule-column"></div></section><section><h3 id="header-balance">⚖️ 균형 모드</h3><div id="summary-balance" class="mode-settlement" aria-live="polite"></div><div id="col-balance" class="schedule-column"></div></section></div>
-      <div class="briefing-bottom-tools"><details class="briefing-free-route"><summary>자유 항로 · 추가 경유지</summary><div id="free-route-root"></div></details>
+      <div class="briefing-bottom-tools">
       <details class="schedule-diagnostics"><summary>계산 진단 데이터</summary><pre id="schedule-diagnostics">아직 계산하지 않았습니다.</pre><button id="copy-engine-diagnostics" type="button">진단 복사</button></details>
       </div><div class="compat-inputs" aria-hidden="true"><input id="maxParley" type="number"><input id="normalWeight" type="number"><input id="maxWeight" type="number"><input id="parleyPerTrade" type="number"><input id="parleyCrow" type="number"></div>
       <div id="waypointModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="waypoint-title">
@@ -182,6 +183,11 @@
   <dialog id="tuning-dialog" class="app-dialog tuning-dialog" aria-labelledby="tuning-title">
     <div class="dialog-titlebar tool-dialog-titlebar"><div class="tool-dialog-heading"><h2 id="tuning-title">계산 튜닝</h2><p class="tool-dialog-context">현재 회차 설정과 다음 회차 기본값을 구분해 관리합니다.</p></div><button type="button" data-close-dialog aria-label="닫기">×</button></div>
     <div class="dialog-body tool-dialog-content"><div class="tuning-tabs tool-dialog-tabs" role="tablist" aria-label="설정 적용 범위"><button type="button" role="tab" aria-selected="true" aria-controls="tuning-root" data-tuning-tab="temporary">이번 회차 임시 적용</button><button type="button" role="tab" aria-selected="false" aria-controls="tuning-root" data-tuning-tab="durable">영구 기본값 저장</button></div><p class="hint tool-dialog-scope">임시 적용 · 현재 회차만 변경하고 스케줄을 다시 계산합니다. 영구 저장 · 다음 새 회차부터 기본값으로 사용합니다.</p><div id="tuning-root" aria-live="polite"></div></div>
+  </dialog>
+
+  <dialog id="free-route-dialog" class="app-dialog" aria-labelledby="free-route-title">
+    <div class="dialog-titlebar tool-dialog-titlebar"><div class="tool-dialog-heading"><h2 id="free-route-title">자유 항로</h2><p class="tool-dialog-context">두 섬 사이의 항해 시간과 출항 타이머를 확인합니다.</p></div><button type="button" data-close-dialog aria-label="닫기">×</button></div>
+    <div class="dialog-body tool-dialog-content"><div id="free-route-root"></div></div>
   </dialog>
 
   <dialog id="map-tools-dialog" class="app-dialog map-tools-dialog" aria-labelledby="map-tools-title">

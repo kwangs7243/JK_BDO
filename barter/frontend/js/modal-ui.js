@@ -43,6 +43,7 @@ for (const [buttonId, dialogId] of [
   ["open-settings", "settings-dialog"],
   ["open-tuning", "tuning-dialog"],
   ["open-map-tools", "map-tools-dialog"],
+  ["open-free-route", "free-route-dialog"],
   ["open-engine-diagnostics", "engine-diagnostics-dialog"],
 ]) {
   document.getElementById(buttonId)?.addEventListener("click", () => openDialog(dialogId));

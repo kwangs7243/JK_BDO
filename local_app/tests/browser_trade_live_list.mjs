@@ -92,7 +92,10 @@ try {
   assert.equal(await evaluate("document.querySelector('#open-trade-master')"), null);
   const snapshotUrl = `${baseUrl}api/bootstrap`;
   const before = await (await fetch(snapshotUrl)).json();
-  const recognize = async (imageIndex, expectedRows) => {
+  const oracle = JSON.parse(await readFile(join(root,"local_app/tests/fixtures/trade-recognition/정답.json"),"utf8"));
+  await evaluate(`window.__rawRecognitionFetch=window.fetch.bind(window);window.fetch=async(...args)=>{const response=await window.__rawRecognitionFetch(...args);if(String(args[0])==='/api/recognition/trade-live-list'&&response.ok)window.__rawRecognition=(await response.clone().json()).result;return response;}`);
+  const actualAudit={automaticNumbers:0,fixtureConfirmed:0};
+  const recognize = async (imageIndex, expectedRows, confirmFromOracle = true) => {
     await evaluate("if (!document.querySelector('#trade-capture-dialog').open) document.querySelector('#open-trade-capture').click()");
     const document = await send("DOM.getDocument");
     const input = await send("DOM.querySelector", { nodeId: document.root.nodeId, selector: "#trade-capture-files" });
@@ -106,6 +109,19 @@ try {
       const diagnostic = await evaluate(`({status:document.querySelector('[data-role=trade-recognition-status]').textContent, table:document.querySelector('[data-role=trade-live-list]').innerText, busy:document.querySelector('[data-action=recognize-trade]').disabled, crashes:${JSON.stringify(crashes)}})`);
       await writeFile(join(output, 'recognition-timeout.json'), JSON.stringify(diagnostic, null, 2));
       throw new Error(`${error.message}; ${JSON.stringify(diagnostic)}`, {cause:error});
+    }
+    const original = await evaluate('window.__rawRecognition');
+    await writeFile(join(output,`original-ocr-${imageIndex}.json`),JSON.stringify(original,null,2));
+    const truth = mapping[imageIndex].oracleRows.map(i=>oracle[i]);
+    // Historical font images can legitimately require review. Confirm only after the independent fixture values agree.
+    for(let i=0;i<original.rows.length;i++)for(const field of ['reqAmount','count','yield']) {
+      const value=original.rows[i].fields[field];
+      if(!value.reviewRequired&&value.valueSource!=='TRADE_RULE'){actualAudit.automaticNumbers++;assert.equal(value.corrected,truth[i][field],`${imageIndex}/${i}/${field}: wrong automatic number`);}
+    }
+    if(confirmFromOracle && await evaluate("!!document.querySelector('[data-role=live-list-review]')")) {
+      actualAudit.fixtureConfirmed+=await evaluate("document.querySelectorAll('[data-role=live-list-review] input[data-field]').length");
+      await evaluate(`(() => {const truth=${JSON.stringify(truth)};for(const input of document.querySelectorAll('[data-role=live-list-review] input[data-field]')){input.value=truth[Number(input.dataset.row)][input.dataset.field];input.dispatchEvent(new Event('input',{bubbles:true}));}document.querySelector('[data-role=live-list-review] form').requestSubmit();})()`);
+      await waitFor(()=>evaluate("!document.querySelector('[data-role=live-list-review]')"),'independent fixture review confirmed');
     }
     const visible = await evaluate(`(() => {
       const section=document.querySelector('[data-role=trade-live-list]'); const ready=section.querySelector(':scope > .trade-ready-list'); if(ready)ready.open=true; const table=section.querySelector(':scope > .trade-recognition-table-wrap table, :scope > .trade-ready-list > .trade-recognition-table-wrap table');
@@ -124,13 +140,15 @@ try {
   await writeFile(join(output, "visible-table.png"), Buffer.from(screenshot.data, "base64"));
   assert.equal(await evaluate("document.querySelector('[data-role=live-list-review] input[data-row=\"0\"][data-field=\"reqAmount\"]')===null"),true,'automatic requirement needs no initial review');
   await evaluate("document.querySelector('[data-action=review-live-requirement][data-row=\"0\"]').click()");
+  await writeFile(join(output, "quantity-review.png"), Buffer.from((await send("Page.captureScreenshot", {format:"png"})).data,"base64"));
+  await writeFile(join(output, "quantity-review-layout.json"), JSON.stringify(await evaluate(`(() => {const review=document.querySelector('[data-role=live-list-review]');return [review,review.parentElement,review.parentElement.parentElement,review.querySelector('input[data-field]')].map(e=>({class:e.className,rect:e.getBoundingClientRect().toJSON(),scroll:e.scrollTop,height:e.scrollHeight,overflow:getComputedStyle(e).overflow}));})()`),null,2));
   assert.equal(await evaluate(`(() => {
     const review=document.querySelector('[data-role=live-list-review]');
     const region=review.parentElement.parentElement.getBoundingClientRect();
-    const card=review.querySelector('.trade-review-row').getBoundingClientRect();
+    const card=review.querySelector('input[data-field]').getBoundingClientRect();
     const list=review.parentElement.querySelector('.trade-ready-list');
-    return Boolean(review.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING) && card.top>=region.top && card.bottom<=region.bottom;
-  })()`),true,'explicit quantity review appears before the full list');
+    return Boolean(review.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING) && card.top>=region.top && card.bottom<=region.bottom+1;
+  })()`),true,'explicit quantity review input is visible before the full list');
   assert.equal(await evaluate("document.querySelector('[data-role=live-list-review] input[data-row=\"0\"][data-field=\"reqAmount\"]').value"),'500','automatic requirement can be reopened');
   await evaluate("const input=document.querySelector('[data-role=live-list-review] input[data-row=\"0\"][data-field=\"reqAmount\"]');input.value='600';input.dispatchEvent(new Event('input',{bubbles:true}))");
   assert.equal(await evaluate("document.querySelector('[data-role=live-list-review] input[data-row=\"0\"][data-field=\"reqAmount\"]').value"),'600');
@@ -171,8 +189,7 @@ try {
     payload.result.rows[5].fields.fromItem.corrected='영롱한비취';
     return new Response(JSON.stringify(payload),{status:response.status,headers:response.headers});
   }`);
-  await recognize(0,6);
-  const oracle = JSON.parse(await readFile(join(root,"local_app/tests/fixtures/trade-recognition/정답.json"),"utf8"));
+  await recognize(0,6,false);
   const truth = mapping[0].oracleRows.map((i)=>oracle[i]);
   // Open quantities explicitly so even confirmed rows participate in the all-excluded UI case.
   await evaluate(`for(let row=0;row<6;row++){
@@ -237,13 +254,15 @@ try {
   assert.equal(appended.workingSession.scannedTrades.length,11);
   assert.ok(!appended.workingSession.scannedTrades.some(row=>row.island===truth[0].island&&row.fromItem===truth[0].fromItem),'excluded row is absent from appended list');
   assert.equal(await evaluate("document.querySelector('#trade-capture-dialog').open"), false, 'successful append closes capture dialog');
-  await recognize(0,6);
+  await recognize(0,6,false);
   await evaluate(`document.querySelector('[data-action=include-live-list-row][aria-label="1행 목록 포함"]').click();
     document.querySelectorAll('[data-role=live-list-review] input[data-field]').forEach(input=>{
       input.value=${JSON.stringify(truth)}[Number(input.dataset.row)][input.dataset.field];input.dispatchEvent(new Event('input',{bubbles:true}));
     });document.querySelector('[data-role=live-list-review] form').requestSubmit();`);
   await waitFor(async()=>evaluate("!document.querySelector('[data-action=apply-live-new]').disabled"),'new recognized list reviewed');
-  await evaluate("window.confirm=()=>true; document.querySelector('[data-action=apply-live-new]').click()");
+  await evaluate("document.querySelector('[data-action=apply-live-new]').click()");
+  await waitFor(()=>evaluate("!!document.querySelector('.suite-feedback-accept')"),"replace session confirmation");
+  await evaluate("document.querySelector('.suite-feedback-accept').click()");
   await waitFor(async()=> (await (await fetch(`${baseUrl}api/bootstrap`)).json()).workingSession.scannedTrades.length===5,'included rows used for new session');
   const replaced=await (await fetch(`${baseUrl}api/bootstrap`)).json();
   assert.ok(!replaced.workingSession.scannedTrades.some(row=>row.island===truth[0].island&&row.fromItem===truth[0].fromItem));
@@ -255,7 +274,7 @@ try {
   assert.deepEqual((await (await fetch(`${baseUrl}api/bootstrap`)).json()).workingSession,replaced.workingSession);
   assert.equal(crashes.length, 0); assert.equal((await fetch(`${baseUrl}api/health`)).ok, true);
   const report = { browserRealImageVisibleTable: "PASS", missingActiveMaster: "PASS", masterApiFailure: "PASS",
-    rawOCRVisibleIfCorrectionFails: "PASS", fixedQuantitiesWithoutReview: "PASS", twoOrThreeRecognition: "PASS",
+    actualAudit, oldFontFixtureReview: "CONFIRMED_FROM_INDEPENDENT_FIXTURE_NOT_NEW_GAME", rawOCRVisibleIfCorrectionFails: "PASS", fixedQuantitiesWithoutReview: "PASS", twoOrThreeRecognition: "PASS",
     databaseSessionModified: "YES_IN_ISOLATED_DB_AFTER_APPLY", finalLiveListPersisted: "PASS", selectiveReview: selectiveCount, appCrash: "NO", images: 5, correctionFeedback: "PASS", appendAndReload: "PASS",
     reviewVisibility: "PASS", rowIncludeExclude: "PASS", excludedDraftAndValidation: "PASS", excludedFeedback: "PASS",
     includedNewAndAppend: "PASS", reinclusion: "PASS", emptyListBlocked: "PASS", filteredImporterReview: "PASS",

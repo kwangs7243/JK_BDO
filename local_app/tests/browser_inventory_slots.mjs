@@ -67,10 +67,10 @@ try {
     await page.screenshot({path:join(output,`warehouse-${width}.png`)});
   }
   await page.evaluate(async()=>{const {state}=await import('/assets/js/state.js');const p=await import('/assets/js/persistence.js');await p.saveInventory({'갈퀴 꽃 씨앗 주머니':{stock:100},'괴생물 촉수':{stock:0}});state.session.scannedTrades=[{island:'베이루와 섬',fromItem:'갈퀴 꽃 씨앗 주머니',toItem:'괴생물 촉수',reqAmount:1,count:3,yield:3}];state.session.remainingParley=1500000;});
-  await page.locator('[data-workspace-view="briefing"]').click();await page.locator('#generate-schedule').click();await idle();
+  await page.locator('[data-workspace-view="briefing"]').click();await page.locator('.v-settings > summary').click();await page.locator('#generate-schedule').click();await idle();
   for(const width of [1920,1440,1024]) {
     await page.setViewportSize({width,height:1000});
-    for(const mode of ['speed','balance','both']) {
+    for(const mode of ['speed','balance']) {
       await page.locator(`[data-brief-mode="${mode}"]`).click();await idle();
       const clipped=await page.locator('.schedule-columns h3:visible').evaluateAll(headings=>headings.some(h=>{const b=h.getBoundingClientRect();return [...h.querySelectorAll('.mode-stat')].some(s=>{const r=s.getBoundingClientRect();return r.right>b.right-1||r.left<b.left+1;});}));
       assert.equal(clipped,false,`${mode} summary clipped at ${width}`);
@@ -86,31 +86,29 @@ try {
   const edges=await Promise.all([command.boundingBox(),columns.boundingBox()]);
   assert.ok(Math.abs(edges[0].x-edges[1].x)<1&&Math.abs(edges[0].width-edges[1].width)<1,'header and schedule share the same width');
   assert.equal(await command.evaluate(n=>getComputedStyle(n).borderTopWidth),'0px','selected design has no enclosing card');
-  await page.locator('.briefing-secondary-tools details').first().locator('summary').click();
+  await page.locator('.v-settings > summary').click();
   assert.equal(await page.locator('#brief-map-speed').isVisible(),true);
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('#brief-map-speed').isVisible(),false);
-  await page.locator('.briefing-secondary-tools details').last().locator('summary').click();
+  await page.locator('.v-settings > summary').click();
   await page.locator('#brief-open-tuning').click();
   assert.equal(await page.locator('#tuning-dialog').evaluate(n=>n.open),true);
   assert.equal(await page.locator('.briefing-menu[open]').count(),0,'tool action closes its menu');
   await page.locator('#tuning-dialog [data-close-dialog]').click();
+  await page.locator('.v-settings > summary').click();
   const slots=page.locator('#schedule-slot-controls');
   await slots.getByRole('button',{name:'저장',exact:true}).click();await idle();
   await page.waitForFunction(()=>document.querySelector('#schedule-status').textContent.includes('스케줄을 저장'));
-  await page.locator('#selected-schedule-slot').selectOption('2');await idle();
+  await page.locator('.v-settings > summary').evaluate(n=>{if(!n.parentElement.open)n.click()});await page.locator('#selected-schedule-slot').selectOption('2');await idle();
   assert.equal(await slots.getByRole('button',{name:'불러오기',exact:true}).isDisabled(),true);
-  await page.locator('#selected-schedule-slot').selectOption('1');await idle();
-  page.once('dialog',dialog=>dialog.accept());
-  await slots.getByRole('button',{name:'불러오기',exact:true}).click();await idle();
+  await page.locator('.v-settings > summary').evaluate(n=>{if(!n.parentElement.open)n.click()});await page.locator('#selected-schedule-slot').selectOption('1');await idle();
+  await slots.getByRole('button',{name:'불러오기',exact:true}).click();await page.locator('.suite-feedback-accept').click();await idle();
   await page.waitForFunction(()=>document.querySelector('#schedule-status').textContent.includes('회차를 불러왔습니다'));
-  await slots.locator('summary').click();
-  page.once('dialog',dialog=>dialog.dismiss());
-  await slots.getByRole('button',{name:'삭제',exact:true}).click();
+  await page.locator('.v-settings > summary').click();
+  await slots.getByRole('button',{name:'삭제',exact:true}).click();await page.locator('.suite-feedback-cancel').click();
   assert.ok((await fetch(base+'/api/bootstrap').then(r=>r.json())).scheduleSlots['1'],'cancelled deletion preserves the slot');
-  await slots.locator('summary').click();
-  page.once('dialog',dialog=>dialog.accept());
-  await slots.getByRole('button',{name:'삭제',exact:true}).click();await idle();
+  await page.locator('.v-settings > summary').click();
+  await slots.getByRole('button',{name:'삭제',exact:true}).click();await page.locator('.suite-feedback-accept').click();await idle();
   await page.waitForFunction(()=>document.querySelector('#schedule-status').textContent.includes('슬롯을 삭제했습니다'));
   assert.equal(Boolean((await fetch(base+'/api/bootstrap').then(r=>r.json())).scheduleSlots['1']),false);
   const withoutIcons=await browser.newPage();
@@ -119,6 +117,6 @@ try {
   assert.equal(await withoutIcons.locator('.inventory-row').count(),70,'an icon service failure must not block inventory');
   await withoutIcons.close();
   assert.deepEqual(errors,[]);
-  await writeFile(join(output,'slots-result.json'),JSON.stringify({ok:true,icons:70,editAndBulk:true,unknownAndZero:true,filters:true,reorderAndReload:true,summaryModes:3,widths:[1920,1440,1024]},null,2));
+  await writeFile(join(output,'slots-result.json'),JSON.stringify({ok:true,icons:70,editAndBulk:true,unknownAndZero:true,filters:true,reorderAndReload:true,summaryModes:2,widths:[1920,1440,1024]},null,2));
   console.log(JSON.stringify({ok:true,icons:70,warehouseControls:true,summaryNotClipped:true,output}));
 } finally {await browser?.close();server?.kill();await new Promise(r=>setTimeout(r,400));if(dirname(temp)!==resolve(tmpdir()))throw Error('unsafe temporary path');await rm(temp,{recursive:true,force:true,maxRetries:10,retryDelay:300});}

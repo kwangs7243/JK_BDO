@@ -56,7 +56,7 @@ try {
   await idle();await click('#open-schedule');await click('#generate-schedule');
   await waitFor(async()=>await evaluate("document.querySelectorAll('#col-speed .sortie-card').length>0&&document.querySelectorAll('#col-balance .sortie-card').length>0"),'schedule generated');
   if(!await evaluate("!document.querySelector('#briefing-panel').hidden&&!document.querySelector('dialog[open]')"))throw Error('briefing workspace did not open');
-  for(const mode of ['speed','balance','both']) {
+  for(const mode of ['speed','balance']) {
     await click(`[data-brief-mode=${mode}]`);
     if(!await evaluate(`import('/assets/js/state.js').then(({state})=>state.session.selection.briefMode==='${mode}')`))throw Error('briefing mode did not select');
   }
@@ -84,14 +84,14 @@ try {
   await waitFor(async()=>{try{return(await fetch(`${baseUrl}api/health`)).ok}catch{return false}},'same DB process restart');
   await reload();
   if(JSON.stringify((await boot()).scheduleSlots)!==JSON.stringify(slotsBefore))throw Error('slots changed after process restart');
-  await click('#open-schedule');await selectSlot(1);await idle();await click('#schedule-slot-controls button:nth-of-type(2)');
+  await click('#open-schedule');await selectSlot(1);await idle();await click('#schedule-slot-controls button:nth-of-type(2)');await waitFor(()=>evaluate("!!document.querySelector('.suite-feedback-accept')"),'slot confirmation');await click('.suite-feedback-accept');
   await waitFor(async()=>await evaluate("document.querySelector('#schedule-status').textContent.includes('1번 스케줄 회차를 불러왔습니다')"),'slot load');
   if(!await evaluate(`import('/assets/js/state.js').then(({state})=>state.session.config.tuning.useClustering===${tuningBefore+1}&&!Object.keys(state.session.timers||{}).length&&!!state.session.schedule)`))throw Error('slot context/timer restore failed');
-  await click('#schedule-slot-controls button:nth-of-type(3)');
+  await click('#schedule-slot-controls button:nth-of-type(3)');await waitFor(()=>evaluate("!!document.querySelector('.suite-feedback-accept')"),'slot delete confirmation');await click('.suite-feedback-accept');
   await waitFor(async()=>!(await boot()).scheduleSlots['1'],'slot 1 delete');
   if(!(await boot()).scheduleSlots['2'])throw Error('slot deletion changed other slot');
   await click('[data-workspace-view=session]');
-  const resetBefore=await boot();await click('#reset-session');
+  const resetBefore=await boot();await click('#reset-session');await waitFor(()=>evaluate("!!document.querySelector('.suite-feedback-accept')"),'reset confirmation');await click('.suite-feedback-accept');
   await waitFor(async()=>(await boot()).workingSession===null,'session reset');
   const resetAfter=await boot();
   if(JSON.stringify(resetBefore.inventory)!==JSON.stringify(resetAfter.inventory)||!resetAfter.scheduleSlots['2'])throw Error('session reset removed inventory or saved slot');

@@ -5,18 +5,18 @@ import { applyInventoryFilters } from "./workspace-ui.js";
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) node.textContent = text; return node; };
 const numberInput = (value, label, integer = true) => { const input = document.createElement("input"); input.type = "number"; input.min = "0"; input.step = integer ? "1" : "any"; input.value = value ?? ""; input.setAttribute("aria-label", label); return input; };
 const tierNames = (tier) => state.inventory.filter((item) => item.tier === tier).map((item) => item.programName);
-let inventoryIcons = {};
+let inventoryIcons = new Map();
 let iconsRequest;
 const iconKey = name => String(name).replace(/\s+/g, '');
-export const inventoryIcon = name => inventoryIcons[iconKey(name)] ?? null;
+export const inventoryIcon = name => inventoryIcons.get(iconKey(name)) ?? null;
 export function loadInventoryIcons() {
   const read = url => fetch(url, {credentials:'same-origin'})
     .then(response => response.ok ? response.json() : null).catch(() => null);
   return iconsRequest ??= Promise.all([
     read('/assets/data/inventory-icons.json'), read('/assets/data/voyage-item-icons.json')
   ]).then(([warehouse, voyage]) => {
-    const extra = (voyage?.items ?? []).map(item => [item.name, '/assets/' + item.file]);
-    inventoryIcons = Object.fromEntries([...extra, ...Object.entries(warehouse ?? {})]
+    const extra = (Array.isArray(voyage?.items) ? voyage.items : []).filter(item => typeof item?.name === 'string' && /^item-icons\/[A-Za-z0-9_-]+\.webp$/.test(item.file)).map(item => [item.name, '/assets/' + item.file]);
+    inventoryIcons = new Map([...extra, ...Object.entries(warehouse && typeof warehouse === 'object' && !Array.isArray(warehouse) ? warehouse : {}).filter(([,url]) => typeof url === 'string' && url.startsWith('/assets/item-icons/'))]
       .map(([name, url]) => [iconKey(name), url]));
   });
 }
@@ -49,8 +49,9 @@ export function renderInventory(root, setStatus) {
       const row = el("article", "inventory-row"); row.draggable = true; row.dataset.name = name; row.dataset.tier = String(tier); row.setAttribute("aria-label", name);
       const nameCell = el("div", "item-name");
       const icon = el("span", "inventory-slot-icon");
-      if (inventoryIcons[name]) {
-        const image = document.createElement("img"); image.src = inventoryIcons[name]; image.alt = "";
+      const imageUrl = inventoryIcon(name);
+      if (imageUrl) {
+        const image = document.createElement("img"); image.src = imageUrl; image.alt = "";
         image.width = 44; image.height = 44; image.loading = "lazy"; image.decoding = "async"; image.draggable = false;
         image.addEventListener("error", () => { icon.hidden = true; }); icon.append(image);
       } else icon.hidden = true;

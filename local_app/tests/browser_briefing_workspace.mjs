@@ -49,15 +49,15 @@ try {
     state.session.scannedTrades=[{island:'베이루와 섬',fromItem:'갈퀴 꽃 씨앗 주머니',toItem:'괴생물 촉수',reqAmount:1,count:3,yield:3}];
     state.session.remainingParley=1500000;
   });
-  await page.locator('#generate-schedule').click();await idle();
+  await page.locator('.v-settings > summary').click();await page.locator('#generate-schedule').click();await idle();
   assert.ok(await page.locator('#col-speed .sortie-card').count());
   await page.locator('[data-brief-mode="speed"]').click();await idle();
-  await page.locator('#col-speed .route-depart-button').first().click();
+  await page.locator('#col-speed .v-show-route').click();await page.locator('#col-speed .route-depart-button').first().click();
   const navigationBefore=await page.evaluate(()=>{
     window.__firstRoute=document.querySelector('#col-speed .route-card');
     const filler=document.createElement('div');filler.id='scroll-test';filler.style.height='2000px';
-    document.querySelector('#col-speed').append(filler);document.querySelector('#schedule-columns').scrollTop=200;
-    return {timers:JSON.stringify(window.ACTIVE_TIMERS),scroll:document.querySelector('#schedule-columns').scrollTop};
+    document.querySelector('#col-speed').append(filler);document.querySelector('#col-speed .voyage-route-scroll').append(filler);document.querySelector('#col-speed .voyage-route-scroll').scrollTop=200;
+    return {timers:JSON.stringify(window.ACTIVE_TIMERS),scroll:document.querySelector('#col-speed .voyage-route-scroll').scrollTop};
   });
   const durableBefore=await boot();
   await page.locator('[data-workspace-view="inventory"]').click();
@@ -65,7 +65,7 @@ try {
   await page.locator('#open-schedule').click();
   await page.keyboard.press('Escape');
   const navigationAfter=await page.evaluate(()=>({sameRow:window.__firstRoute===document.querySelector('#col-speed .route-card'),
-    timers:JSON.stringify(window.ACTIVE_TIMERS),scroll:document.querySelector('#schedule-columns').scrollTop}));
+    timers:JSON.stringify(window.ACTIVE_TIMERS),scroll:document.querySelector('#col-speed .voyage-route-scroll').scrollTop}));
   assert.equal(navigationAfter.sameRow,true,'navigation must retain route DOM and timers');
   assert.equal(navigationAfter.timers,navigationBefore.timers);
   assert.ok(navigationBefore.scroll>0);assert.equal(navigationAfter.scroll,navigationBefore.scroll);
@@ -75,17 +75,17 @@ try {
   await page.locator('#col-speed .sortie-heading button').click();
   assert.equal(await page.locator('#waypointModal').isVisible(),true);
   await page.locator('#close-waypoint').click();
-  await page.locator('#brief-open-tuning').click();
+  await page.locator('.v-settings > summary').click();await page.locator('#brief-open-tuning').click();
   assert.equal(await page.locator('#tuning-dialog').isVisible(),true);
   await page.locator('#tuning-dialog [data-close-dialog]').click();
   assert.equal(await page.locator('#briefing-panel').isVisible(),true);
   await page.evaluate(async()=>{const p=await import('/assets/js/persistence.js');await p.saveScheduleSlot(1);await p.loadScheduleSlot(1);});
-  await page.locator('#col-speed .route-complete-button').click();await idle();
+  await page.locator('#col-speed .v-show-route').click();await page.locator('#col-speed .v-current .route-complete-button').click();await idle();
   const completed=await boot();
   assert.equal(completed.inventory.find(i=>i.programName==='갈퀴 꽃 씨앗 주머니').stock,97);
   assert.equal(completed.inventory.find(i=>i.programName==='괴생물 촉수').stock,9);
   assert.ok(completed.workingSession.schedule.speed[0].trades[0].completed);
-  await page.locator('#col-speed .route-complete-button').evaluate(button=>button.click());await idle();
+  await page.evaluate(()=>window.completeTrade(document.createElement('button'),'speed',0,0,0));await idle();
   assert.deepEqual(await boot(),completed,'completion is persisted once');
   const screenshots=process.env.UI_AUDIT_DIR||temp;
   await import('node:fs/promises').then(m=>m.mkdir(screenshots,{recursive:true}));
@@ -93,22 +93,22 @@ try {
   await page.evaluate(fixture=>{
     window.renderModeColumn('col-speed',fixture.speed,'speed');window.renderModeColumn('col-balance',fixture.balance,'balance');
   },fixture);
-  await page.locator('[data-brief-mode="both"]').click();await idle();
+  await page.locator('[data-brief-mode="speed"]').click();await idle();
   for(const width of [1920,1440,1024]){
     await page.setViewportSize({width,height:1080});
     await page.waitForFunction(()=>Math.abs(document.body.getBoundingClientRect().width-innerWidth)<2);
     const layout=await page.evaluate(()=>{
       const panel=document.querySelector('#briefing-panel').getBoundingClientRect();
-      const toolbar=document.querySelector('.briefing-toolbar').getBoundingClientRect();
+      const toolbar=document.querySelector('.briefing-command').getBoundingClientRect();
       const list=document.querySelector('#schedule-columns').getBoundingClientRect();
       return {left:panel.left,right:panel.right,bottom:panel.bottom,width:innerWidth,height:innerHeight,
         listHeight:list.height,toolbarBottom:toolbar.bottom,listTop:list.top,scrollWidth:document.documentElement.scrollWidth,
-        grid:getComputedStyle(document.querySelector('#schedule-columns')).gridTemplateColumns.split(' ').length};
+        display:getComputedStyle(document.querySelector('#schedule-columns')).display,visible:[...document.querySelectorAll('#schedule-columns>section')].filter(n=>n.checkVisibility()).map(n=>n.getBoundingClientRect().width)};
     });
     assert.ok(layout.left>=0&&layout.right<=layout.width+2&&layout.bottom<=layout.height+2,JSON.stringify(layout));
     assert.ok(layout.listHeight>150&&layout.toolbarBottom<=layout.listTop+2,JSON.stringify(layout));
     assert.ok(layout.scrollWidth<=layout.width+2,JSON.stringify(layout));
-    assert.equal(layout.grid,width===1024?1:2);
+    assert.equal(layout.display,'block');assert.equal(layout.visible.length,1);assert.ok(layout.visible[0]>layout.right-layout.left-30);
     await page.screenshot({path:join(screenshots,`briefing-${width}.png`)});
   }
   assert.deepEqual(errors,[]);

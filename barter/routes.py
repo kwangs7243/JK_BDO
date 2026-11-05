@@ -21,4 +21,4 @@ def inventory_icons():
 
 @barter_pages.get("/assets/item-icons/<int:item_id>.webp")
 def inventory_icon(item_id):
-    return send_from_directory(Path(__file__).resolve().parents[1] / "reference/icons", f"{item_id}.webp", max_age=86400)
+    return send_from_directory(Path(__file__).resolve().parents[1] / "reference/icons", f"{item_id}.webp", mimetype="image/webp", max_age=86400)

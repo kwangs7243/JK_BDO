@@ -39,11 +39,12 @@ try {
   const evaluate = async (expression) => { const result = await send("Runtime.evaluate", { expression: "(()=>eval("+JSON.stringify(expression)+"))()", awaitPromise: true, returnByValue: true }); if (result.exceptionDetails) throw new Error(result.exceptionDetails.exception?.description ?? result.exceptionDetails.text); return result.result?.value; };
   await send("Page.enable"); await send("Runtime.enable");
   await waitFor(async () => (await evaluate("document.querySelectorAll('.inventory-row').length")) === 70, "SPEC-002 UI and trade panel");
+  await evaluate("new MutationObserver(()=>{const d=document.querySelector('dialog.suite-feedback[open]');if(d&&!d.dataset.testAnswered){d.dataset.testAnswered='1';d.querySelector('.suite-feedback-accept').click();}}).observe(document.documentElement,{childList:true,subtree:true});");
   const seed = JSON.parse(await readFile(resolve(root, "local_app/tests/fixtures/KNOWN_CORRECT_SPECIAL_IMPORT_4.json"), "utf8"))[0];
   const second = JSON.parse(await readFile(resolve(root, "local_app/tests/fixtures/KNOWN_CORRECT_SPECIAL_IMPORT_4.json"), "utf8"))[1];
   const encodedSeed = JSON.stringify(JSON.stringify([seed]));
   const idle = () => evaluate("import('/assets/js/persistence.js').then(m=>m.whenPersistenceIdle())");
-  const inputRows = rows => evaluate(`document.querySelector('#trade-json-input').value=${JSON.stringify(JSON.stringify(rows))};document.querySelector('#apply-new-session').click()`);
+  const inputRows = async rows => {await evaluate(`document.querySelector('#trade-json-input').value=${JSON.stringify(JSON.stringify(rows))};document.querySelector('#apply-new-session').click()`);await waitFor(()=>evaluate("!!document.querySelector('.trade-import-review[open]')"),'import review ready');};
   const closeReview = async () => {
     await evaluate("document.querySelector('.trade-import-review[open] .patch-review-footer button').click()");
     await waitFor(async () => await evaluate("!document.querySelector('.trade-import-review')"), "closed review removed before next import");
@@ -63,7 +64,7 @@ try {
   const third = JSON.parse(await readFile(resolve(root,"local_app/tests/fixtures/KNOWN_CORRECT_SPECIAL_IMPORT_4.json"),"utf8"))[2];
   const mixed = [seed,{...second,yield:0},{...third,toItem:'품목 확인 불가'}];
   await inputRows(mixed);
-  if (!await evaluate("document.querySelectorAll('.trade-import-review[open] .trade-review-include').length===2 && [...document.querySelectorAll('.trade-import-review[open] .trade-review-include')].every(n=>!n.checked)")) throw Error("mixed default exclusion missing");
+  if (!await evaluate("document.querySelectorAll('.trade-import-review[open] .trade-review-include').length===2 && [...document.querySelectorAll('.trade-import-review[open] .trade-review-include')].every(n=>!n.checked)")) throw Error("mixed default exclusion missing: "+await evaluate("document.querySelector('.trade-import-review').innerText"));
   await closeReview();
   if (await evaluate("import('/assets/js/state.js').then(({state})=>JSON.stringify(state.session.scannedTrades))") !== reviewedBefore) throw Error("cancel changed prior session");
   await inputRows(mixed);

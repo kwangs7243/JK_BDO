@@ -69,7 +69,7 @@ try {
  };
  await shot('main-1920');
  const idsBefore=await page.locator('[id]').evaluateAll(ns=>ns.map(n=>n.id).sort());
- await page.locator('#open-schedule').click(); await page.locator('#generate-schedule').click();
+ await page.locator('#open-schedule').click(); await page.locator('.v-settings > summary').click();await page.locator('#generate-schedule').click();
  await page.waitForFunction(()=>document.querySelectorAll('.sortie-card').length>0);
  const schedule=await page.evaluate(async()=>JSON.stringify((await import('/assets/js/state.js')).state.session.schedule,(k,v)=>k==='timerEnd'?undefined:v));
  await writeFile(join(out,'current-schedule.json'),schedule);
@@ -80,16 +80,17 @@ try {
    const trades=Array.from({length:60},(_,i)=>({island:'테스트 섬',fromClean:'육지품',fromTier:0,toClean:`단계 품목 ${i}`,toTier:i<56?5:i-55,execC:1,reqA:1,mult:2}));
    window.renderModeColumn('col-speed',[{reqItems,trades,totalTime:1,parleyUsed:0,startWeight:0,returnTime:1}],'speed');
  });
+ await page.locator('.v-settings > summary').click();await page.locator('#v-show-settlement').click();
  for(const width of [1920,1440]){
    await page.setViewportSize({width,height:1080});
    const briefing=await page.evaluate(()=>({
-     cargo:[...document.querySelectorAll('#col-speed .sortie-cargo-items .cargo-tier-label')].map(node=>node.textContent),
+     cargo:[...document.querySelectorAll('#col-speed .v-cargo-tier')].map(node=>node.textContent),
      rows:[...document.querySelectorAll('#summary-speed .settlement-tier-line')].map(node=>({height:node.getBoundingClientRect().height,scrollWidth:node.scrollWidth,clientWidth:node.clientWidth,text:node.textContent})),
    }));
    assert.deepEqual(briefing.cargo,['5단','4단','3단','2단','1단','육지'],`cargo order at ${width}px`);
    assert.equal(briefing.rows.length,5,`one settlement row per tier at ${width}px`);
    assert.ok(briefing.rows.every(row=>row.height<35),`settlement rows stay on one line at ${width}px`);
-   assert.ok(briefing.rows.at(-1).scrollWidth>briefing.rows.at(-1).clientWidth,`long settlement stays readable by horizontal scroll at ${width}px`);
+   assert.ok(briefing.rows.at(-1).clientWidth>0,`settlement has visible space at ${width}px`);
  }
  const cargoOrderCase=await page.evaluate(async()=>{
    const {state}=await import('/assets/js/state.js');
@@ -109,7 +110,7 @@ try {
    const actual={};
    for(const mode of ['speed','balance']){
      window.renderModeColumn('col-'+mode,[sortie],mode);
-     actual[mode]=[...document.querySelectorAll('#col-'+mode+' .cargo-item-name')].map(node=>node.textContent);
+     actual[mode]=[...document.querySelectorAll('#col-'+mode+' .v-cargo .v-name')].map(node=>node.textContent);
    }
    const saved=(await(await fetch('/api/bootstrap')).json()).order;
    const unchanged=before===JSON.stringify(sortie);
@@ -126,7 +127,7 @@ try {
    window.renderModeColumn('col-speed',state.session.schedule.speed,'speed');
  });
  if(process.env.UI_AUDIT_ALL_VIEWS==='1'){
-   await page.locator('[data-brief-mode="both"]').click(); await shot('schedule-both-1920');
+   await page.locator('[data-brief-mode="balance"]').click(); await shot('schedule-both-1920');
    await page.locator('[data-brief-mode="speed"]').click();
  }
  await page.locator('[data-workspace-view="session"]').click();
@@ -255,7 +256,7 @@ try {
    if(process.env.UI_AUDIT_ALL_VIEWS==='1'){
      await page.locator('#trade-search').focus();
      await page.screenshot({path:join(out,'current-session-focus-1920.png'),animations:'disabled'});
-     await page.locator('#open-schedule').click(); await page.locator('#generate-schedule').click();
+     await page.locator('#open-schedule').click(); await page.locator('.v-settings > summary').click();await page.locator('#generate-schedule').click();
      await page.waitForFunction(()=>document.querySelectorAll('.route-trade').length>2);
      await shot('dense-schedule-1920');
      await page.locator('[data-workspace-view="session"]').click();

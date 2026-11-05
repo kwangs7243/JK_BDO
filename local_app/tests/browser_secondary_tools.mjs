@@ -166,19 +166,19 @@ try {
 
     await click("#open-schedule");
     await waitFor(async()=>evaluate("!document.querySelector('#briefing-panel').hidden"),"briefing workspace");
-    const schedule = await evaluate("(()=>({heading:document.querySelector('#briefing-title').textContent,primary:document.querySelector('#generate-schedule').textContent,modeRole:document.querySelector('.brief-mode-tabs').getAttribute('role'),modes:[...document.querySelectorAll('[data-brief-mode]')].map(x=>[x.dataset.briefMode,x.getAttribute('role'),x.getAttribute('aria-selected')]),slotLabel:document.querySelector('.briefing-saved-schedule .tool-dialog-group-label')?.textContent,aux:document.querySelector('.briefing-secondary-tools .tool-dialog-group-label')?.textContent,status:document.querySelector('#schedule-status').getAttribute('role'),cols:getComputedStyle(document.querySelector('#schedule-columns')).gridTemplateColumns,freeRoot:!!document.querySelector('#free-route-root .mv-free-route'),diagnostics:document.querySelector('.schedule-diagnostics').open}))()");
+    const schedule = await evaluate("(()=>({heading:document.querySelector('#briefing-title').textContent,primary:document.querySelector('#generate-schedule').textContent,modeRole:document.querySelector('.brief-mode-tabs').getAttribute('role'),modes:[...document.querySelectorAll('[data-brief-mode]')].map(x=>[x.dataset.briefMode,x.getAttribute('role'),x.getAttribute('aria-selected')]),slotLabel:document.querySelector('.briefing-saved-schedule .briefing-control-label')?.textContent,aux:document.querySelector('.briefing-tools-section .briefing-control-label')?.textContent,status:document.querySelector('#schedule-status').getAttribute('role'),cols:getComputedStyle(document.querySelector('#schedule-columns')).gridTemplateColumns,freeRoot:!!document.querySelector('#free-route-root .mv-free-route'),diagnostics:document.querySelector('.schedule-diagnostics').open}))()");
     assert.equal(schedule.primary, "스케줄 생성 / 다시 계산");
     assert.equal(schedule.modeRole, "tablist");
-    assert.deepEqual(schedule.modes.map((item) => item[0]), ["speed", "balance", "both"]);
+    assert.deepEqual(schedule.modes.map((item) => item[0]), ["speed", "balance"]);
     assert.ok(schedule.modes.every((item) => item[1] === "tab"));
-    assert.equal(schedule.slotLabel, "저장된 스케줄");
+    assert.equal(schedule.slotLabel, "스케줄 저장");
     assert.equal(schedule.aux, "보조 도구");
     assert.equal(schedule.status, "status");
     assert.equal(schedule.diagnostics, false, "raw schedule diagnostics starts collapsed");
     if (width <= 900) assert.equal(schedule.cols.trim().split(/\s+/).length, 1, `schedule columns stack at ${width}`);
     await assertViewport(width, height, [{ id: "briefing-panel" }]);
 
-    await click("#open-engine-diagnostics");
+    await click(".v-settings > summary");await click("#open-engine-diagnostics");
     await waitFor(async () => evaluate("document.querySelector('#engine-diagnostics-dialog').open"), "route diagnostics");
     const diagnostics = await evaluate("(()=>({title:document.querySelector('#engine-diagnostics-title').textContent,context:document.querySelector('#engine-diagnostics-dialog .tool-dialog-context').textContent,rawOpen:document.querySelector('#engine-diagnostics-dialog .tool-dialog-raw').open,copy:!!document.querySelector('#copy-engine-diagnostics-dialog'),status:document.querySelector('#diagnostics-copy-status').getAttribute('role')}))()");
     assert.equal(diagnostics.title, "항로 결정 과정");

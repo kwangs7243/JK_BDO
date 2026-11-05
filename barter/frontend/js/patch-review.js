@@ -21,10 +21,6 @@ function currentStocks() {
   return Object.fromEntries(state.inventory.map((item) => [item.programName, item.stock]));
 }
 
-function correctionSlots() {
-  return reviewSlots();
-}
-
 function reviewSlots() {
   return applicableSlots().filter((slot) => slot.decision !== "MATCH");
 }
