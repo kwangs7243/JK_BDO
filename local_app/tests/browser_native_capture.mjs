@@ -135,6 +135,8 @@ try {
   await waitFor(async () => (await nativeStatus()).pending === 0, "retried packet acknowledged");
   assert.equal(await evaluate("document.querySelector('#trade-capture-dialog').dataset.queueLength"), "1", "duplicate heartbeat packet was inserted once");
   assert.match(await evaluate("document.querySelector('.capture-draft-item').textContent"), /게임 캡처/);
+  assert.match(await evaluate("document.querySelector('.capture-gallery-caption').textContent"), /F10 캡처 완료/);
+  assert.equal(await evaluate("document.querySelector('.capture-draft-image').naturalWidth"),80);
   assert.match(await evaluate("document.querySelector('[data-role=trade-queue-summary]').textContent"), /게임 캡처/);
   if (process.env.BDO_NATIVE_SCREENSHOT) {
     const screenshot = await send("Page.captureScreenshot", { format: "png" });

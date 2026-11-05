@@ -15,7 +15,8 @@
   <link rel="stylesheet" href="/assets/css/map-viewer.css" data-map-viewer>
   <link rel="stylesheet" href="/assets/css/workspace.css">
   <link rel="stylesheet" href="/assets/css/notifications.css">
-<link rel="stylesheet" href="/assets/css/independent.css"><link rel="stylesheet" href="/assets/css/voyage-view.css"><link rel="stylesheet" href="/assets/css/maritime-suite.css"></head>
+<link rel="stylesheet" href="/assets/css/independent.css"><link rel="stylesheet" href="/assets/css/voyage-view.css"><link rel="stylesheet" href="/assets/css/maritime-suite.css">  <link rel="stylesheet" href="/assets/css/trade-capture-gallery.css">
+</head>
 <body class="barter-final art-maritime voyage-design">
   <a class="skip-link" href="#app-content">작업 영역으로 이동</a>
   <aside class="app-sidebar" aria-label="주 메뉴">
@@ -149,11 +150,6 @@
           <button type="button" data-action="reset-trade-roi">영역 초기화</button>
         </div>
       </details>
-      <label class="field" for="trade-capture-files">이미지 파일 선택<input id="trade-capture-files" type="file" accept="image/png,image/jpeg,image/webp,image/gif,.png,.jpg,.jpeg,.webp,.gif" multiple></label>
-      <button type="button" class="capture-paste-target" data-capture-paste-target>붙여넣기 준비 · 이 버튼에 포커스를 두고 Ctrl+V</button>
-      <p class="capture-status" data-role="capture-status" role="status" aria-live="polite"></p>
-      <div class="actions"><button type="button" data-action="clear-trade-queue" disabled>스크린샷 전체삭제</button></div>
-      <ol class="capture-draft-list" data-role="capture-list"></ol>
       </section>
       <section class="trade-recognition-panel" data-role="trade-recognition" aria-labelledby="trade-recognition-title" aria-busy="false">
         <div class="trade-recognition-toolbar">
@@ -161,6 +157,13 @@
           <button type="button" class="primary" data-action="recognize-trade" disabled>인식 결과 만들기</button>
         </div>
         <p data-role="trade-recognition-status" role="status" aria-live="polite"></p>
+        <div class="capture-main-actions">
+          <label class="capture-file-add" for="trade-capture-files">파일 추가<input id="trade-capture-files" type="file" accept="image/png,image/jpeg,image/webp,image/gif,.png,.jpg,.jpeg,.webp,.gif" multiple></label>
+          <button type="button" class="capture-paste-target" data-capture-paste-target>붙여넣기 · Ctrl+V</button>
+          <button type="button" data-action="clear-trade-queue" disabled>스크린샷 전체삭제</button>
+        </div>
+        <p class="capture-status" data-role="capture-status" role="status" aria-live="polite"></p>
+        <ol class="capture-draft-list" data-role="capture-list"></ol>
         <div class="trade-recognition-progress" data-role="trade-recognition-progress" hidden>
           <progress aria-label="물교 인식 진행" max="1"></progress>
           <span data-role="trade-progress-label" role="status" aria-live="polite"></span>

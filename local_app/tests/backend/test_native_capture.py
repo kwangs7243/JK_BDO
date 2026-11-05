@@ -519,7 +519,7 @@ class NativeApiTests(NativeFixture):
         from barter.backend.services import warehouse_scan
         output={"type":"master_inventory_patch","version":1,"items":{}}
         report={"input":{},"slots":[]}
-        with patch.object(warehouse_scan,"convert",return_value=(output,report)) as scan:
+        with patch.object(self.app.extensions["trade_batch_runtime"],"recognize_warehouse",return_value=(output,report)) as scan:
             self.assertEqual(self.client.get("/api/bootstrap").get_json(),before);scan.assert_not_called()
             result=self.client.post("/api/warehouse-scan",base_url="http://localhost:18765",headers=self.headers,
                 data={"image":(io.BytesIO(png),"native.png","image/png")})

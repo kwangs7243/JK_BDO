@@ -52,7 +52,7 @@ try{
  });
  await page.goto('http://127.0.0.1:'+server.address().port);
  await page.evaluate(async settings=>{
-  document.body.style.zoom='1.3';window.confirm=()=>true;
+  document.body.style.zoom='1.3';new MutationObserver(()=>{const d=document.querySelector('dialog.suite-feedback[open]');if(d&&!d.dataset.testAnswered){d.dataset.testAnswered='1';d.querySelector('.suite-feedback-accept').click();}}).observe(document.documentElement,{childList:true,subtree:true});
   const {state}=await import('/assets/js/state.js');Object.assign(state,{revision:1,settings});
   window.__bdoScheduleRuntime={pending:null,snapshotWorkingSession:s=>({...s.session,version:1})};
   const {initTradeSessionUI}=await import('/assets/js/trade-ui.js');await initTradeSessionUI(()=>{});
@@ -71,10 +71,10 @@ try{
  };
  await open();await add();assert.equal(await page.locator('[data-action=clear-trade-queue]').isVisible(),true,'clear button visible with native capture');
  await page.locator('[data-action=clear-trade-queue]').click();assert.equal(await page.evaluate(()=>window.testUI.getTradeDraftCount()),0);
- await add();failOCR=true;await recognize();assert.equal(await page.evaluate(()=>window.testUI.getTradeDraftCount()),1,'failed OCR retains screenshots');
+ await add();assert.equal(await page.locator('.trade-capture-gallery').isVisible(),true);assert.equal(await page.locator('.trade-recognition-panel .capture-draft-image').count(),1);failOCR=true;await recognize();assert.equal(await page.evaluate(()=>window.testUI.getTradeDraftCount()),1,'failed OCR retains screenshots');
  failOCR=false;emptyOCR=true;await recognize();assert.equal(await page.evaluate(()=>window.testUI.getTradeDraftCount()),1,'empty OCR retains retry input');
  emptyOCR=false;await recognize();assert.equal(await page.evaluate(()=>window.testUI.getTradeDraftCount()),0);assert.equal(await page.locator('[data-role=capture-list] li').count(),0);assert.equal(await dialog.evaluate(d=>d.open),true);
- assert.equal(await page.locator('.trade-review-source img').count(),1,'review source remains available');
+ assert.equal(await page.locator('.trade-capture-gallery').isVisible(),false,'successful recognition replaces the large preview with review');assert.equal(await page.locator('.trade-review-source img').count(),1,'review source remains available');
  await page.locator('[data-role=live-list-review] input[data-field=count]').fill('6');await page.locator('[data-role=live-list-review] form').evaluate(f=>f.requestSubmit());await page.waitForFunction(()=>!document.querySelector('[data-action=apply-live-new]').disabled);
  failSave=true;await page.locator('[data-action=apply-live-new]').click();await page.waitForFunction(()=>document.querySelector('[data-role=trade-recognition-status]').textContent.includes('test save failed'));assert.equal(await dialog.evaluate(d=>d.open),true,'save failure keeps dialog');assert.equal(await page.locator('[data-role=trade-live-list]').isVisible(),true);
  failSave=false;await page.locator('[data-action=apply-live-new]').click();await page.waitForFunction(()=>!document.querySelector('#trade-capture-dialog').open);assert.equal(saved.scannedTrades.length,1);assert.equal(writes,1);assert.equal(await page.locator('[data-role=trade-live-list]').evaluate(d=>d.childElementCount),0);

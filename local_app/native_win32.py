@@ -13,6 +13,9 @@ from local_app.native_capture import NativeCaptureError, adjust_roi
 
 GEOMETRY_INTERVAL = .15
 IDENTITY_INTERVAL = 1.0
+ROI_READY_COLOR = 0x00FF00
+ROI_CAPTURE_COLOR = 0x004B55FF
+CAPTURE_FEEDBACK_SECONDS = .45
 
 
 class Win32CapturePlatform:
@@ -29,6 +32,9 @@ class Win32CapturePlatform:
         self.roi_frame_visible = False
         self.frame_drag = None
         self.frame_bounds = None
+        self.frame_color = ROI_READY_COLOR
+        self.capture_feedback = None
+        self.capture_flash_until = 0
         self.hotkey_retry = 0
         self.identity_cache = None
         self.identity_lock = threading.Lock()
@@ -454,6 +460,11 @@ class Win32CapturePlatform:
                     self._update_roi_frame(self.controller.state == "READY", geometry)
                     next_geometry, frame_state = now + GEOMETRY_INTERVAL, state
                 self._update_hotkey()
+                color = self._capture_feedback_color(self.controller.generation, self.controller.captured_count,
+                    self.controller.state == "READY" and self.controller.mode == "TRADE", now)
+                if color != self.frame_color:
+                    self.frame_color = color
+                    self.u.InvalidateRect(self.roi_frame, None, True)
                 while self.u.PeekMessageW(ctypes.byref(message), None, 0, 0, 1):
                     self.u.TranslateMessage(ctypes.byref(message)); self.u.DispatchMessageW(ctypes.byref(message))
                 try: target, generation = self.commands.get_nowait()
@@ -519,7 +530,7 @@ class Win32CapturePlatform:
                 try:
                     if self.frame_bounds:
                         width, height = self.frame_bounds[2:]
-                        pen = g.CreatePen(0, 3, 0x00ff00)
+                        pen = g.CreatePen(0, 3, self.frame_color)
                         old_pen, old_brush = g.SelectObject(hdc, pen), g.SelectObject(hdc, g.GetStockObject(5))
                         try:
                             g.Rectangle(hdc, 3, 3, width-3, height-3)
@@ -568,6 +579,18 @@ class Win32CapturePlatform:
         self.frame_bounds = bounds
         if not self.u.SetWindowPos(self.roi_frame, w.HWND(-1), x, y, width, height, 0x0010): raise ctypes.WinError(ctypes.get_last_error())
         self.u.InvalidateRect(self.roi_frame, None, True)
+
+    def _capture_feedback_color(self, generation, captured_count, active, now):
+        observed = (generation, captured_count)
+        if not active:
+            self.capture_feedback = observed
+            self.capture_flash_until = 0
+        elif observed != self.capture_feedback:
+            previous = self.capture_feedback
+            self.capture_feedback = observed
+            self.capture_flash_until = (now + CAPTURE_FEEDBACK_SECONDS
+                if previous and previous[0] == generation and captured_count > previous[1] else 0)
+        return ROI_CAPTURE_COLOR if now < self.capture_flash_until else ROI_READY_COLOR
 
     def _update_roi_frame(self, active, geometry=None):
         if not self.roi_frame: return
@@ -635,7 +658,7 @@ class Win32CapturePlatform:
                     g.SetTextColor(hdc, 0xFFFFFF); g.SetBkMode(hdc, 1)
                     g.TextOutW(hdc, 16, 16, text, len(text))
                     if selection:
-                        pen = g.CreatePen(0, 3, 0x00ff00)
+                        pen = g.CreatePen(0, 3, ROI_READY_COLOR)
                         old_pen = g.SelectObject(hdc, pen)
                         old_brush = g.SelectObject(hdc, g.GetStockObject(5))
                         try:

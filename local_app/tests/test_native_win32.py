@@ -308,8 +308,13 @@ class NativeWin32LifecycleTests(unittest.TestCase):
                 platform.u.GetWindowDisplayAffinity.argtypes=[w.HWND,ctypes.POINTER(w.DWORD)];platform.u.GetWindowDisplayAffinity.restype=w.BOOL
                 self.assertTrue(platform.u.GetWindowDisplayAffinity(platform.roi_frame,ctypes.byref(affinity)))
                 self.assertEqual(affinity.value,0x11);self.assertEqual(platform.dwm.DwmFlush(),0)
-                with Image.open(io.BytesIO(platform.capture((128,128,272,242)))) as image:
-                    self.assertEqual(image.getcolors(),[(144*114,(255,255,255))],"real GDI excludes the entire visible border")
+                from local_app.native_win32 import ROI_READY_COLOR, ROI_CAPTURE_COLOR
+                for color in [ROI_READY_COLOR, ROI_CAPTURE_COLOR]:
+                    platform.frame_color=color
+                    platform.u.InvalidateRect(platform.roi_frame,None,True);platform.u.UpdateWindow(platform.roi_frame)
+                    self.assertEqual(platform.dwm.DwmFlush(),0)
+                    with Image.open(io.BytesIO(platform.capture((128,128,272,242)))) as image:
+                        self.assertEqual(image.getcolors(),[(144*114,(255,255,255))],"GDI excludes both ready and capture-feedback borders")
                 self.assertTrue(platform.u.IsWindowVisible(platform.roi_frame),"capture must not hide the frame")
             finally:
                 if platform.roi_frame:platform.u.DestroyWindow(platform.roi_frame);platform.roi_frame=None

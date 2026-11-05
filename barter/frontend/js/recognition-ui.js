@@ -1,9 +1,10 @@
+import { createTradeCaptureGallery } from "./trade-capture-gallery.js";
 import { createTradeLiveListUI } from "./trade-live-list-ui.js";
 import { initCaptureRoiUI } from "./capture-roi-ui.js";
 import { initNativeCaptureUI } from "./native-capture-ui.js";
 import { state } from "./state.js";
 import { validateUnusedTradePolicy } from "./domain/trade-unused-policy.js";
-import { CaptureError, CaptureQueue, DEFAULT_TRADE_ROI, PreviewRegistry, ScreenCaptureSession, captureFromFile, captureFromPaste, captureLimits, isEditableTarget } from "./capture.js";
+import { CaptureError, CaptureQueue, DEFAULT_TRADE_ROI, ScreenCaptureSession, captureFromFile, captureFromPaste, captureLimits, isEditableTarget } from "./capture.js";
 import { getTradeRecognitionRuntime, recognizeTradeLiveList } from "./trade-recognition-client.js";
 
 function captureContext(taskType) {
@@ -92,7 +93,6 @@ export function initRecognitionUI({ warehouseCaptureUI }) {
   const disconnectScreenButton = document.querySelector("#disconnect-screen-capture");
   const screenSession = new ScreenCaptureSession();
   const tradeQueue = new CaptureQueue();
-  const tradePreviews = new PreviewRegistry();
   let tradeRoi = { ...DEFAULT_TRADE_ROI };
   let roiInitialized = false;
   let tradeBatchId = null;
@@ -183,48 +183,16 @@ export function initRecognitionUI({ warehouseCaptureUI }) {
     tradeRecognitionStatus.textContent = message;
   };
   listen(tradePreview, "loadedmetadata", initializeRoi);
+  const tradeGallery = createTradeCaptureGallery({dialog:tradeDialog, list:tradeList, signal:events.signal,
+    onRemove(id) {
+      if (tradeRecognitionPending) return;
+      tradeQueue.remove(id);
+      if (tradeQueue.items.every(item => item.metadata.sourceType !== "browser-stream")) tradeBatchId = null;
+      tradeQueueRevision += 1;invalidateRecognitionResult();tradeStatus.textContent="캡처 이미지를 제거했습니다.";renderTradeQueue();
+    },
+  });
   const renderTradeQueue = () => {
-    tradePreviews.clear();
-    tradeList.replaceChildren();
-    for (const capture of tradeQueue.items) {
-      const item = document.createElement("li");
-      item.className = "capture-draft-item";
-      item.dataset.captureId = capture.metadata.captureId;
-      item.dataset.status = "TRADE_DRAFT";
-      item.dataset.batchId = capture.metadata.batchId ?? "";
-      if (capture.regionEvidence) item.dataset.regionEvidence = JSON.stringify(capture.regionEvidence);
-      const image = document.createElement("img");
-      image.alt = "물교 캡처 이미지 미리보기";
-      image.src = tradePreviews.create(capture.blob);
-      const details = document.createElement("div");
-      details.className = "capture-draft-details";
-      const heading = document.createElement("strong");
-      const regionLabel = capture.regionEvidence ? "선택 영역" : "캡처 이미지";
-      heading.textContent = `${regionLabel} · ${capture.metadata.frame.width}×${capture.metadata.frame.height}`;
-      const meta = document.createElement("span");
-      const sourceLabel = ({ clipboard: "클립보드", "browser-stream": "화면", "native-screen": "게임 캡처", file: "파일" }[capture.metadata.sourceType] ?? "이미지");
-      meta.textContent = `${sourceLabel} · ${(capture.bytes / 1024 / 1024).toFixed(2)} MiB${capture.reencoded ? " · PNG 변환" : ""}`;
-      const status = document.createElement("span");
-      status.className = "capture-draft-state";
-      status.textContent = "인식 대기";
-      details.append(heading, meta, status);
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.textContent = "제거";
-      remove.setAttribute("aria-label", "물교 캡처 이미지 제거");
-      remove.disabled = tradeRecognitionPending;
-      remove.addEventListener("click", () => {
-        if (tradeRecognitionPending) return;
-        tradeQueue.remove(capture.metadata.captureId);
-        if (tradeQueue.items.every((item) => item.metadata.sourceType !== "browser-stream")) tradeBatchId = null;
-        tradeQueueRevision += 1;
-        invalidateRecognitionResult();
-        tradeStatus.textContent = "캡처 이미지를 제거했습니다.";
-        renderTradeQueue();
-      });
-      item.append(image, details, remove);
-      tradeList.append(item);
-    }
+    tradeGallery.render(tradeQueue.items, {recognizing:tradeRecognitionPending, hasResult:!!liveListResult?.rows?.length});
     tradeDialog.dataset.queueLength = String(tradeQueue.length);
     tradeDialog.dataset.queueBytes = String(tradeQueue.bytes);
     const sourceCounts = tradeQueue.items.reduce((counts, capture) => {
@@ -317,7 +285,7 @@ export function initRecognitionUI({ warehouseCaptureUI }) {
     if (tradeRecognitionPending) return;
     tradeQueue.clear();
     tradeQueueRevision += 1;
-    tradePreviews.clear();
+    tradeGallery.clear();
     tradeBatchId = null;
     invalidateRecognitionResult("대기 이미지를 지워 인식 결과도 지웠습니다.");
     renderTradeQueue();
@@ -329,6 +297,7 @@ export function initRecognitionUI({ warehouseCaptureUI }) {
     if (tradeRecognitionButton.disabled) return;
     tradeRecognitionPending = true;
     tradeCaptureStopping = true;
+    renderTradeQueue();
     updateRecognitionControls();
     tradeRecognitionStatus.textContent = "캡처를 종료하고 남은 이미지를 받는 중…";
     try {
@@ -384,7 +353,7 @@ export function initRecognitionUI({ warehouseCaptureUI }) {
   tradeDialog.querySelectorAll("[data-close-trade-capture]").forEach((button) => listen(button, "click", () => tradeDialog.close()));
   listen(tradeDialog, "close", () => {
     if (tradeDialog.open) return;
-    tradePreviews.clear();
+    tradeGallery.clear();
     screenSession.detachPreview(tradePreview);
     tradeRoiBox.hidden = true;
   });
@@ -456,7 +425,7 @@ export function initRecognitionUI({ warehouseCaptureUI }) {
     nativeUI.cleanup();
     screenSession.dispose();
     roiUI.dispose();
-    tradePreviews.clear();
+    tradeGallery.dispose();
     liveListUI.dispose();
     tradeQueue.clear();
     liveListResult = null;
