@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "bdo-suite"
 version = "1.0.0"
-description = "Local BDO application with barter and alchemy workspaces"
+description = "Local BDO suite with barter, alchemy and recipe notebook workspaces"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -25,7 +25,7 @@ bdo = "local_app.launcher:run_launcher"
 bdo-barter = "local_app.launcher:run_launcher"
 
 [project.urls]
-Repository = "https://github.com/kwangs7243/BDOBarterDev"
+Repository = "https://github.com/kwangs7243/JK_BDO"
 
 [tool.setuptools]
 include-package-data = false
