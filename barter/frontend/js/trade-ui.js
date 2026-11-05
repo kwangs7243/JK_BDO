@@ -206,15 +206,7 @@ export async function initTradeSessionUI(setStatus) {
       const active = state.session.scannedTrades?.filter((trade) => !trade.deleted) ?? []; if (!active.length) return;
       const targetDisabled = active.some((trade) => !trade.disabled); active.forEach((trade) => { trade.disabled = targetDisabled; }); changed();
     });
-    document.querySelector("#reset-session").addEventListener("click", async () => {
-      if (window.__bdoScheduleRuntime?.pending) { setStatusFn("완료 저장을 먼저 확인하거나 재시도하세요.", "error"); return; }
-      const confirmationRevision = state.sessionRevision;
-      const confirmationSession = JSON.stringify(state.session.scannedTrades);
-      if (state.session.scannedTrades === null || !await confirmAction("현재 회차를 초기화할까요? 영구 재고·설정과 저장 슬롯은 유지됩니다.", {title:"회차 초기화", acceptLabel:"초기화", danger:true})) return;
-      if (window.__bdoScheduleRuntime?.pending || confirmationRevision !== state.sessionRevision || confirmationSession !== JSON.stringify(state.session.scannedTrades)) { setStatusFn("확인 중 회차가 바뀌었습니다. 다시 시도하세요.", "error"); return; }
-      try { setStatusFn("현재 회차를 초기화하는 중입니다.", "saving"); await resetWorkingSession(); renderTradeList(); document.querySelector("#col-speed").replaceChildren(); document.querySelector("#col-balance").replaceChildren(); setStatusFn("현재 회차를 초기화했습니다. 영구 재고·설정과 슬롯은 유지됩니다.", "success"); }
-      catch (error) { setStatusFn(`회차를 초기화하지 못했습니다: ${error.message}`, "error"); }
-    });
+    document.querySelector("#reset-session").addEventListener("click", () => requestSessionReset());
     initialized = true;
   }
   renderTradeList();
@@ -224,3 +216,29 @@ export { renderTradeList };
 
 
 
+
+let resetQuestionOpen = false;
+export async function requestSessionReset({ completed = false, stillValid = () => true } = {}) {
+  if (resetQuestionOpen || state.session.scannedTrades === null) return;
+  if (window.__bdoScheduleRuntime?.pending || state.persistencePending > 0) { setStatusFn("완료 저장을 먼저 확인하거나 재시도하세요.", "error"); return; }
+  resetQuestionOpen = true;
+  const confirmationRevision = state.sessionRevision;
+  const confirmationSession = JSON.stringify(state.session.scannedTrades);
+  try {
+    if (!stillValid()) return;
+    const message = completed
+      ? "이번 회차의 모든 출항·교환을 마쳤습니다. 현재 물교 목록과 스케줄을 초기화하고 새 회차를 준비할까요? 재고·설정·저장 슬롯은 유지됩니다."
+      : "현재 물교 목록과 스케줄을 초기화할까요? 재고·설정과 저장 슬롯은 유지됩니다.";
+    const accepted = await confirmAction(message, { title: completed ? "이번 회차 교환 완료" : "회차 초기화", acceptLabel: "회차 초기화", cancelLabel: completed ? "나중에" : "취소", danger: !completed });
+    if (!accepted) return;
+    if (!stillValid() || window.__bdoScheduleRuntime?.pending || confirmationRevision !== state.sessionRevision || confirmationSession !== JSON.stringify(state.session.scannedTrades)) { setStatusFn("확인 중 회차가 바뀌었습니다. 다시 시도하세요.", "error"); return; }
+    setStatusFn("현재 회차를 초기화하는 중입니다.", "saving");
+    await resetWorkingSession();
+    renderTradeList();
+    document.querySelector("#col-speed").replaceChildren();
+    document.querySelector("#col-balance").replaceChildren();
+    document.querySelector('[data-workspace-view="session"]').click();
+    setStatusFn("새 회차를 준비할 수 있습니다. 재고·설정과 저장 슬롯은 유지됩니다.", "success");
+  } catch (error) { setStatusFn(`회차를 초기화하지 못했습니다: ${error.message}`, "error"); }
+  finally { resetQuestionOpen = false; }
+}

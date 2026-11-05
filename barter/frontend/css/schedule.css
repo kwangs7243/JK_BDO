@@ -138,3 +138,83 @@
 .route-step-number{border-radius:50%;background:#223b4d;border-color:#32536a}
 .route-card{border-bottom-color:var(--line)}
 .mode-settlement{background:#111c26}
+
+
+/* One scroll owner per visible route; size it from the available workspace. */
+body.art-maritime:has(#app-content[data-view="briefing"]) .app-sidebar{display:none}
+body.art-maritime:has(#app-content[data-view="briefing"]) main.workspace{grid-column:1/-1;padding:12px 24px}
+body.art-maritime .briefing-panel .briefing-command{padding:0 0 8px}
+body.art-maritime .briefing-panel .briefing-heading{padding:0 0 8px;gap:10px}
+body.art-maritime .briefing-panel .briefing-heading h2{font-size:23px}
+body.art-maritime .briefing-panel .briefing-toolbar{margin:0;padding-bottom:6px;gap:8px}
+body.art-maritime .briefing-panel .briefing-body{flex:1;min-height:0;padding:8px 0 0;overflow:hidden}
+body.art-maritime .briefing-panel .schedule-columns{flex:1;min-height:0;overflow:hidden;gap:16px;align-items:stretch}
+body.art-maritime .briefing-panel .schedule-columns>section{display:flex;flex-direction:column;min-height:0;padding:0 12px;overflow:hidden}
+body.art-maritime .briefing-panel .schedule-columns h3{position:static;flex:none;padding:7px 0;font:500 14px Pretendard,sans-serif;gap:8px}
+body.art-maritime .briefing-panel .mode-stat small{font-size:11px}
+body.art-maritime .briefing-panel .mode-stat strong{font-size:13px}
+body.art-maritime .briefing-panel .mode-settlement{flex:none;padding:5px 0;border:0;background:none;max-height:none;overflow:visible}
+body.art-maritime .briefing-panel .mode-settlement>details[open]{max-height:160px;overflow:auto}
+body.art-maritime .briefing-panel .schedule-column{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;max-height:none}
+.voyage-trip-tabs{display:flex;flex:none;gap:6px;border-bottom:1px solid var(--line);padding:5px 0}
+.voyage-trip-tabs button{padding:5px 14px;background:transparent;border-color:transparent}
+.voyage-trip-tabs button[aria-pressed=true]{color:var(--accent);background:var(--accent-soft);border-bottom-color:var(--accent)}
+body.art-maritime .briefing-panel .sortie-card{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;padding:0;margin:0;border:0;background:none}
+body.art-maritime .briefing-panel .sortie-card[hidden]{display:none}
+body.art-maritime .briefing-panel .sortie-heading{flex:none;padding:6px 0;gap:10px}
+body.art-maritime .briefing-panel .sortie-title{font:500 13px Pretendard,sans-serif}
+body.art-maritime .briefing-panel .sortie-index{font:500 18px Pretendard,sans-serif}
+.voyage-cargo-details{flex:none;font-size:12px;margin:3px 0}
+.voyage-cargo-details>summary{color:var(--accent)}
+.voyage-cargo-details[open]{max-height:150px;overflow:auto}
+.voyage-current-bar{flex:none;display:flex;align-items:center;gap:12px;padding:8px 12px;background:linear-gradient(90deg,#b38c4929,#25414a88);border-bottom:1px solid var(--line);margin:4px 0}
+.voyage-current-bar>div:first-child{display:grid;gap:1px;margin-right:auto}
+.voyage-current-bar small{font-size:11px;color:var(--accent)}
+.voyage-current-bar strong{font-size:16px}
+.voyage-current-bar .route-actions{flex-direction:row;flex-basis:auto}
+.voyage-current-jump{flex:none;align-self:center;padding:3px 10px;margin:2px 0;font-size:12px;background:transparent;border-color:transparent}
+body.art-maritime .briefing-panel .voyage-route-scroll{display:block;flex:1;min-height:0;height:auto;max-height:none;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scroll-snap-type:y proximity;position:relative;scrollbar-width:thin;margin:0}
+body.art-maritime .briefing-panel .route-card{scroll-snap-align:start;padding:8px;gap:10px;min-height:54px;border-bottom:1px solid var(--line-soft)}
+body.art-maritime .briefing-panel .voyage-current-row{background:#bb985122;box-shadow:inset 3px 0 var(--accent)}
+body.art-maritime .briefing-panel .route-content{display:grid;grid-template-columns:minmax(170px,1fr) minmax(0,4fr);align-content:center;column-gap:18px;row-gap:2px}
+body.art-maritime .briefing-panel .route-heading{grid-column:1;grid-row:1/3;padding:0;font:500 14px/1.4 Pretendard,sans-serif}
+body.art-maritime .briefing-panel .route-kind{font-size:11px}
+body.art-maritime .briefing-panel .route-exchange-items{grid-column:2;gap:10px;font-size:14px;line-height:1.4}
+body.art-maritime .briefing-panel .route-trade-info{grid-column:2;grid-row:2;padding-right:42px;font-size:12px}
+body.art-maritime .briefing-panel .route-explanation{grid-column:2}
+body.art-maritime .briefing-panel .route-step-number{font-size:12px;width:24px;flex-basis:24px}
+body.art-maritime .briefing-panel .route-step-number:after{display:none}
+body.art-maritime .briefing-panel .route-actions button{font-size:12px;padding:6px 10px}
+body.art-maritime .briefing-panel .route-count-label{font-size:12px}
+body.art-maritime .briefing-panel .sortie-footer{flex:none;padding:5px 0;font-size:12px}
+.voyage-row-details{grid-column:2;grid-row:2;justify-self:end;font-size:11px;background:var(--surface)}
+.voyage-row-details>summary{padding:0 4px;color:var(--muted)}
+.voyage-row-details[open]{grid-row:3;justify-self:stretch;padding:8px}
+.voyage-row-details .route-actions{flex-direction:row;margin-top:8px}
+.briefing-panel.voyage-focused .briefing-toolbar,.briefing-panel.voyage-focused .briefing-saved-schedule,.briefing-panel.voyage-focused #schedule-status,.briefing-panel.voyage-focused .mode-settlement{display:none}
+.briefing-panel.voyage-focused .briefing-heading{padding-bottom:4px}
+.briefing-panel.voyage-focused .briefing-free-route,.briefing-panel.voyage-focused .schedule-diagnostics{display:none}
+@media(max-width:1000px){body.art-maritime .briefing-panel .route-content{grid-template-columns:minmax(110px,1fr) minmax(0,3fr);column-gap:10px}}
+@media(max-width:600px){body.art-maritime:has(#app-content[data-view="briefing"]) main.workspace{padding:8px}body.art-maritime .briefing-panel .route-content{display:flex}.voyage-current-bar{flex-wrap:wrap}.sortie-metrics{gap:8px}}
+body.art-maritime .briefing-panel .schedule-columns[data-mode="speed"]>section:not(:first-child),body.art-maritime .briefing-panel .schedule-columns[data-mode="balance"]>section:first-child{display:none}
+
+body.art-maritime .briefing-panel .schedule-column{gap:0;padding:0}
+body.art-maritime .briefing-panel .sortie-card{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto minmax(0,1fr) auto;gap:0}
+body.art-maritime .briefing-panel .sortie-card[hidden]{display:none}
+body.art-maritime .briefing-panel .sortie-heading{grid-column:1;grid-row:1;padding:4px 0;font-size:12px}
+body.art-maritime .briefing-panel .sortie-metrics{gap:16px;margin-left:20px;margin-right:auto}
+body.art-maritime .briefing-panel .sortie-metrics>span{display:flex;gap:6px;align-items:baseline}
+body.art-maritime .briefing-panel .sortie-metrics strong{font-size:13px}
+body.art-maritime .briefing-panel .sortie-metrics small{font-size:11px}
+.voyage-cargo-details{grid-column:2;grid-row:1;align-self:center;margin-left:15px}
+.voyage-cargo-details[open]{grid-column:1/-1;grid-row:1;position:relative;z-index:3;background:var(--surface)}
+.voyage-current-bar{grid-column:1/-1;grid-row:2;margin:0;padding:7px 12px}
+body.art-maritime .briefing-panel .voyage-route-scroll{grid-column:1/-1;grid-row:3}
+body.art-maritime .briefing-panel .sortie-footer{grid-column:1;grid-row:4;min-width:0}
+.voyage-current-jump{grid-column:2;grid-row:4;margin:0;align-self:center}
+.briefing-bottom-tools{display:flex;flex-wrap:wrap;gap:8px 24px;flex:none;border-top:1px solid var(--line)}
+body.art-maritime .briefing-panel .briefing-bottom-tools>details{margin:0;padding:3px 0;border:0;font-size:12px}
+.briefing-bottom-tools>details[open]{flex-basis:100%;max-height:160px;overflow:auto}
+.briefing-panel.voyage-focused .briefing-bottom-tools{display:none}
+@media(max-width:800px){body.art-maritime .briefing-panel .sortie-metrics{display:none}.voyage-cargo-details{margin-left:6px}}
+body.art-maritime .briefing-panel.voyage-focused .schedule-columns h3{display:none}.voyage-trip-tabs{padding:3px 0}.voyage-trip-tabs button{min-height:26px;font-size:12px;padding:3px 12px}body.art-maritime .briefing-panel .sortie-footer{padding:2px 0}body.art-maritime .briefing-panel .sortie-footer button{min-height:26px;padding:3px 8px;font-size:12px}

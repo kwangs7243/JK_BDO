@@ -15,8 +15,8 @@
   <link rel="stylesheet" href="/assets/css/map-viewer.css" data-map-viewer>
   <link rel="stylesheet" href="/assets/css/workspace.css">
   <link rel="stylesheet" href="/assets/css/notifications.css">
-<link rel="stylesheet" href="/assets/css/independent.css"></head>
-<body class="barter-final art-maritime">
+<link rel="stylesheet" href="/assets/css/independent.css"><link rel="stylesheet" href="/assets/css/voyage-view.css"><link rel="stylesheet" href="/assets/css/maritime-suite.css"></head>
+<body class="barter-final art-maritime voyage-design">
   <a class="skip-link" href="#app-content">작업 영역으로 이동</a>
   <aside class="app-sidebar" aria-label="주 메뉴">
 
@@ -63,32 +63,33 @@
       <details class="tier-rule-details"><summary>단계 규칙</summary><div id="tier-rules-root"></div></details>
     </section>
   <section id="briefing-panel" class="panel briefing-panel" hidden aria-labelledby="briefing-title">
-    <header class="briefing-command">
-      <div class="briefing-heading">
-        <div class="briefing-title-status"><h2 id="briefing-title">출항 브리핑</h2><p id="schedule-status" class="status-note" role="status" aria-live="polite"></p></div>
-        <section class="briefing-saved-schedule" aria-label="저장된 스케줄">
-          <span class="briefing-control-label">저장 스케줄</span>
-          <div id="schedule-slot-controls" class="schedule-slot-controls" aria-label="스케줄 저장 슬롯"></div>
-          <button id="retry-completion-save" type="button" hidden>완료 저장 재시도</button>
-        </section>
-      </div>
-      <div class="briefing-toolbar">
-        <section class="briefing-calculation" aria-label="계산 설정">
-          <label class="brief-config-mode" for="brief-session-mode">교역 모드<select id="brief-session-mode"></select></label>
-          <div class="brief-mode-tabs" role="tablist" aria-label="브리핑 보기"><button type="button" role="tab" aria-selected="false" data-brief-mode="speed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 2-8 11h6l-1 9 9-12h-6l1-8"/></svg>쾌속</button><button type="button" role="tab" aria-selected="false" data-brief-mode="balance"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17M5 20h14M3 7h18M6 7 2 14h8L6 7Zm12 0-4 7h8l-4-7Z"/></svg>균형</button><button type="button" role="tab" aria-selected="true" data-brief-mode="both"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h6v14H4V5Zm10 0h6v14h-6V5Z"/></svg>비교</button></div>
-        </section>
-        <section class="briefing-secondary-tools" aria-label="보조 도구">
-          <details class="briefing-menu"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2V5Zm6-2v16m6-14v16"/></svg>지도<span aria-hidden="true">⌄</span></summary><div class="briefing-popover"><button id="brief-map-speed" type="button">쾌속 지도</button><button id="brief-map-balance" type="button">균형 지도</button></div></details>
-          <details class="briefing-menu"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v8m0 4v6M12 3v2m0 4v12M20 3v12m0 4v2M1 11h6m2-6h6m2 10h6"/></svg>보조 도구<span aria-hidden="true">⌄</span></summary><div class="briefing-popover"><button id="brief-open-tuning" type="button">계산 튜닝</button><button id="open-engine-diagnostics" type="button">결정 과정 보기</button></div></details>
-          <button id="generate-schedule" class="primary" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M19 11a7 7 0 0 0-12-5L4 9m1 4a7 7 0 0 0 12 5l3-3"/></svg>스케줄 생성 / 다시 계산</button>
-        </section>
-      </div>
-    </header>
+<header class="briefing-command"><div class="briefing-heading"><h2 id="briefing-title">출항 브리핑</h2><div class="brief-mode-tabs" role="tablist" aria-label="브리핑 보기"><button type="button" role="tab" aria-selected="false" data-brief-mode="speed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 2-8 11h6l-1 9 9-12h-6l1-8"/></svg>쾌속</button><button type="button" role="tab" aria-selected="false" data-brief-mode="balance"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17M5 20h14M3 7h18M6 7 2 14h8L6 7Zm12 0-4 7h8l-4-7Z"/></svg>균형</button></div><button type="button" id="v-reset-round">회차 초기화</button><details class="briefing-menu v-settings"><summary>도구·저장</summary>
+<div class="briefing-popover briefing-tools-popover">
+  <section class="briefing-saved-schedule" aria-label="저장된 스케줄">
+    <span class="briefing-control-label">스케줄 저장</span>
+    <div id="schedule-slot-controls" class="schedule-slot-controls" aria-label="스케줄 저장 슬롯"></div>
+    <button id="retry-completion-save" type="button" hidden>완료 저장 재시도</button>
+  </section>
+  <section class="briefing-calculation" aria-label="계산 설정">
+    <label class="brief-config-mode" for="brief-session-mode">교역 모드<select id="brief-session-mode"></select></label>
+    <button id="generate-schedule" class="primary" type="button">스케줄 생성 / 다시 계산</button>
+  </section>
+  <section class="briefing-tools-section" aria-label="보조 도구">
+    <span class="briefing-control-label">보조 도구</span>
+    <div class="briefing-tool-grid">
+      <button id="brief-map-speed" type="button">쾌속 지도</button>
+      <button id="brief-map-balance" type="button">균형 지도</button>
+      <button id="brief-open-tuning" type="button">계산 튜닝</button>
+      <button id="open-engine-diagnostics" type="button">결정 과정 보기</button>
+      <button id="v-show-settlement" type="button">창고 결산 보기</button>
+    </div>
+  </section>
+</div></details><button type="button" id="voyage-focus" hidden>항로만 보기</button></div><p id="schedule-status" role="status"></p></header>
     <div class="briefing-body">
       <div id="schedule-columns" class="schedule-columns" data-mode="both"><section><h3 id="header-speed">⚡ 쾌속 모드</h3><div id="summary-speed" class="mode-settlement" aria-live="polite"></div><div id="col-speed" class="schedule-column"></div></section><section><h3 id="header-balance">⚖️ 균형 모드</h3><div id="summary-balance" class="mode-settlement" aria-live="polite"></div><div id="col-balance" class="schedule-column"></div></section></div>
-      <details class="briefing-free-route"><summary>자유 항로 · 추가 경유지</summary><div id="free-route-root"></div></details>
+      <div class="briefing-bottom-tools"><details class="briefing-free-route"><summary>자유 항로 · 추가 경유지</summary><div id="free-route-root"></div></details>
       <details class="schedule-diagnostics"><summary>계산 진단 데이터</summary><pre id="schedule-diagnostics">아직 계산하지 않았습니다.</pre><button id="copy-engine-diagnostics" type="button">진단 복사</button></details>
-      <div class="compat-inputs" aria-hidden="true"><input id="maxParley" type="number"><input id="normalWeight" type="number"><input id="maxWeight" type="number"><input id="parleyPerTrade" type="number"><input id="parleyCrow" type="number"></div>
+      </div><div class="compat-inputs" aria-hidden="true"><input id="maxParley" type="number"><input id="normalWeight" type="number"><input id="maxWeight" type="number"><input id="parleyPerTrade" type="number"><input id="parleyCrow" type="number"></div>
       <div id="waypointModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="waypoint-title">
         <div class="modal-card"><h3 id="waypoint-title">경유지 추가</h3><input id="wpMode" type="hidden"><input id="wpSortieIdx" type="hidden"><label class="field">섬 이름<input id="wpIsland" type="text"></label><label class="field">기준 교환<select id="wpAnchorSelect"></select></label><fieldset><legend>삽입 위치</legend><label><input type="radio" name="wpPos" value="before" checked> 앞</label><label><input type="radio" name="wpPos" value="after"> 뒤</label></fieldset><label class="inline-field"><input id="wpUseMat" type="checkbox"> 재료 사용</label><div id="wpMatBox" class="hidden"><label class="field">재료명<input id="wpMatName" type="text"></label><label class="field">수량<input id="wpMatCount" type="number" min="1" value="1"></label></div><div class="actions"><button id="confirm-waypoint" class="primary" type="button">추가</button><button id="close-waypoint" type="button">취소</button></div></div>
       </div>

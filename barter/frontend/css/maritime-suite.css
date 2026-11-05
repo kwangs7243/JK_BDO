@@ -1,0 +1,91 @@
+body.voyage-design{--text:#dae6e5;--muted:#a4bbbe;--line:#a9bca13d;--line-highlight:#d2b97a88;--surface-input:#0b2634c9;--surface-header:#123442ab;--feedback-bg:#102e3a;--feedback-ink:#e8e9dc;--feedback-muted:#afc5c3;--feedback-line:#ac9c6e99;--feedback-accent:#dec288}
+body.voyage-design h1,body.voyage-design h2,body.voyage-design h3{font-family:Pretendard,'Malgun Gothic',sans-serif;letter-spacing:-.035em}
+body.voyage-design button{border-radius:5px;background:linear-gradient(120deg,#234452c9,#102b39);border-color:#94aaa75c;color:#d1e0dd;box-shadow:inset 0 1px #ffffff08}
+body.voyage-design button:hover:not(:disabled){border-color:#d3bb81;color:#fff0cf;background:linear-gradient(120deg,#35535a,#183440)}
+body.voyage-design button.primary{background:linear-gradient(110deg,#e6ce97,#aa894c);color:#24302c;border-color:#e8ce94;box-shadow:inset 0 1px #fff6,0 4px 15px #0002;font-weight:650}
+body.voyage-design button:disabled{opacity:.45;cursor:not-allowed}
+body.voyage-design button.danger{color:#e1a7a0;border-color:#b6827777;background:#6e32262b}
+body.voyage-design input,body.voyage-design select,body.voyage-design textarea{background:#092433bd;border-color:#99b2aa4d;color:#e3ece5;border-radius:5px;accent-color:#d2b477}
+body.voyage-design :is(button,input,select,textarea,summary):focus-visible{outline:2px solid #e2c68f;outline-offset:3px}
+body.voyage-design .panel-heading h2{font:500 32px/1.4 Pretendard,'Malgun Gothic',sans-serif;color:#eee3c8}
+body.voyage-design :is(#trade-session-panel,#mainPanel)>.panel-heading{padding:0 0 23px;margin-bottom:0;border-bottom:1px solid #adbdab44}
+body.voyage-design :is(#trade-session-panel,#mainPanel)>.panel-heading h2{margin-bottom:5px}
+body.voyage-design .session-input-actions{gap:8px;align-self:center}
+body.voyage-design .session-input-actions>button{min-height:39px;padding:9px 13px}
+body.voyage-design .session-input-actions>button:not(.primary){background:#0d2a37b0;border:1px solid #94aaa747;color:#bbcdcc}
+body.voyage-design .session-input-actions>#reset-session{color:#d5a49a}
+body.voyage-design .session-toolbar{margin:18px 0;padding:16px 20px;border:1px solid #a5b6a646;background:linear-gradient(110deg,#163b48cf,#102f3dc7);box-shadow:inset 3px 0 #c8ac74,inset 0 1px #ffffff08;border-radius:4px;gap:22px}
+body.voyage-design .session-budget{border-color:#a4b5a63d;padding-right:24px}
+body.voyage-design .session-budget input{font:500 23px Pretendard,sans-serif;color:#eed9aa;padding:8px 12px;background:#092432bb;border-color:#adbb9e55;width:155px}
+body.voyage-design .session-toolbar .session-action-label{font-size:11px;color:#a9c1c3}
+body.voyage-design .session-toolbar .status-note{font-size:11px}
+body.voyage-design .list-filter-bar{padding:0 0 15px;gap:12px;font-size:12px}
+body.voyage-design .list-filter-bar input{padding:10px 13px;width:300px}
+body.voyage-design .list-filter-bar select{padding:10px}
+body.voyage-design .trade-list-scroll{background:linear-gradient(110deg,#0c2c3ac9,#0b2430a8);border:1px solid #adbdab4d;border-radius:5px;box-shadow:0 12px 35px #0002;scrollbar-color:#a4b5a366 transparent;scrollbar-width:thin}
+body.voyage-design .trade-session-table thead th{background:#153947;color:#d8cda9;border-bottom:1px solid #c1b07f66;padding:14px 12px;font-size:11px;font-weight:500;letter-spacing:.04em}
+body.voyage-design .trade-session-table td{padding:10px 9px;border-bottom:1px solid #99b7ab24}
+body.voyage-design .trade-session-table tbody tr:nth-child(even){background:#c3d2bb03}
+body.voyage-design .trade-session-table tbody tr:hover{background:#c3d2bb0b}
+body.voyage-design .trade-row input{border-color:transparent;background:transparent;padding:8px 5px;font-size:13px}
+body.voyage-design .trade-row td:first-child input{color:#f1dfb9;font-weight:600}
+body.voyage-design .trade-row td:nth-child(4) input{color:#bed6cf}
+body.voyage-design .trade-row input[type=number]{font:500 16px Pretendard,sans-serif;color:#dfd7b7}
+body.voyage-design .trade-row input:focus,body.voyage-design .trade-row input:hover{background:#173c47;border-color:#a9b9a155}
+body.voyage-design .trade-row-state{font-size:11px;color:#bed0cd}
+body.voyage-design .trade-row.trade-disabled{opacity:.5}
+body.voyage-design .inventory-panel .inventory-toolbar{border-top:0;padding:18px 0;gap:25px}
+body.voyage-design .inventory-toolbar :is(input,select){background:#0c2c3ab5;border:1px solid #99b2aa55;border-radius:5px;padding:10px 12px}
+body.voyage-design .inventory-panel .inventory-null-hint{margin-bottom:28px;color:#a8c0c0}
+body.voyage-design .tier-heading{padding-bottom:15px;border-color:#c7b17c66}
+body.voyage-design .tier-heading h3{font:500 23px Pretendard,sans-serif;color:#e5d9b9!important}
+body.voyage-design .inventory-slots{gap:0 24px;background:linear-gradient(100deg,#153c4629,#09273522)}
+body.voyage-design .inventory-panel .inventory-row{padding:21px 12px;grid-template-columns:64px minmax(0,1fr);gap:0 15px;border-bottom:1px solid #a1b69d4a;background:radial-gradient(ellipse at 12% 45%,#d2b5730d,transparent 55%);min-width:0}
+body.voyage-design .inventory-panel .inventory-row:focus-within{background:linear-gradient(100deg,#c2b27d13,transparent);box-shadow:inset 0 -2px #d2b67a}
+body.voyage-design .inventory-slot-icon{width:64px;height:74px;display:grid;place-items:center;border:1px solid #cbb47b55;background:radial-gradient(#bb9f4e23,#092b36a3);border-radius:5px}
+body.voyage-design .inventory-slot-icon img{width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 5px 7px #0009)}
+body.voyage-design .inventory-item-label{color:#dbe5dc;font-size:12px;min-height:36px}
+body.voyage-design .inventory-row input[data-value=stock]{font:500 29px/1.2 Pretendard,sans-serif;color:#ecddb1;background:none;border:0;padding:4px 0;min-width:0;font-variant-numeric:tabular-nums}
+body.voyage-design .inventory-slot-footer{color:#a7bfbb;border-color:#a2b39c33}
+body.voyage-design .quantity-step{background:#1537449e;border-color:#9cb09b44;color:#d6d7b9}
+body.voyage-design .stock-balance{font-size:10px;color:#bdc9b6}
+body.voyage-design :is(.app-dialog,.warehouse-dialog,.patch-review-dialog,.modal-card){color:#dbe6df;background:linear-gradient(125deg,#173744f5,#0b2532fa);border:1px solid #b7a57699;border-radius:9px;box-shadow:0 30px 100px #0009,inset 0 1px #eff7e51a}
+body.voyage-design :is(.app-dialog,.warehouse-dialog,.patch-review-dialog)::backdrop{background:#031420bd;backdrop-filter:blur(5px)}
+body.voyage-design :is(.dialog-titlebar,.warehouse-dialog-header,.patch-review-header){padding:22px 27px;background:linear-gradient(110deg,#294d51ad,#123340a3);border-bottom:1px solid #bdb08266;box-shadow:inset 4px 0 #c7ab70}
+body.voyage-design :is(.dialog-titlebar,.warehouse-dialog-header,.patch-review-header) h2{font:500 23px/1.4 Pretendard,sans-serif;color:#efe3c6;margin:0}
+body.voyage-design :is(.tool-dialog-context,.warehouse-dialog-header p,.patch-review-summary){color:#aec7c5;font-size:12px;margin-top:6px}
+body.voyage-design :is(.dialog-titlebar,.warehouse-dialog-header,.patch-review-header)>button{background:#0a27343b;border-color:#b8b58f44;min-width:34px}
+body.voyage-design :is(.dialog-body,.warehouse-dialog-content){padding:22px 27px}
+body.voyage-design :is(.warehouse-dialog-footer,.patch-review-footer){padding:15px 25px;background:#12323e;border-color:#b4aa7d66;gap:10px}
+body.voyage-design :is(.warehouse-dialog-footer,.patch-review-footer) button{padding:11px 18px}
+body.voyage-design .capture-workflow{padding:14px 18px;margin:0 0 22px;background:linear-gradient(100deg,#d4b97812,transparent);border:1px solid #a8b59940;border-radius:5px;gap:28px}
+body.voyage-design .capture-workflow li{color:#c5d6cf;font-size:12px;gap:9px}
+body.voyage-design .capture-workflow b{background:#0b2937;border:1px solid #c5ad74aa;color:#ebd49e;border-radius:50%;width:27px;height:27px}
+body.voyage-design :is(.capture-inputs,.trade-recognition-panel){background:#0a28345c;border:1px solid #a2b09940;padding:19px;border-radius:6px}
+body.voyage-design .trade-recognition-toolbar{padding-bottom:17px;border-bottom:1px solid #b6b08644;align-items:center;gap:15px}
+body.voyage-design .trade-recognition-toolbar h3{font:500 20px Pretendard,sans-serif;color:#e2d3aa;margin-bottom:9px}
+body.voyage-design .trade-recognition-toolbar p{font-size:11px;color:#abc3c0}
+body.voyage-design .trade-recognition-toolbar .primary{min-height:45px;padding:12px 18px}
+body.voyage-design .capture-paste-target{padding:17px;border:1px dashed #b7ac7e88;background:linear-gradient(110deg,#2347537a,#11344291);color:#d3ded4;text-align:center;border-radius:6px;font-size:12px}
+body.voyage-design .warehouse-drop-zone{padding:34px 20px;border:1px dashed #b7ac7e99;background:radial-gradient(ellipse at center,#3852483d,#0d2a3777);border-radius:7px;color:#e6dbbf}
+body.voyage-design .warehouse-drop-zone span{color:#b4c8c2}
+body.voyage-design input[type=file]{padding:12px;max-width:100%;font-size:12px}
+body.voyage-design input[type=file]::file-selector-button{border:1px solid #c6b17d77;background:#284954;color:#e7dec6;border-radius:4px;padding:9px 12px;margin-right:12px;cursor:pointer}
+body.voyage-design :is(.capture-draft-item,.capture-queue-item){background:#0c2b38bd;border-color:#a4b39755;padding:10px}
+body.voyage-design .capture-draft-item>img{background:#071e29;border-color:#c1ad7755}
+body.voyage-design :is(.screen-capture-session,.patch-review-tier h3){background:#12323f;border-color:#a9b29455;color:#c9dcd5}
+body.voyage-design .recognition-empty{border:0;background:none;color:#a8c0bd;padding:38px 18px}
+body.voyage-design .capture-browser-options{border-color:#a4b29455;background:#0a27344d}
+body.voyage-design .capture-browser-options>summary{color:#b2c9c5}
+body.voyage-design :is(.settings-sections>section,.trade-review-card){background:#0c29354d;border-color:#a8b29544}
+body.voyage-design :is(.trade-capture-dialog,.warehouse-dialog,.patch-review-dialog){max-height:92vh}
+@media(max-width:1200px){body.voyage-design .session-toolbar{gap:14px;padding:14px}body.voyage-design .session-budget{padding-right:14px}body.voyage-design .inventory-slots{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 14px}body.voyage-design .inventory-panel .inventory-row{grid-template-columns:48px minmax(0,1fr);padding:18px 6px;gap:0 10px}body.voyage-design .inventory-slot-icon{width:48px;height:62px}body.voyage-design .inventory-slot-icon img{width:45px;height:45px}}
+@media(max-width:850px){body.voyage-design .inventory-slots{grid-template-columns:repeat(2,minmax(0,1fr))}body.voyage-design .session-heading{flex-wrap:wrap}body.voyage-design .session-input-actions{width:100%}body.voyage-design .list-filter-bar{flex-wrap:wrap}body.voyage-design .capture-workflow{gap:12px;flex-wrap:wrap}body.voyage-design :is(.dialog-body,.warehouse-dialog-content){padding:18px}body.voyage-design .trade-recognition-toolbar{flex-wrap:wrap}}
+@media(max-width:500px){body.voyage-design .inventory-slots{grid-template-columns:1fr}body.voyage-design .session-toolbar{gap:12px}.session-budget{flex-wrap:wrap}body.voyage-design .session-input-actions>button{font-size:11px;padding:8px}body.voyage-design .list-filter-bar input{width:100%}body.voyage-design .panel-heading h2{font-size:26px}body.voyage-design .trade-list-scroll{min-height:350px}body.voyage-design :is(.dialog-titlebar,.warehouse-dialog-header){padding:18px}body.voyage-design .capture-workflow{gap:8px;padding:10px}body.voyage-design .capture-workflow li{font-size:10px}}
+@media(max-width:850px){
+  body.voyage-design .trade-capture-dialog .dialog-body{display:block;overflow:auto;min-height:0}
+  body.voyage-design .capture-workspace{display:flex;flex-direction:column;flex:none;overflow:visible;min-height:auto}
+  body.voyage-design .capture-inputs{flex:none;overflow:visible;min-height:auto}
+  body.voyage-design .capture-workspace .trade-recognition-panel{flex:none;min-height:380px;overflow:visible}
+  body.voyage-design .capture-workspace .trade-recognition-result{overflow:visible;max-height:none}
+}

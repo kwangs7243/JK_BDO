@@ -58,6 +58,9 @@ export function initWorkspaceUI() {
   const workspace = document.getElementById('app-content');
   const views = {session: document.getElementById('trade-session-panel'), briefing: document.getElementById('briefing-panel'), inventory: document.getElementById('mainPanel')};
   const titles = {session:'현재 회차', briefing:'출항 브리핑', inventory:'창고 재고'};
+  const viewKey = 'bdo-barter-workspace-view';
+  let previousView = 'session';
+  try { previousView = sessionStorage.getItem(viewKey) || previousView; } catch {}
   const showView = name => {
     if (!views[name]) return;
     workspace.dataset.view = name;
@@ -67,6 +70,7 @@ export function initWorkspaceUI() {
       else button.removeAttribute('aria-current');
     }
     document.getElementById('workspace-title').textContent = titles[name];
+    try { sessionStorage.setItem(viewKey, name); } catch {}
   };
   window.__bdoOpenBriefing = () => showView('briefing');
   document.getElementById('open-schedule').addEventListener('click', window.__bdoOpenBriefing);
@@ -86,5 +90,5 @@ export function initWorkspaceUI() {
     applyInventoryFilters();
     document.getElementById('mainPanel').scrollTop = 0;
   });
-  showView('session');
+  showView(views[previousView] ? previousView : 'session');
 }

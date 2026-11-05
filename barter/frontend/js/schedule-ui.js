@@ -1,3 +1,6 @@
+import { syncRoundResetButton } from "./round-flow.js";
+import { requestSessionReset } from "./trade-ui.js";
+import { enhanceVoyageBoard } from "./voyage-view.js";
 import { confirmAction } from "/portal-assets/feedback.js";
 import { totalDepartureDuration } from "./duration.js";
 import { state } from "./state.js";
@@ -7,6 +10,7 @@ import { renderScheduleDiagnostics } from "./diagnostics-ui.js";
 import { createAutocomplete } from "./autocomplete.js";
 
 const escape = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+
 const scheduleStatus = document.querySelector("#schedule-status");
 function setScheduleStatus(message, kind = "info") { scheduleStatus.textContent = message; scheduleStatus.dataset.kind = kind; }
 function syncTradeModeControl() {
@@ -68,7 +72,7 @@ function renderModeSettlement(mode, sorties) {
       list.append(row);
     }
   }
-  root.append(title, note, list);
+  const fold = document.createElement("details"); const summary = document.createElement("summary"); summary.textContent = "창고 결산 · 펼쳐보기"; fold.append(summary, note, list); root.append(fold);
 }
 
 function setModeHeading(header, mode, sorties, totalParley) {
@@ -217,9 +221,10 @@ function renderModeColumn(id, sorties, mode) {
     footer.append(returnTimer, returnSpan);
     card.append(footer); root.append(card);
   });
+  enhanceVoyageBoard(root, mode, sorties);
 }
 
-function persistCompletion(payload) { return saveCompletionInventory(payload); }
+async function persistCompletion(payload) { return saveCompletionInventory(payload); }
 
 function renderScheduleSlots(setStatus) {
   const root = document.getElementById("schedule-slot-controls");
@@ -237,14 +242,18 @@ function renderScheduleSlots(setStatus) {
   const slot = () => Number(document.getElementById("selected-schedule-slot").value);
   root.append(button("저장", async () => { const current = slot(); try { await whenPersistenceIdle(); await saveScheduleSlot(current); renderScheduleSlots(setStatus); setScheduleStatus(`${current}번 회차 스케줄을 저장했습니다.`, "success"); } catch (error) { setScheduleStatus(`슬롯 저장 실패: ${error.message}`, "error"); } }, state.session.scannedTrades === null || !state.session.schedule));
   root.append(button("불러오기", async () => { const current = slot(); if (!state.scheduleSlots?.[current]) return; if (state.session.scannedTrades !== null && !await confirmAction(`${current}번 슬롯 내용으로 현재 회차를 바꿀까요?`)) return; try { await loadScheduleSlot(current); syncScheduleState(); renderModeColumn("col-speed", state.session.schedule?.speed, "speed"); renderModeColumn("col-balance", state.session.schedule?.balance, "balance"); renderScheduleDiagnostics(state); renderScheduleSlots(setStatus); setScheduleStatus(`${current}번 스케줄 회차를 불러왔습니다.`, "success"); } catch (error) { setScheduleStatus(`슬롯 불러오기 실패: ${error.message}`, "error"); } }, !state.scheduleSlots?.[selected]));
-  const more = document.createElement("details"); more.className = "briefing-menu briefing-slot-more";
-  const summary = document.createElement("summary"); summary.textContent = "···"; summary.setAttribute("aria-label", "스케줄 추가 작업");
-  const actions = document.createElement("div"); actions.className = "briefing-popover";
   const remove = button("삭제", async () => { const current = slot(); if (!state.scheduleSlots?.[current] || !await confirmAction(`${current}번 저장 슬롯을 삭제할까요?`)) return; try { await deleteScheduleSlot(current); renderScheduleSlots(setStatus); setScheduleStatus(`${current}번 슬롯을 삭제했습니다.`, "success"); } catch (error) { setScheduleStatus(`슬롯 삭제 실패: ${error.message}`, "error"); } }, !state.scheduleSlots?.[selected]);
-  remove.className = "danger"; actions.append(remove); more.append(summary, actions); root.append(more);
+  remove.className = "danger"; root.append(remove);
 }
 
 export function initScheduleUI(setStatus) {
+  document.getElementById("v-reset-round").onclick = () => requestSessionReset();
+  document.getElementById("v-show-settlement").onclick=()=>document.getElementById("schedule-columns").classList.toggle("show-settlement");
+  document.getElementById("voyage-focus").addEventListener("click", event => {
+    const focused=document.getElementById("briefing-panel").classList.toggle("voyage-focused");
+    event.currentTarget.textContent=focused?"기본 화면":"항로만 보기";
+    event.currentTarget.setAttribute("aria-pressed",String(focused));
+  });
   document.addEventListener("click", event => {
     document.querySelectorAll(".briefing-menu[open]").forEach(menu => {
       if (!menu.contains(event.target) || event.target.closest("button")) menu.open = false;
@@ -330,8 +339,10 @@ export function initScheduleUI(setStatus) {
 }
 
 export function syncScheduleState() {
+  syncRoundResetButton();
   window.__bdoScheduleRuntime.syncLegacyState(state);
-  const mode = state.session.selection?.briefMode ?? "both";
+  const savedMode = state.session.selection?.briefMode;
+  const mode = savedMode === "balance" ? "balance" : "speed";
   document.getElementById("schedule-columns").dataset.mode = mode;
   document.querySelectorAll("[data-brief-mode]").forEach((tab) => tab.setAttribute("aria-selected", String(tab.dataset.briefMode === mode)));
   syncTradeModeControl();
