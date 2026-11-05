@@ -1,0 +1,1150 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-11-05",
+  "items": [
+    {
+      "tier": "0",
+      "name": "대추야자",
+      "file": "item-icons/extra-526ec2d7c0623eda.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7016.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007016.png",
+      "sha256": "dc8ec6bc05c9bdd0443bb6e84b06955a8b28f23b23789909da1bb91f8f9d6b91"
+    },
+    {
+      "tier": "0",
+      "name": "영롱한 흑요석",
+      "file": "item-icons/extra-90e86f6c96cadb3f.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4273.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004273.png",
+      "sha256": "ca08a2d3e2d7ed223112ce008ba3c774d811153a4e7f2906f7a5fe029ac1aee7"
+    },
+    {
+      "tier": "0",
+      "name": "닭고기",
+      "file": "item-icons/extra-e52fd233d26bda4e.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7921.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007916.png",
+      "sha256": "7eba31dcc681e230e02b9346f846f59e0281b7b529cb33bfe8e78212f37cee07"
+    },
+    {
+      "tier": "0",
+      "name": "어둠의 가루",
+      "file": "item-icons/extra-dac1718323ca883d.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4801.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004801.png",
+      "sha256": "67221e97fdb3b4ba53be583771f5a360c8b0bb8a1d73f26443bfaadc00169dac"
+    },
+    {
+      "tier": "0",
+      "name": "세월의 가루",
+      "file": "item-icons/extra-320d6f52b9bbd204.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4805.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004805.png",
+      "sha256": "efc998030ba5f3a591730fb966c804e84b94c5fd2e15ab7e1599cf5808e52aeb"
+    },
+    {
+      "tier": "0",
+      "name": "영롱한 비취",
+      "file": "item-icons/extra-2773f553a9c275cf.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4494.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004494.png",
+      "sha256": "1a8f2ad181272d2de9a3fb22f230499001d1751597f4d58810a07af4266b7001"
+    },
+    {
+      "tier": "0",
+      "name": "호랑이 고기",
+      "file": "item-icons/extra-9d496d78aab2b460.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7959.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007959.png",
+      "sha256": "1dcfb17851e2bf8f826d53ac590dc39b9f1b417aad24f425fd2ecc876919dce4"
+    },
+    {
+      "tier": "0",
+      "name": "이끼나무 합판",
+      "file": "item-icons/extra-1da4b7e21d2c92f1.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4695.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004695.png",
+      "sha256": "973640f52be4fc913ba72d1c1d15d18b3a854f6e1237a002c7f3f14644c0678d"
+    },
+    {
+      "tier": "0",
+      "name": "삼나무 합판",
+      "file": "item-icons/extra-9b73981c0e2b19f8.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4667.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004667.png",
+      "sha256": "87c992cc14d9008413eb9b203320c5796fbe2cbb9da31601f43cd6431628d283"
+    },
+    {
+      "tier": "0",
+      "name": "상급 화려한 깃털",
+      "file": "item-icons/extra-cae38c9df145bf79.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6166.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006166.png",
+      "sha256": "0fb3c91fa0be8063571114b049ab59d50b0fe49c96ba2a7dcaa0c8d7835f7605"
+    },
+    {
+      "tier": "0",
+      "name": "두꺼운 모피",
+      "file": "item-icons/extra-2514ac4481651542.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6155.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006155.png",
+      "sha256": "b7853efc8cf93d40376e2cfbf60939c72f0e5c478ab9487d273c8ab969e4b615"
+    },
+    {
+      "tier": "0",
+      "name": "상급 단단한 가죽",
+      "file": "item-icons/extra-9748acd68b67d518.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6161.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006161.png",
+      "sha256": "edb8527535146ff2bf02b2304b41ae45b5b3b6c9462451c53ab17f7600715015"
+    },
+    {
+      "tier": "0",
+      "name": "현자의 혈액",
+      "file": "item-icons/extra-1cd836f50c4fc1ec.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6355.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006355.png",
+      "sha256": "32acfd91571017246a845373c4a353f3f2a0b68f2031c80487b744cfdc89aa2b"
+    },
+    {
+      "tier": "0",
+      "name": "가시나무 합판",
+      "file": "item-icons/extra-5f3c10661d301dfc.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4711.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004711.png",
+      "sha256": "0e1257b9545948ecde4973b37d36c20c6effdba82323cc8688a2a212f49eae75"
+    },
+    {
+      "tier": "0",
+      "name": "양털",
+      "file": "item-icons/extra-1da1e51ca697f183.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5804.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005804.png",
+      "sha256": "c5d091377ed2bfa3d038e492f10919cdc6af773a5ed8ec52c4701e29526e2db6"
+    },
+    {
+      "tier": "0",
+      "name": "편백나무 합판",
+      "file": "item-icons/extra-6014ca1e170f5013.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4677.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004677.png",
+      "sha256": "0407cae165a5958c7b17f0026a05ce2fbc289d4b24e4a9d30a34dfd2d6092b95"
+    },
+    {
+      "tier": "0",
+      "name": "무화과",
+      "file": "item-icons/extra-f5390275b426084a.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7018.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007018.png",
+      "sha256": "304db91e58d8f29573d4a170da347dd540b8a1f8652cd56ed90940b5fe49b3e4"
+    },
+    {
+      "tier": "0",
+      "name": "울",
+      "file": "item-icons/extra-32be34f55fbaeb57.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5858.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005858.png",
+      "sha256": "af28c851dd002f762d46c199d227d5ce1db79c18c2f798f4be2c33085eedd09d"
+    },
+    {
+      "tier": "0",
+      "name": "구리 주괴",
+      "file": "item-icons/extra-0d4144a2a9071f9d.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4058.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004058.png",
+      "sha256": "7aae2b3673df2671ff9c7ccddc702caa423b23000e337d1533d9a03e2c7da784"
+    },
+    {
+      "tier": "0",
+      "name": "최상급 곰 가죽",
+      "file": "item-icons/extra-4096af92b86b1ea1.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/820158.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00820158.png",
+      "sha256": "74e9bbbf33c2fb7f59ad20b7e5940491a693ae4d1accc724396768b643192a4e"
+    },
+    {
+      "tier": "0",
+      "name": "최상급 멧돼지 가죽",
+      "file": "item-icons/extra-8b0cafe26a113064.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/820157.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00820157.png",
+      "sha256": "e63dfcd5ff384c584873188b3d7b95fceb786ce48c10e5837087938434baa633"
+    },
+    {
+      "tier": "0",
+      "name": "소나무 합판",
+      "file": "item-icons/extra-145a5c823b173ad2.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4658.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004658.png",
+      "sha256": "51814feaa503e65e590088cd2ef8aa501554de9df6c350f1fd2b3fd93de9ece8"
+    },
+    {
+      "tier": "0",
+      "name": "핏빛 나무 옹이",
+      "file": "item-icons/extra-72a7f39bcfea40d4.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5005.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005005.png",
+      "sha256": "6e9bed6e6a59800d23b4f46751cf77aa053e4bd5bf4c97942608970a82e8ada9"
+    },
+    {
+      "tier": "0",
+      "name": "상급 두꺼운 모피",
+      "file": "item-icons/extra-6548e74439a76f61.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6163.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006163.png",
+      "sha256": "b08c70d740937e5b6126fdbefc04d95e75e02bb67d9e6f19a959bda4bf63bf11"
+    },
+    {
+      "tier": "0",
+      "name": "청동 주괴",
+      "file": "item-icons/extra-ce4502691a7bf71c.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4067.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004067.png",
+      "sha256": "c47faaed4dcbff625eddb4f1643b7863fb331f27ff22e047e40fcec7bc67f404"
+    },
+    {
+      "tier": "0",
+      "name": "고리나무 합판",
+      "file": "item-icons/extra-8a50aca6d18cd322.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4698.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004698.png",
+      "sha256": "32aadcf5d67447227ec3ec305d94d8930e687ada11a1ed3707160d721d07bd42"
+    },
+    {
+      "tier": "0",
+      "name": "계피",
+      "file": "item-icons/extra-bc8dc7fdfa39c507.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7348.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007348.png",
+      "sha256": "dbbab8cc1d9c19e69bcb3e96b1f9ee72fdfd3d0ce17626131dc439de0b883c7a"
+    },
+    {
+      "tier": "0",
+      "name": "팔각",
+      "file": "item-icons/extra-6b87e708c124f531.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7019.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007019.png",
+      "sha256": "6ad59b996cd9bc63683401eac8e5c6d9dbe4f2349a463dc9060cc379d0b1f3da"
+    },
+    {
+      "tier": "0",
+      "name": "맑은 액체 시약",
+      "file": "item-icons/extra-406e458aa583b6f5.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5301.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005301.png",
+      "sha256": "c191d6119e242cb2e96ad64e41524162159a4e004912290e75b11f3e6c0d09ff"
+    },
+    {
+      "tier": "0",
+      "name": "화각",
+      "file": "item-icons/extra-cd0f991f5257467a.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6185.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006185.png",
+      "sha256": "007043e789c715fa49effb90487759a78d4e722356d8ab369cdf2374d23f0516"
+    },
+    {
+      "tier": "0",
+      "name": "질긴 가죽",
+      "file": "item-icons/extra-4afe2d172983d995.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6152.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006152.png",
+      "sha256": "3aec40ec7cc1b53150157cae3e175955a989f8c427f1b9975d3f1b1429a61e2b"
+    },
+    {
+      "tier": "0",
+      "name": "황동 주괴",
+      "file": "item-icons/extra-a229cbcbbb53f202.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4066.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004066.png",
+      "sha256": "fa7a1d5852e3749b129a0fbc96885f1700c2a9092e60f419719bd35d734e8bd7"
+    },
+    {
+      "tier": "0",
+      "name": "육두구",
+      "file": "item-icons/extra-dc0182b1a0366015.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7020.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007020.png",
+      "sha256": "708377005aa8b351c98b026ac474173fa7ee38086660c52375b400084fbb5563"
+    },
+    {
+      "tier": "0",
+      "name": "맥주",
+      "file": "item-icons/extra-f932c62c04eedcc3.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/9213.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00009213.png",
+      "sha256": "4b36ff632eabf557047162938db0fb52c7ba12e3075e8c88c6531024e0d7e712"
+    },
+    {
+      "tier": "0",
+      "name": "식초",
+      "file": "item-icons/extra-ba6236f5c8fce1e1.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/9066.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00009066.png",
+      "sha256": "a51e89e1ffd1ecab456e94089fa0bac3ae9f35867d98a03772e1134583a915a7"
+    },
+    {
+      "tier": "0",
+      "name": "측백나무 합판",
+      "file": "item-icons/extra-28e7e713c12c6643.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4702.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004702.png",
+      "sha256": "ac5ac96931c75eb369b9163dd9c248a642431a25182886c05250c818c6ffdccb"
+    },
+    {
+      "tier": "0",
+      "name": "균열의 가루",
+      "file": "item-icons/extra-8a4826cd8dab36a3.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4803.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004803.png",
+      "sha256": "b3e75899e7e34daada46c8ae8573ba7e98173c3ed8e3bb6f16bf3827a0f2f80c"
+    },
+    {
+      "tier": "0",
+      "name": "납 주괴",
+      "file": "item-icons/extra-ee5ebcccdc32c2f8.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4055.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004055.png",
+      "sha256": "a796ac9932651842c3736a810d7fbf558361f5d3fb096864aa196e34f510cae0"
+    },
+    {
+      "tier": "0",
+      "name": "주석 주괴",
+      "file": "item-icons/extra-857009fe1d5e5350.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4061.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004061.png",
+      "sha256": "68107468cff4859c50ee13d4ebab96206b209f7b3ac34b6c0b60119a65bd3797"
+    },
+    {
+      "tier": "0",
+      "name": "야자수 합판",
+      "file": "item-icons/extra-bf7c2ec96da3f22f.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4671.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004671.png",
+      "sha256": "0619f472ccf6f3af3ad6fae5b8dc7f79cb632e1efcd963fff1e305ebccf09f14"
+    },
+    {
+      "tier": "0",
+      "name": "알로에",
+      "file": "item-icons/extra-59eca158190bd0a9.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7347.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007347.png",
+      "sha256": "d035c5dc4b1edfd9e303bf7d3a812a19c7e9ceaf09bd840943be8fc5e6b69165"
+    },
+    {
+      "tier": "0",
+      "name": "단풍나무 합판",
+      "file": "item-icons/extra-a2db162f07b97ef9.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4655.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004655.png",
+      "sha256": "cac689881aa865dfc168aee8414196b28e78f2f48cb48704ebf7dd18500c5694"
+    },
+    {
+      "tier": "0",
+      "name": "새구이",
+      "file": "item-icons/extra-c68f9727ef7c1f19.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/9492.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00009492.png",
+      "sha256": "24736bd213f9902b97ddb64b54379b34401f7af8f2e862498c432039d295f6e4"
+    },
+    {
+      "tier": "0",
+      "name": "신비로운 가루",
+      "file": "item-icons/extra-b02ccfbe09dd3713.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/820138.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00820138.png",
+      "sha256": "8cdac83d2a9d764f8abb80326798d9f41d741207cd4b7205de92675b2f2a6183"
+    },
+    {
+      "tier": "0",
+      "name": "부드러운 가죽",
+      "file": "item-icons/extra-7ef8a3f436a2cd42.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6151.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006151.png",
+      "sha256": "5c01e0dbffe86f275cee91b0caa8a14ef09b44f4955d72181e5858ccc8a902bc"
+    },
+    {
+      "tier": "0",
+      "name": "죄인의 혈액",
+      "file": "item-icons/extra-b566e5eafa42728a.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6354.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006354.png",
+      "sha256": "33a3b52ab78407caf7594ec54e379ac82211f99df4d4168416e730b1adbf497c"
+    },
+    {
+      "tier": "0",
+      "name": "신수의 혈액",
+      "file": "item-icons/extra-f951f1c89cdadc64.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6351.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006351.png",
+      "sha256": "d262fc10d53e0281b1be6ac686b2215a9211d13a6a7827d55817954ce2a9524e"
+    },
+    {
+      "tier": "0",
+      "name": "순수한 가루 시약",
+      "file": "item-icons/extra-b308577e97a8002e.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5302.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005302.png",
+      "sha256": "5ff0e45862b8e3ce304f2c959e07a6e26f265e9e33590adda7918691edaa6900"
+    },
+    {
+      "tier": "0",
+      "name": "명주실",
+      "file": "item-icons/extra-36f50c1646a6d5c0.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5853.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005853.png",
+      "sha256": "52dd8efa9033cbfe542c5dbc53b64d6bee917b43bc94f2d407b76660a7c4ed1e"
+    },
+    {
+      "tier": "0",
+      "name": "술의 정수",
+      "file": "item-icons/extra-7f42c651b38cda56.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/9057.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00009057.png",
+      "sha256": "db28ae82cf9cb20636c6076f4c387881168ad6869401743fa622d04d5c2e5e85"
+    },
+    {
+      "tier": "0",
+      "name": "전나무 합판",
+      "file": "item-icons/extra-2b84967db41c7954.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4664.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004664.png",
+      "sha256": "ae9a8f7149e341bd691a88d190f1d11ff759380f5d799c1f7c1f2a85636b6c18"
+    },
+    {
+      "tier": "0",
+      "name": "선인장 껍질",
+      "file": "item-icons/extra-8c4bb14e851217f3.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4612.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004612.png",
+      "sha256": "5aa2168bc1e06527b95094c603540fae63699ff3fd6ad83cc8357f9ebb50f149"
+    },
+    {
+      "tier": "0",
+      "name": "피스타치오",
+      "file": "item-icons/extra-6f83b94fcba20848.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7017.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007017.png",
+      "sha256": "6de97d22a92747adb17c986b4c52118db47642a823c67e4934693ee3c1ee6677"
+    },
+    {
+      "tier": "0",
+      "name": "털실",
+      "file": "item-icons/extra-853131e0b518e848.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5854.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005854.png",
+      "sha256": "0313651e0bca67b31070044842856fc5811b9c5e7f87675873948542e6066bb7"
+    },
+    {
+      "tier": "0",
+      "name": "식용벌꿀",
+      "file": "item-icons/extra-31d76347280aaa02.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7702.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007702.png",
+      "sha256": "b1d200ed913c66bfbca4b7119cd1ffbbfc72af126756af0dcbba16f07ac4c5cf"
+    },
+    {
+      "tier": "0",
+      "name": "자작나무 합판",
+      "file": "item-icons/extra-134db26f00d5a297.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4661.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004661.png",
+      "sha256": "6ee64fd40ab9b056ea2fa1e64a67f65200105b9b38af0d4850bad01b9b208062"
+    },
+    {
+      "tier": "0",
+      "name": "프리카",
+      "file": "item-icons/extra-73c3d5d92aaf2683.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7021.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007021.png",
+      "sha256": "6ba3f94eae7abbc551bce51dcb63c242de0d32700d637c64e70458f5f3bd40ac"
+    },
+    {
+      "tier": "0",
+      "name": "비단",
+      "file": "item-icons/extra-e22a80e6d89aa03a.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5857.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005857.png",
+      "sha256": "50963a5e4d67190c5f780ca66fd1f91b554e2f8ef13dffd82d0d094bbe69164d"
+    },
+    {
+      "tier": "0",
+      "name": "아마포",
+      "file": "item-icons/extra-7ef59c1bbaf2a94d.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5856.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005856.png",
+      "sha256": "9bfbfcaba8b55bb660a3438997ed825c94f472838bee539ab9fefc2be2aef2c2"
+    },
+    {
+      "tier": "0",
+      "name": "코코넛",
+      "file": "item-icons/extra-2d6a4c6a80f51bea.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7026.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007026.png",
+      "sha256": "7ead381a001ead9550a6a5e8944dd8701f1563ae850979a28041b01cf5408592"
+    },
+    {
+      "tier": "0",
+      "name": "빛나는 가루",
+      "file": "item-icons/extra-a5e996d6c869a136.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/9733.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00009733.png",
+      "sha256": "23c8c6a24040d102bff18e02a7539a254e5d8f7ea79589ad4d4ab2d8b578539e"
+    },
+    {
+      "tier": "0",
+      "name": "딱총나무 합판",
+      "file": "item-icons/extra-4d659044c19599c6.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4674.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004674.png",
+      "sha256": "884226dd5fa67ecb4226ac4e6dfa8f71972b3a090b74de24e4683e8efb80a506"
+    },
+    {
+      "tier": "0",
+      "name": "다진 새고기",
+      "file": "item-icons/extra-7fc3507da10d7266.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7958.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007958.png",
+      "sha256": "e2a620e33fd34546e47d9a51c6e9cdea3731d6e99f968852b35ddb000e688c0f"
+    },
+    {
+      "tier": "0",
+      "name": "면포",
+      "file": "item-icons/extra-16ba3850ef16822d.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5855.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005855.png",
+      "sha256": "76be6268b817839170511597136530e2c6ee124b81f28ff94a6a62566793cd54"
+    },
+    {
+      "tier": "0",
+      "name": "광대의 혈액",
+      "file": "item-icons/extra-5a8dbbc4c9e0857e.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6353.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006353.png",
+      "sha256": "04ecb0469a16726197e3fce95a368c332adce8671551a37d3b406a7a988985f0"
+    },
+    {
+      "tier": "0",
+      "name": "가공석탄",
+      "file": "item-icons/extra-f78e92f42ebe4f70.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4070.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004070.png",
+      "sha256": "ba2ff759bd5b39433b9a6a2f97aaa53e8aac2ec58667f53c225d444880c2a64e"
+    },
+    {
+      "tier": "0",
+      "name": "선인장 가시",
+      "file": "item-icons/extra-90652999f7b19153.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4683.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004683.png",
+      "sha256": "0e7e0cee00f450c9c293026c48f5ce977013be5ca90bdce8763b0ae4a40f9b6c"
+    },
+    {
+      "tier": "0",
+      "name": "철 주괴",
+      "file": "item-icons/extra-4da2b7c1a6383f1e.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4052.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004052.png",
+      "sha256": "a90aa3bf8dd64821105d5a59992c0859b94dd27b35bb30eeffd49ab50131507f"
+    },
+    {
+      "tier": "0",
+      "name": "고목나무 껍질",
+      "file": "item-icons/extra-3035d681cdb558d1.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5008.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005008.png",
+      "sha256": "a352a5b8acabb68b83eeb20551154fe4cd20160088717ac1d4e2e072450433f4"
+    },
+    {
+      "tier": "0",
+      "name": "비취 원석",
+      "file": "item-icons/extra-d9031a181e3ffdfb.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4414.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004414.png",
+      "sha256": "b67df4f820becc780e54c4c62c461a61bb8d5e1f612f4670d70ecede85c8b99d"
+    },
+    {
+      "tier": "0",
+      "name": "상급 질긴 가죽",
+      "file": "item-icons/extra-1485dd0a25910b10.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6160.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006160.png",
+      "sha256": "dea0e68b0833e7a2d85d6ba9e514d9e0f6e97c1e78c375608de06fd08daa7395"
+    },
+    {
+      "tier": "0",
+      "name": "가벼운 깃털",
+      "file": "item-icons/extra-84f1cb816d0416d5.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6157.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006157.png",
+      "sha256": "c03eeab094d474d41aef6e7a85b47d91f4669e88838ba81c9df0578c87b2f950"
+    },
+    {
+      "tier": "0",
+      "name": "호박",
+      "file": "item-icons/extra-1690884b38bb5624.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/7306.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00007306.png",
+      "sha256": "8339b9d269a7c1d3c42e84c5c27538857fd002cc68ca8d7ab3e21be72b7a6a4b"
+    },
+    {
+      "tier": "0",
+      "name": "아마실",
+      "file": "item-icons/extra-92cd29f73d88e3b8.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5852.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005852.png",
+      "sha256": "7e492809b4fe2d9f8d78b432cd16a65eea23082986377f7e08b304d0f9d2d613"
+    },
+    {
+      "tier": "0",
+      "name": "설원 삼나무 합판",
+      "file": "item-icons/extra-adcedf283343e6e2.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4722.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004722.png",
+      "sha256": "4bad701e6618fa9e69069bc0ebd293ebf21e13e55a9b9a1d6603fd804a498503"
+    },
+    {
+      "tier": "0",
+      "name": "카프라스 나무 합판",
+      "file": "item-icons/extra-8138d3d42133ab67.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4725.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004725.png",
+      "sha256": "f91396e6a7b49305fc87a2e7b6588f334edcff957c2e76b17c406e4ae10bca39"
+    },
+    {
+      "tier": "0",
+      "name": "아연 주괴",
+      "file": "item-icons/extra-8ace044166d92343.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4064.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004064.png",
+      "sha256": "c8e0bf562be46b5752340ba31a48393af62a4e1c85b1de9ad4e95afdbf7f54e0"
+    },
+    {
+      "tier": "0",
+      "name": "녹 주괴",
+      "file": "item-icons/extra-a13b8e15bc329202.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4086.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004086.png",
+      "sha256": "16405713afa740a965ac0eb4f4c34ffabaaa518ee752640a611314b9000ac812"
+    },
+    {
+      "tier": "0",
+      "name": "단단한 가죽",
+      "file": "item-icons/extra-57fb9dfa3a7df045.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6153.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006153.png",
+      "sha256": "58c0ad325a3064ec4f434a4932553d67edd0356194f3f333cf03fa731d944d82"
+    },
+    {
+      "tier": "0",
+      "name": "상급 부드러운 가죽",
+      "file": "item-icons/extra-91c94d135bf78601.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6159.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006159.png",
+      "sha256": "82f775bbdbdc3360936b12ffa6fe0e746f131581e0fd01125e0ce103e41e4dad"
+    },
+    {
+      "tier": "0",
+      "name": "화려한 깃털",
+      "file": "item-icons/extra-cde581bf62069e5b.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6158.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006158.png",
+      "sha256": "44fbc33bc79d653fdbfa8edf23b3b68baf5027cac190dab2fbc324ac1c674830"
+    },
+    {
+      "tier": "0",
+      "name": "상급 가벼운 깃털",
+      "file": "item-icons/extra-5b0190d2d77cf46e.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/6165.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00006165.png",
+      "sha256": "d6bf8a9abf6913013ee813520c149d4d8f701d06cc6d7ab4870edfb97a237b1a"
+    },
+    {
+      "tier": "0",
+      "name": "정령의 잎사귀",
+      "file": "item-icons/extra-c3014dd66c01fbb7.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5006.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005006.png",
+      "sha256": "ba2bd71d2a231f5970d8a613391ce7a5bb907fd4ab97c73873b5928419e3c6d6"
+    },
+    {
+      "tier": "0",
+      "name": "붉은 나무혹",
+      "file": "item-icons/extra-1d9fd76489055d0a.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5011.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005011.png",
+      "sha256": "7e998d2f7f98ebd5ea017c2849f5a2f1b52ac0ab1efae9e2646ebb0e21446498"
+    },
+    {
+      "tier": "0",
+      "name": "화염의 가루",
+      "file": "item-icons/extra-e2eefab4767f4a7f.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4802.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004802.png",
+      "sha256": "4babdb10cee80735614bdc496f40e2cfffe450b5ab327221688b95a91e7bf936"
+    },
+    {
+      "tier": "0",
+      "name": "대지의 가루",
+      "file": "item-icons/extra-0c54ec777d12eb24.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/4804.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00004804.png",
+      "sha256": "5e0f62633ac09a0142c363b224713002db5bf153186e3944d27ac8be2e46d3a0"
+    },
+    {
+      "tier": "6",
+      "name": "발렌시아 모래 방패",
+      "file": "item-icons/extra-8f2c22459cda1727.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/d4eaddd252820260410135634027.png",
+      "sha256": "fe0ce1a4e75bf7408d119ae9420740d208219f0b157bd988435096d6988088b5"
+    },
+    {
+      "tier": "6",
+      "name": "발렌시아 사막 보검",
+      "file": "item-icons/extra-4589f2257b4929e8.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/696ee8478fe20260410135634334.png",
+      "sha256": "ef416dd3cf52c334a3440995c3b3dae55da2c2a1ca88f6e998b54848894adfa7"
+    },
+    {
+      "tier": "6",
+      "name": "화려한 낙타 가죽",
+      "file": "item-icons/extra-a034da029e860a06.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/f88054217bc20260410135634615.png",
+      "sha256": "ac4e4bd921a16301f3b7699ccf14a46c19cba2e69e76461418afb651b4c70b59"
+    },
+    {
+      "tier": "6",
+      "name": "황금 사막의 모래반지",
+      "file": "item-icons/extra-cc35837d9c3df65d.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/95478425cb220260410135634912.png",
+      "sha256": "edb028db582f1de94faf50b8753d7bc3fb4a4592edceb118efbb2068581f0f42"
+    },
+    {
+      "tier": "6",
+      "name": "최고급 코코넛 시럽",
+      "file": "item-icons/extra-84fb9c26ddf97915.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/93fb60dff3b20260410135655376.png",
+      "sha256": "5d5df73989135cf5b62c02174d1b3932fdad0719b5b23bb919db1d79a268c18c"
+    },
+    {
+      "tier": "6",
+      "name": "아레하자 전통 차",
+      "file": "item-icons/extra-d847833367210dc3.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/9ffa9a4e01e20260410135655649.png",
+      "sha256": "8e222886b249b42d4fcc7feb64773c0afc199ff144138ffcbedf11ee94ea2c73"
+    },
+    {
+      "tier": "6",
+      "name": "아레하자 등대 조각상",
+      "file": "item-icons/extra-8b7a03646edb297d.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/29b4a596ee120260410135655915.png",
+      "sha256": "0cac2ff599a838af5f7e1f427b1914c1158ee1fab98fd791ab3232dbd949dad0"
+    },
+    {
+      "tier": "6",
+      "name": "황금빛 선인장 꽃다발",
+      "file": "item-icons/extra-9ae7ed2cc473fce7.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/bb9be674e5e20260410135656166.png",
+      "sha256": "718ed5beff8a0a1820e73630485f46f0de8f52e6df3c6e1515a8eb0004f031ee"
+    },
+    {
+      "tier": "6",
+      "name": "숲의 요정 향수병",
+      "file": "item-icons/extra-4aabf22a89aff734.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/1e5663f306720260410135707498.png",
+      "sha256": "6546a5a08c093f08861d56d65d66014b41962b97d40fb2de404e732d3dfad44c"
+    },
+    {
+      "tier": "6",
+      "name": "카마실비아 조각상",
+      "file": "item-icons/extra-70b43f121a9778eb.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/6392cc3f96420260410135707796.png",
+      "sha256": "9f4b0c41aafb2e2f2673bc90cfc5bf289562dcc816f67cbd26d56fe0361985bf"
+    },
+    {
+      "tier": "6",
+      "name": "달빛 수정 램프",
+      "file": "item-icons/extra-c8f8f186238a35dc.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/8a3718ada8e20260410135708031.png",
+      "sha256": "e3117b2850a446e558a89660661a10d8c23c43d9ee8cd282076966bf34a87e28"
+    },
+    {
+      "tier": "6",
+      "name": "은빛 나무 이끼 장식",
+      "file": "item-icons/extra-80a53e6b9459d736.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/3770ba3989220260410135708281.png",
+      "sha256": "7b9484bc7b9c09901dfb78f27e5899b6b5031db6e2f0bbb64e66842f7ab6f1ae"
+    },
+    {
+      "tier": "6",
+      "name": "검은 장미 꽃다발",
+      "file": "item-icons/extra-eaaf780bd316e9c8.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/a93efeeb37220260410162726763.png",
+      "sha256": "216ef8c68f14b53e769dcbfa7a3132c0072fcdeef1754702652144a49db99cde"
+    },
+    {
+      "tier": "6",
+      "name": "월광 수정 조각",
+      "file": "item-icons/extra-b4dabc1b6860a3da.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/59289babe5320260410162727080.png",
+      "sha256": "ec3a731969ec13f4c88cbb9c0d27c3ad011670baaf25ad662c9b43d519548bb0"
+    },
+    {
+      "tier": "6",
+      "name": "달빛 그림자 숙성 와인",
+      "file": "item-icons/extra-8526ddc97882a048.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/54fc11cf5c320260410162727330.png",
+      "sha256": "f99f311e395c630283e670059d0158286ffc88d5f402ed2647d3972d3c0c7661"
+    },
+    {
+      "tier": "6",
+      "name": "그림자 장식 거울",
+      "file": "item-icons/extra-0c56baa51a7e6769.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/ee4f406dbb520260410162727628.png",
+      "sha256": "8c7001fd3c962c8be53d01133c3ed4a891e20656bf06f879fb1d68b47102bb6a"
+    },
+    {
+      "tier": "6",
+      "name": "대나무 수액 상자",
+      "file": "item-icons/extra-e400d4cc258ea183.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/652d9e227d020260410172557496.png",
+      "sha256": "ff0e3a53dda781814212403ab67a28827bfeb08e8557d9f565f7f3094303b5d4"
+    },
+    {
+      "tier": "6",
+      "name": "남포 특산품 감 상자",
+      "file": "item-icons/extra-5f8d047a0dc33660.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/d07a197554520260410172557245.png",
+      "sha256": "cab5feb08d075019b296990e70f537b4c79153c34d38cc10b5b4fb0987298a16"
+    },
+    {
+      "tier": "6",
+      "name": "고급 묵향함",
+      "file": "item-icons/extra-2738b7694ce6f73f.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/3f5e0beb54d20260410172556900.png",
+      "sha256": "1ecc8a8cbf41176cff44e532ac5d38c734839ec996537bcfcba17807986baac0"
+    },
+    {
+      "tier": "6",
+      "name": "한짓골 산딸기 상자",
+      "file": "item-icons/extra-f80c6dcfec9d8293.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/039ab2c5a6220260410172557747.png",
+      "sha256": "14a50a519251498757cce7757c97036620d9f05453ad11046aa09720b81c4be8"
+    },
+    {
+      "tier": "6",
+      "name": "최고급 청화백자 상자",
+      "file": "item-icons/extra-e68f56ca0f2dbf0d.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/1463b8f663420260410172615083.png",
+      "sha256": "07f969eec260659f29b0630a513a5a99da3ea70ee56addf6ba4c978dafb4f411"
+    },
+    {
+      "tier": "6",
+      "name": "최고급 감투 상자",
+      "file": "item-icons/extra-323c31918c277d9d.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/8f935088ff220260410172614814.png",
+      "sha256": "04bd539d95925a2ade5c6c99a7b8e2499cfebc7b589fd9c1bb888fd2bc30653f"
+    },
+    {
+      "tier": "6",
+      "name": "놋쇠그릇 상자",
+      "file": "item-icons/extra-664bdef99e64cb98.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/b3b5329ef9220260410172614256.png",
+      "sha256": "caec92f9a802b738512cce57fdfa7b29770532d90a5ac251a40a63ed819f0480"
+    },
+    {
+      "tier": "6",
+      "name": "예리한 홍화도 상자",
+      "file": "item-icons/extra-aa47704fe899039e.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/57df6c4228d20260410172614553.png",
+      "sha256": "c06bfd2a64fde63407412bf71a4f671c0874a04c505efcf63da101b9ff963d76"
+    },
+    {
+      "tier": "7",
+      "name": "최고급 하이델산 포도주",
+      "file": "item-icons/extra-728b9bc5dcadb8db.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/99a88a77f4420260410172647439.png",
+      "sha256": "cf6ace46cbfbd71da4b0620abc2e9d35a3e76a456fc93f5c08314fcbcfe3bdf8"
+    },
+    {
+      "tier": "7",
+      "name": "금빛 밀가루 포대",
+      "file": "item-icons/extra-1cdf25417c69a2d4.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/ac2dddf256220260410172646642.png",
+      "sha256": "10e1fe05ac36cd7f72d4a900de4907a03b1e6c5f455f6e9bbeaeca083e073ed8"
+    },
+    {
+      "tier": "7",
+      "name": "유기농 벌꿀 상자",
+      "file": "item-icons/extra-bbb9ab18565ae106.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/1ccb546d39720260410172647200.png",
+      "sha256": "9012a46ed71b2f50b41685ead40307621ec787dde55e18158c3ee70aee9f2c67"
+    },
+    {
+      "tier": "7",
+      "name": "발레노스 전통 닻 장식",
+      "file": "item-icons/extra-eb395a5ba7f12448.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/49be318ae9a20260410172646902.png",
+      "sha256": "e1698abe1318180cdb5e671c1ec60728562035802a0c3e29c8b288eaa9f267b4"
+    },
+    {
+      "tier": "7",
+      "name": "황금 독수리 브로치",
+      "file": "item-icons/extra-da317b80d564639e.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/85ca95581e820260410172700286.png",
+      "sha256": "981f8440ca7ca3256d7ac143fbdda34d71aab820c7d23d35d04518f286925422"
+    },
+    {
+      "tier": "7",
+      "name": "칼페온 기사단의 전투 교본",
+      "file": "item-icons/extra-b01307d8a9dc1620.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/20bb944e1f320260410172659495.png",
+      "sha256": "f47367e043e27e7c293459f6414b0567a02f52bdd53f81303a5220f8c566cc13"
+    },
+    {
+      "tier": "7",
+      "name": "칼페온 황금 장식 촛대",
+      "file": "item-icons/extra-fc70a097293c4bbd.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/d1d13552bb820260410172700035.png",
+      "sha256": "b0d403606e6c7497fdb2bc2ac3cac630a31033ae6edc9dee8850fb10ace548af"
+    },
+    {
+      "tier": "7",
+      "name": "칼페온 장인의 진주 목걸이",
+      "file": "item-icons/extra-17c48270206a0b99.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/d808d79db7f20260410172659785.png",
+      "sha256": "a5ec78eb6e58058f24206b935659acee5c9cf1d63c80bec976f0019bf40d1a26"
+    },
+    {
+      "tier": "7",
+      "name": "소산 군수품 상자",
+      "file": "item-icons/extra-103943c84c8bb646.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/07d016b37b720260410172713068.png",
+      "sha256": "c42ea152f4d73374ee18199469276f0006cf43bd1c00d64c724b6c87f1fc5f9b"
+    },
+    {
+      "tier": "7",
+      "name": "돌꼬리 당근 건강식 상자",
+      "file": "item-icons/extra-74062bd441ea81a9.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/e2fcbb6f8f220260410172712786.png",
+      "sha256": "9f136b55d38f091c2150871bf6b1c5cf7d814fdaeacb4a0e81d852f4f9d2d3eb"
+    },
+    {
+      "tier": "7",
+      "name": "오마르 용암 가루",
+      "file": "item-icons/extra-fdaaba8faade0b67.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/7066769ed6d20260410172713315.png",
+      "sha256": "b6d5113ad21322f06fdd50d0905396da3f94581e227f41d4ebb298185551805a"
+    },
+    {
+      "tier": "7",
+      "name": "타리프의 마법 항아리",
+      "file": "item-icons/extra-3fd523a1574fd44a.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/850da6e387720260410172713565.png",
+      "sha256": "b0bfbd9cd733bc9354c66645f79245171134d7f6d78cc2c91d30a8203245848d"
+    },
+    {
+      "tier": "7",
+      "name": "루살카 가시꽃다발",
+      "file": "item-icons/extra-397f11180972184e.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/8845e28552120260410172722313.png",
+      "sha256": "1c6d042eb74bd58ac8e4f2b86704d7c1f85fb88f31aa606c26c22b02cd9d3bee"
+    },
+    {
+      "tier": "7",
+      "name": "단단한 카프라스 목재",
+      "file": "item-icons/extra-fecec0773a603fdc.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/00c1208735720260410172722042.png",
+      "sha256": "4cd2f750c6d3a09df6a130bda0354ff494519f49562fa2e5a54da3071332d2de"
+    },
+    {
+      "tier": "7",
+      "name": "하킨자 최고급 향수",
+      "file": "item-icons/extra-4178a8cf902af26f.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/6d049ec694620260410172722845.png",
+      "sha256": "994c045a784d473332af90cc087c7508fd9660a2544a44861aa0dd61683c2d54"
+    },
+    {
+      "tier": "7",
+      "name": "에다나 권좌의 기록서",
+      "file": "item-icons/extra-730c64a8b50a34dd.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/c937904cdfc20260410172722579.png",
+      "sha256": "4300bc1906625e45e87f3b781127860e23b27e0094fcc9714ddcc95c93abae14"
+    },
+    {
+      "tier": "7",
+      "name": "장인의 조개 껍질 목걸이",
+      "file": "item-icons/extra-32def990b51278cf.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/17cd72f58f520260410172733630.png",
+      "sha256": "52b8f56d84ee05ba8f138725e398f774093087a7c7ded1e36fc3c5619df0a614"
+    },
+    {
+      "tier": "7",
+      "name": "발레노스 항해사의 망원경",
+      "file": "item-icons/extra-fc099a8c83762db7.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/2bb529265c320260410172733364.png",
+      "sha256": "5b6d9a475bc3408229656e47682e09943405bd1438c8748fce4207cfaa8e82ee"
+    },
+    {
+      "tier": "7",
+      "name": "발레노스 고래 조각상",
+      "file": "item-icons/extra-142bf86a582f77bd.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/937bcad186920260410172732811.png",
+      "sha256": "9b9cf05fd8c27af544cd6e3a0b2727862108e89cde72e95e1f7acb087bdf4000"
+    },
+    {
+      "tier": "7",
+      "name": "발레노스 소금꽃",
+      "file": "item-icons/extra-e5cc8ea9c734d4e0.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/39db8cc693820260410172733113.png",
+      "sha256": "138733ec8ae86823e50f09c07efce838a52c03c7165e1c75e32981baaa8174cf"
+    },
+    {
+      "tier": "7",
+      "name": "발레노스 별빛 소금",
+      "file": "item-icons/extra-d42207848a55813d.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/d21a74270b720260410172745907.png",
+      "sha256": "dea04398b676d862473095240aeaad2aec73675c0ce1379d47e1b5d56e3a2d5e"
+    },
+    {
+      "tier": "7",
+      "name": "발레노스 유물 파편",
+      "file": "item-icons/extra-0e14dec9723a3ecf.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/3705845ddc220260410172745657.png",
+      "sha256": "8a32c1fa7f39e119898af44ce0cb7352238e344d5840ebbb93534105cd0d9b6e"
+    },
+    {
+      "tier": "7",
+      "name": "발레노스 무지개 산호",
+      "file": "item-icons/extra-61c0cc75fc05f83e.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/62cae75c1cc20260410172745360.png",
+      "sha256": "ef5704fdf5aaf11628c1c14e25e1d03d147e3b3d34c86908e9ce3550a0a6aac2"
+    },
+    {
+      "tier": "7",
+      "name": "무지개빛 해원석 조각",
+      "file": "item-icons/extra-d8b13fbf764866f2.webp",
+      "source": "https://www.kr.playblackdesert.com/ko-KR/News/Detail?groupContentNo=15451",
+      "iconSource": "https://s1.pearlcdn.com/KR/Upload/News/272be2f3d5c20260410172746277.png",
+      "sha256": "42e88b82f3f44a286c69c078292f9daad096f3a5aac15e822906053a28e9abec"
+    },
+    {
+      "tier": "mat",
+      "name": "순수한 진주 결정",
+      "file": "item-icons/extra-7beba606072cc55e.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5820.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005820.png",
+      "sha256": "ccf1d1fa0a73ae1edf599f6b9c3fdb49dfd8a81230d71cfaac20ac70f39e0065"
+    },
+    {
+      "tier": "mat",
+      "name": "화려한 진주 결정",
+      "file": "item-icons/extra-a98a67eb33fb6b39.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5831.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005831.png",
+      "sha256": "e14bc50a9d1c287487a34dfd5cd66f879b339b2e97c96222b8dfb336ef31b50a"
+    },
+    {
+      "tier": "mat",
+      "name": "화려한 암염 주괴",
+      "file": "item-icons/extra-fd0120a2e801ec5b.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5815.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005815.png",
+      "sha256": "1395349b7398f66d7bd85f357e70096f8073eedc721c56ec64ca0fca9d9e10d9"
+    },
+    {
+      "tier": "mat",
+      "name": "빛나는 코발트 주괴",
+      "file": "item-icons/extra-193fe59dc30e715d.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5830.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005830.png",
+      "sha256": "4a7db8fa483811b75dec8bca5bcfd81eac01332b9f985b9e144e1539a3623ece"
+    },
+    {
+      "tier": "mat",
+      "name": "오킬루아의 꽃",
+      "file": "item-icons/extra-105e5273cedbe09d.webp",
+      "source": "https://bdocodex.com/kr/item/8010/",
+      "iconSource": "https://bdocodex.com/items/new_icon/03_etc/07_productmaterial/00008010.webp",
+      "sha256": "7107f6c3f93e89c6eb430873ac31b915aae9fd7816f898c81ff68ae4d5982fa5"
+    },
+    {
+      "tier": "mat",
+      "name": "파도의 블랙스톤",
+      "file": "item-icons/extra-aa915f8f37bd234d.webp",
+      "source": "https://bdocodex.com/kr/item/756001/",
+      "iconSource": "https://bdocodex.com/items/new_icon/03_etc/00756005.webp",
+      "sha256": "994b903f89406bb0ebd6ede5bbfe0420fc13a4140b58284bd7e23cd7a2438474"
+    },
+    {
+      "tier": "mat",
+      "name": "대양의 견고한 현철",
+      "file": "item-icons/extra-12d47538bfcdc461.webp",
+      "source": "https://www.korbdo.co.kr/xml/ko-kr/5832.xml",
+      "iconSource": "https://www.korbdo.co.kr/png/00005832.png",
+      "sha256": "26aa359bfe0e1c73db9e2e19b2055c38fb9f2d98d010db0bc0cad61e9066edb5"
+    },
+    {
+      "tier": "mat",
+      "name": "유실된 무역품 상자",
+      "file": "item-icons/extra-eae0d7dbb84d7f57.webp",
+      "source": "https://bdocodex.com/kr/item/752562/",
+      "iconSource": "https://bdocodex.com/items/new_icon/09_cash/00049644.webp",
+      "sha256": "3c2f6e8981a3d5be6b5e1985191b60b4653b04aeb2358be00106043059f17a6b"
+    },
+    {
+      "name": "까마귀주화",
+      "tier": "coin",
+      "file": "item-icons/extra-54fe2251a9cd807f.webp",
+      "source": "https://bdocodex.com/kr/item/10/",
+      "iconSource": "https://bdocodex.com/items/new_icon/00000010_special.webp",
+      "sha256": "d1656dc94c40678290159ce7a85d205e23410c04246c5de4e557993cc987cd35"
+    }
+  ]
+}

@@ -7,11 +7,18 @@ const numberInput = (value, label, integer = true) => { const input = document.c
 const tierNames = (tier) => state.inventory.filter((item) => item.tier === tier).map((item) => item.programName);
 let inventoryIcons = {};
 let iconsRequest;
+const iconKey = name => String(name).replace(/\s+/g, '');
+export const inventoryIcon = name => inventoryIcons[iconKey(name)] ?? null;
 export function loadInventoryIcons() {
-  return iconsRequest ??= fetch('/assets/data/inventory-icons.json', {credentials:'same-origin'})
-    .then(response => response.ok ? response.json() : {})
-    .then(icons => { inventoryIcons = icons; })
-    .catch(() => {});
+  const read = url => fetch(url, {credentials:'same-origin'})
+    .then(response => response.ok ? response.json() : null).catch(() => null);
+  return iconsRequest ??= Promise.all([
+    read('/assets/data/inventory-icons.json'), read('/assets/data/voyage-item-icons.json')
+  ]).then(([warehouse, voyage]) => {
+    const extra = (voyage?.items ?? []).map(item => [item.name, '/assets/' + item.file]);
+    inventoryIcons = Object.fromEntries([...extra, ...Object.entries(warehouse ?? {})]
+      .map(([name, url]) => [iconKey(name), url]));
+  });
 }
 export const inventoryDisplayOrder = () => Object.fromEntries([1,2,3,4,5].map((tier) => {
   const canonical = tierNames(tier);
