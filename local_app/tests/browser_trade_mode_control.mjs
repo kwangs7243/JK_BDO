@@ -40,6 +40,12 @@ try {
   });
   await page.locator('[data-workspace-view="briefing"]').click();
   assert.equal(await select.isDisabled(), false, "freshly recognized session enables mode without a reload");
+  assert.equal(await page.locator('.v-settings').evaluate(n=>n.open),false,'mode is accessible while tools are closed');
+  assert.equal(await page.locator('.briefing-heading > .brief-config-mode #brief-session-mode').count(),1);
+  const modeBox=await select.boundingBox(), tabsBox=await page.locator('.brief-mode-tabs').boundingBox();
+  assert.ok(Math.abs(modeBox.y-tabsBox.y)<4,'mode shares the quick/balanced row');
+  if(process.env.UI_AUDIT_DIR){const {mkdir}=await import('node:fs/promises');await mkdir(process.env.UI_AUDIT_DIR,{recursive:true});await page.screenshot({path:join(process.env.UI_AUDIT_DIR,'briefing-mode-row.png')});}
+
   await select.selectOption("inner"); await idle();
   let snapshot = await fetch(`${origin}/api/bootstrap`).then(r => r.json());
   assert.equal(snapshot.workingSession.config.ship.mode, "inner", "changed mode is persisted in the current session");

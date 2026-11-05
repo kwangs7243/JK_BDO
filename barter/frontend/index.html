@@ -64,7 +64,7 @@
       <details class="tier-rule-details"><summary>단계 규칙</summary><div id="tier-rules-root"></div></details>
     </section>
   <section id="briefing-panel" class="panel briefing-panel" hidden aria-labelledby="briefing-title">
-<header class="briefing-command"><div class="briefing-heading"><h2 id="briefing-title">출항 브리핑</h2><div class="brief-mode-tabs" role="tablist" aria-label="브리핑 보기"><button type="button" role="tab" aria-selected="false" data-brief-mode="speed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 2-8 11h6l-1 9 9-12h-6l1-8"/></svg>쾌속</button><button type="button" role="tab" aria-selected="false" data-brief-mode="balance"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17M5 20h14M3 7h18M6 7 2 14h8L6 7Zm12 0-4 7h8l-4-7Z"/></svg>균형</button></div><button type="button" id="v-reset-round">회차 초기화</button><details class="briefing-menu v-settings"><summary>도구·저장</summary>
+<header class="briefing-command"><div class="briefing-heading"><h2 id="briefing-title">출항 브리핑</h2><label class="brief-config-mode" for="brief-session-mode">교역 모드<select id="brief-session-mode"></select></label><div class="brief-mode-tabs" role="tablist" aria-label="브리핑 보기"><button type="button" role="tab" aria-selected="false" data-brief-mode="speed"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 2-8 11h6l-1 9 9-12h-6l1-8"/></svg>쾌속</button><button type="button" role="tab" aria-selected="false" data-brief-mode="balance"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17M5 20h14M3 7h18M6 7 2 14h8L6 7Zm12 0-4 7h8l-4-7Z"/></svg>균형</button></div><button type="button" id="v-reset-round">회차 초기화</button><details class="briefing-menu v-settings"><summary>도구·저장</summary>
 <div class="briefing-popover briefing-tools-popover">
   <section class="briefing-saved-schedule" aria-label="저장된 스케줄">
     <span class="briefing-control-label">스케줄 저장</span>
@@ -72,7 +72,6 @@
     <button id="retry-completion-save" type="button" hidden>완료 저장 재시도</button>
   </section>
   <section class="briefing-calculation" aria-label="계산 설정">
-    <label class="brief-config-mode" for="brief-session-mode">교역 모드<select id="brief-session-mode"></select></label>
     <button id="generate-schedule" class="primary" type="button">스케줄 생성 / 다시 계산</button>
   </section>
   <section class="briefing-tools-section" aria-label="보조 도구">

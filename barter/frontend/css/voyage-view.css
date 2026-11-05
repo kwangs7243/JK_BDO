@@ -19,8 +19,6 @@ body.voyage-design #briefing-panel .v-settings .schedule-slot-controls select{wi
 body.voyage-design #briefing-panel .v-settings .schedule-slot-controls>button{width:auto;min-width:0;padding:9px 10px;text-align:center;font-size:12px;border:1px solid #a4b5a14d;border-radius:5px;color:#dae5dc;background:#24434d;white-space:nowrap}
 body.voyage-design #briefing-panel .v-settings .schedule-slot-controls>button.danger{color:#e0aaa0;background:#54332d55;border-color:#b1857855}
 body.voyage-design #briefing-panel .v-settings .briefing-calculation{display:grid;gap:12px;padding-top:16px;border-top:1px solid #a3b39d3d}
-body.voyage-design #briefing-panel .v-settings .brief-config-mode{display:grid;gap:9px;font-size:12px;color:#d9c89e}
-body.voyage-design #briefing-panel .v-settings .brief-config-mode select{width:100%;font-size:13px;padding:10px;background:#0c2836}
 body.voyage-design #briefing-panel .v-settings #generate-schedule{width:100%;justify-content:center;padding:11px;font-size:13px;text-align:center;background:linear-gradient(110deg,#e6ce97,#aa894c);border:1px solid #e8ce94;color:#24302c;border-radius:5px}
 .briefing-tools-section{border-top:1px solid #a3b39d3d;padding-top:16px}
 .briefing-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -98,3 +96,7 @@ body.voyage-design #briefing-panel .v-return-copy h3{display:block;position:stat
 .v-completed-route{margin:23px 0 0;min-height:0;overflow:auto;scrollbar-width:thin;flex:1}.v-completed-route>summary{font-size:13px;color:#adc3c0;padding:12px 8px;cursor:pointer;border-bottom:1px solid #a6b1a640}.v-completed-route .voyage-route-scroll{overflow:visible!important;flex:none!important}.v-completed-route .v-route-footer{padding:12px 8px}
 @media(max-width:1000px){body.voyage-design #briefing-panel .v-current.v-return{grid-template-columns:90px minmax(0,1fr);padding:30px 24px;gap:20px}.v-return-emblem{width:86px;height:86px}.v-return-emblem svg{width:66px;height:66px}.v-return-actions{grid-column:2;max-width:360px;justify-content:flex-start}.v-return-actions>.primary{flex-basis:auto}body.voyage-design #briefing-panel .v-return-copy h3{font-size:27px}}
 @media(max-width:600px){body.voyage-design .v-cargo-title{align-items:stretch;flex-direction:column;gap:15px;padding:15px 12px}.v-cargo-caption>span{font-size:11px}body.voyage-design #briefing-panel .v-current.v-return{grid-template-columns:1fr;padding:26px 19px;gap:17px}.v-return-emblem{width:69px;height:69px}.v-return-emblem svg{width:53px;height:53px}.v-return-actions{grid-column:1;max-width:none}.v-return-actions>.primary{width:100%}.v-return-copy>p{font-size:12px}.v-return-metrics{font-size:11px}.v-return-preview-copy{font-size:10px}}
+
+body.voyage-design #briefing-panel .briefing-heading>.brief-config-mode{display:flex;align-items:center;gap:8px;margin:0;color:#b8c9c3;font-size:11px;white-space:nowrap}
+body.voyage-design #briefing-panel .briefing-heading>.brief-config-mode select{width:185px;min-height:42px;padding:8px 28px 8px 10px;color:#dfd6bc;font-size:12px;background:#0e2834b8;border:1px solid #a2afad55;border-radius:6px}
+@media(max-width:600px){body.voyage-design #briefing-panel .briefing-heading>.brief-config-mode{order:1}body.voyage-design #briefing-panel .brief-mode-tabs{order:2}body.voyage-design #briefing-panel .briefing-heading>.brief-config-mode select{min-height:36px}}
