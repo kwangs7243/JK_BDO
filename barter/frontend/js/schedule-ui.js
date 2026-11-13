@@ -29,7 +29,7 @@ function renderModeSettlement(mode, sorties) {
   const root = document.getElementById('summary-' + mode);
   root.replaceChildren();
   const title = document.createElement('h4'); title.textContent = '창고 결산 · 품목별 순증감';
-  const note = document.createElement('p'); note.className = 'settlement-note'; note.textContent = '해당 모드의 전체 스케줄 완료 기준입니다. 창고 1~5단만 합산하며 6·7단, 육지품, 특수품, 까마귀 주화는 제외합니다.';
+  const note = document.createElement('p'); note.className = 'settlement-note sr-only'; note.textContent = '해당 모드의 전체 스케줄 완료 기준입니다. 창고 1~5단만 합산하며 6·7단, 육지품, 특수품, 까마귀 주화는 제외합니다.';
   const list = document.createElement('ul'); list.className = 'settlement-net-list';
   const deltas = new Map();
   const isWarehouseTier = (tier) => Number.isInteger(Number(tier)) && Number(tier) >= 1 && Number(tier) <= 5;
@@ -57,9 +57,8 @@ function renderModeSettlement(mode, sorties) {
     }
     for (const [tierNumber, items] of tiers) {
       const row = document.createElement('li'); row.className = 'settlement-tier-line';
-      const tierTotal = items.reduce((sum, item) => sum + item.amount, 0);
       const tier = document.createElement('span'); tier.className = 'settlement-tier ' + itemTone(tierNumber);
-      tier.textContent = `${tierNumber}단계(총 ${tierTotal > 0 ? '+' : '−'}${numberFormat.format(Math.abs(tierTotal))}): `;
+      tier.textContent = `${tierNumber}단`;
       row.append(tier);
       items.forEach((item, index) => {
         if (index) row.append(document.createTextNode(' · '));
@@ -72,14 +71,20 @@ function renderModeSettlement(mode, sorties) {
       list.append(row);
     }
   }
-  const fold = document.createElement("details"); const summary = document.createElement("summary"); summary.textContent = "창고 결산 · 펼쳐보기"; fold.append(summary, note, list); root.append(fold);
+  const fold = document.createElement("details"); const summary = document.createElement("summary");
+  summary.textContent = "창고 결산";
+  const scope = document.createElement("small"); scope.textContent = "전체 계획 · 품목별 순증감"; summary.append(scope);
+  const key = `bdo-settlement-open-${mode}`;
+  try { fold.open = sessionStorage.getItem(key) !== "false"; } catch { fold.open = true; }
+  fold.addEventListener("toggle", () => { if (fold.isConnected) { try { sessionStorage.setItem(key, String(fold.open)); } catch {} } });
+  fold.append(summary, note, list); root.append(fold);
 }
 
 function setModeHeading(header, mode, sorties, totalParley) {
   const label = document.createElement("span"); label.className = "mode-heading-label"; label.textContent = mode === "speed" ? "⚡ 쾌속 모드" : "⚖️ 균형 모드";
   const stats = document.createElement("span"); stats.className = "mode-heading-stats";
   const totalCoins = sorties.reduce((sum, sortie) => sum + (sortie.trades || []).reduce((amount, trade) => amount + (!trade.isWaypoint && (trade.isCoin || trade.toTier === "coin") ? tradeGain(trade) : 0), 0), 0);
-  for (const [captionText, valueText] of [["출항", `${sorties.length}회`], ["총 소요시간", totalDepartureDuration(sorties)], ["교섭력", numberFormat.format(totalParley)], ["까마귀주화 총획득", `${numberFormat.format(totalCoins)}개`]]) {
+  for (const [captionText, valueText] of [["출항", `${sorties.length}회`], ["총 소요시간", totalDepartureDuration(sorties)], ["계획 교섭력 소모", numberFormat.format(totalParley)], ["까마귀주화 예상 총획득", `${numberFormat.format(totalCoins)}개`]]) {
     const stat = document.createElement("span"); stat.className = "mode-stat";
     const caption = document.createElement("small"); caption.textContent = captionText;
     const value = document.createElement("strong"); value.textContent = valueText;
@@ -248,7 +253,12 @@ function renderScheduleSlots(setStatus) {
 
 export function initScheduleUI(setStatus) {
   document.getElementById("v-reset-round").onclick = () => requestSessionReset();
-  document.getElementById("v-show-settlement").onclick=()=>document.getElementById("schedule-columns").classList.toggle("show-settlement");
+  document.getElementById("v-show-settlement").onclick = () => {
+    const columns = document.getElementById("schedule-columns");
+    const mode = columns.dataset.mode === "balance" ? "balance" : "speed";
+    const fold = document.querySelector(`#summary-${mode} details`);
+    if (fold) { fold.open = true; fold.querySelector("summary").focus({preventScroll:true}); }
+  };
   document.getElementById("voyage-focus").addEventListener("click", event => {
     const focused=document.getElementById("briefing-panel").classList.toggle("voyage-focused");
     event.currentTarget.textContent=focused?"기본 화면":"항로만 보기";
@@ -268,7 +278,7 @@ export function initScheduleUI(setStatus) {
   window.__bdoScheduleRuntime.installCompletionAdapters((payload) => persistCompletion(payload), state, setScheduleStatus);
   const modeSelect = document.getElementById("brief-session-mode");
   const { MODES, MODE_LABELS } = window.BDO_CONSTANTS;
-  for (const mode of MODES) { const option = document.createElement("option"); option.value = mode; option.textContent = MODE_LABELS[mode]; modeSelect.append(option); }
+  for (const mode of MODES) { const option = document.createElement("option"); option.value = mode; option.textContent = MODE_LABELS[mode].replace(/^[^\p{L}\p{N}]+/u, ""); modeSelect.append(option); }
   document.getElementById("generate-schedule").addEventListener("click", () => {
     try {
       if (!window.__bdoScheduleRuntime.generateSchedule(state, setScheduleStatus)) return;
