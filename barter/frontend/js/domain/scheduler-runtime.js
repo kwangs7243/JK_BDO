@@ -129,6 +129,11 @@ function generateSchedule(appState, setStatus) {
 }
 
 function canCompleteScheduleStep(schedule, si, ti) {
+    const session=window.__bdoAppState?.session, plan=session?.selection?.plan;
+    const mode=schedule===sortiesSpeed?'speed':'balance';
+    const existing=plan?.lockedMode || ['speed','balance'].find(key=>session?.schedule?.[key]?.some(s=>s.trades.some(t=>t.completed)));
+    if (plan?.dirtyReasons?.length || existing && existing!==mode) {showToast('진행 중인 계획이 변경됐습니다. 브리핑에서 재계산을 확인하세요.');return false;}
+
     if (schedule.slice(0, si).some(s => s.trades.some(t => !t.completed && (t.isWaypoint || t.execC !== 0)))) {
         showToast('앞 출항의 교환과 경유지를 먼저 완료하세요.');
         return false;
@@ -207,6 +212,7 @@ function wrapCompletion(original) {
       appState.session.timers = window.ACTIVE_TIMERS;
     }
     const payload = { mutationId: crypto.randomUUID(), baseRevision: appState.revision, kind: "completion", patch: { items: changed } };
+    appState.session.selection ||= {}; appState.session.selection.plan ||= {}; appState.session.selection.plan.lockedMode = mode; appState.session.selection.plan.inventory = Object.fromEntries(Object.entries(inventory).map(([n,i])=>[n,i.stock]));
     payload.session = snapshotWorkingSession(appState);
     Object.defineProperty(payload, "beforeInventory", { value: before, enumerable: false });
     pendingCompletion = { payload, before, after, changed, trade, btn };
@@ -257,6 +263,7 @@ function installCompletionAdapters(store, appState, setStatus) {
     const changed = Object.fromEntries(Object.entries(after).filter(([name, value]) => before[name] !== value).map(([name, stock]) => [name, { stock }]));
     {
       const payload = { mutationId: crypto.randomUUID(), baseRevision: appState.revision, kind: "completion", patch: { items: changed } };
+    appState.session.selection ||= {}; appState.session.selection.plan ||= {}; appState.session.selection.plan.lockedMode = mode; appState.session.selection.plan.inventory = Object.fromEntries(Object.entries(inventory).map(([n,i])=>[n,i.stock]));
     payload.session = snapshotWorkingSession(appState);
     Object.defineProperty(payload, "beforeInventory", { value: before, enumerable: false });
       pendingCompletion = { payload, before, after, changed, trade: waypoint, btn };
@@ -291,7 +298,7 @@ function snapshotWorkingSession(appState) {
     schedule: session.schedule, completed: session.completed,
     remainingParley: session.remainingParley ?? appState.settings.parley.defaultBudget,
     config: session.config,
-    selection: { briefMode: selection.briefMode || "speed", selectedScheduleSlot: selection.selectedScheduleSlot || 1 },
+    selection: { ...selection, briefMode: selection.briefMode || "speed", selectedScheduleSlot: selection.selectedScheduleSlot || 1 },
     diagnostics: session.diagnostics,
   }, (key, value) => ["timerActive", "timerEnd", "alarmPlayed", "__completionPending"].includes(key) ? undefined : value));
 }

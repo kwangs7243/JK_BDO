@@ -1,3 +1,4 @@
+import { initPlanLifecycle, requestPlan, lockedPlan } from './plan-lifecycle.js';
 import { initBriefingChoice, renderBriefingChoice } from "./briefing-choice.js";
 import { initBriefModePicker } from "./brief-mode-picker.js";
 import { syncRoundResetButton } from "./round-flow.js";
@@ -283,29 +284,8 @@ export function initScheduleUI(setStatus) {
   const { MODES, MODE_LABELS } = window.BDO_CONSTANTS;
   for (const mode of MODES) { const option = document.createElement("option"); option.value = mode; option.textContent = MODE_LABELS[mode].replace(/^[^\p{L}\p{N}]+/u, ""); modeSelect.append(option); }
   tradeModePicker = initBriefModePicker(modeSelect);
-  document.getElementById("generate-schedule").addEventListener("click", () => {
-    try {
-      if (!window.__bdoScheduleRuntime.generateSchedule(state, setScheduleStatus)) return;
-      renderModeColumn("col-speed", state.session.schedule.speed, "speed");
-      renderModeColumn("col-balance", state.session.schedule.balance, "balance");
-      renderScheduleDiagnostics(state);
-      renderScheduleSlots(setStatus);
-      setScheduleStatus("쾌속·균형 스케줄을 생성했습니다.", "success");
-    } catch (error) { setScheduleStatus(`스케줄 생성 실패: ${error.message}`, "error"); }
-  });
-  modeSelect.addEventListener("change", () => {
-    if (window.__bdoScheduleRuntime.pending) { syncScheduleState(); setScheduleStatus("완료 저장을 먼저 확인하거나 재시도하세요.", "error"); return; }
-    if (state.session.scannedTrades === null) return;
-    state.session.config ||= structuredClone({ ship: state.settings.ship, parley: state.settings.parley, tuning: state.settings.tuning });
-    state.session.config.ship.mode = modeSelect.value;
-    window.dispatchEvent(new CustomEvent("bdo:session-changed"));
-    try {
-      if (window.__bdoScheduleRuntime.generateSchedule(state, setScheduleStatus)) {
-        renderModeColumn("col-speed", state.session.schedule.speed, "speed"); renderModeColumn("col-balance", state.session.schedule.balance, "balance");
-        renderScheduleDiagnostics(state); renderScheduleSlots(setStatus); setScheduleStatus("이번 회차 교역 모드를 바꾸고 스케줄을 다시 계산했습니다.", "success");
-      }
-    } catch (error) { setScheduleStatus(`스케줄 생성 실패: ${error.message}`, "error"); }
-  });
+  document.getElementById("generate-schedule").addEventListener("click",()=>requestPlan({force:true}));
+  modeSelect.addEventListener("change",async()=>{const mode=modeSelect.value;await requestPlan({force:true,mode});syncTradeModeControl();});
   document.getElementById("wpUseMat").addEventListener("change", window.toggleWaypointMaterial);
   for (const [id, ariaLabel, options] of [
     ["wpIsland", "경유지 섬 이름", () => Object.keys(window.islandCoordinates)],
@@ -324,9 +304,11 @@ export function initScheduleUI(setStatus) {
   document.getElementById("close-waypoint").addEventListener("click", window.closeWaypointModal);
   document.getElementById("retry-completion-save").addEventListener("click", () => window.__bdoScheduleRuntime.retryCompletion());
   renderScheduleSlots(setStatus);
+  initPlanLifecycle();
   initBriefingChoice();
   document.querySelectorAll("[data-brief-mode]").forEach((button) => button.addEventListener("click", () => {
     if (window.__bdoScheduleRuntime.pending) { setScheduleStatus("완료 저장을 먼저 확인하거나 재시도하세요.", "error"); syncScheduleState(); return; }
+    if(lockedPlan()&&lockedPlan()!==button.dataset.briefMode){setScheduleStatus('출항 방식을 바꾸려면 남은 교환으로 재계산하세요.');return;}
     const mode = button.dataset.briefMode; state.session.selection ||= {}; state.session.selection.briefMode = mode;
     document.getElementById("schedule-columns").dataset.mode = mode;
     document.querySelectorAll("[data-brief-mode]").forEach((tab) => tab.setAttribute("aria-selected", String(tab === button)));
@@ -350,7 +332,7 @@ export function initScheduleUI(setStatus) {
       document.getElementById("col-speed").replaceChildren();
       document.getElementById("col-balance").replaceChildren();
       renderBriefingChoice();
-      setScheduleStatus("물교 목록이 바뀌었습니다. 다시 스케줄을 생성하세요.", "info");
+      setScheduleStatus("");
     }
   });
 }

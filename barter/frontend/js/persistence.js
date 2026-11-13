@@ -168,7 +168,7 @@ export function saveCompletionInventory(request) {
 }
 
 window.addEventListener("bdo:session-changed", () => {
-  if (runtime()?.pending) return;
+  if (window.__bdoPlanGenerating || runtime()?.pending) return;
   const failed = (error) => {
     const status = document.getElementById("runtime-status");
     if (status) { status.dataset.kind = "error"; status.textContent = `회차 저장 실패: ${error.message}`; }

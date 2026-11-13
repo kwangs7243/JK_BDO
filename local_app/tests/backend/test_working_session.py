@@ -67,6 +67,29 @@ class WorkingSessionTests(unittest.TestCase):
         self.assertNotIn("timerActive", trade)
         self.assertNotIn("timerEnd", trade)
 
+    def test_plan_lifecycle_metadata_survives_restart_and_rejects_invalid_flow(self):
+        session = self.session()
+        session["selection"].update({
+            "plan": {"lockedMode": "speed", "dirtyReasons": [], "inventory": {"괴생물 촉수": 9}},
+            "voyage": {"epoch": "saved-plan", "execution": True,
+                       "modes": {"speed": {"active": 0, "view": 0, "phase": "route"}}},
+        })
+        self.save(session)
+        fresh = create_app(self.path, testing=True).test_client()
+        self.assertEqual(fresh.get("/api/bootstrap", base_url=self.origin).get_json()["workingSession"]["selection"], session["selection"])
+        before = self.bootstrap()
+        for change in ({"lockedMode": "both"}, {"dirtyReasons": [False]}):
+            invalid = deepcopy(session)
+            invalid["selection"]["plan"].update(change)
+            response, _ = self.send("PUT", "/api/working-session", {"session": invalid})
+            self.assertEqual(response.status_code, 422)
+        for change in ({"active": -1}, {"view": True}, {"phase": "unknown"}):
+            invalid = deepcopy(session)
+            invalid["selection"]["voyage"]["modes"]["speed"].update(change)
+            response, _ = self.send("PUT", "/api/working-session", {"session": invalid})
+            self.assertEqual(response.status_code, 422)
+        self.assertEqual(self.bootstrap(), before)
+
     def test_reset_keeps_durable_data_and_other_slots(self):
         session = self.session()
         self.save(session)

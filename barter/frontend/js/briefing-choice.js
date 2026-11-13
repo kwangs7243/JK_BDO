@@ -5,8 +5,8 @@ import { inventoryIcon } from './inventory-ui.js';
 const make = (tag, className, text) => { const node = document.createElement(tag); node.className = className; if (text !== undefined) node.textContent = text; return node; };
 const amount = n => Number(n).toLocaleString('ko-KR');
 const selectedMode = () => state.session.selection?.briefMode === 'balance' ? 'balance' : 'speed';
-function showExecution(value) {
-  const flow = briefingFlow(); flow.execution = value; saveVoyageFlow();
+function showExecution(value, persist = false) {
+  const flow = briefingFlow(); flow.execution = value; saveVoyageFlow(persist);
   const panel = document.getElementById('briefing-panel');
   panel.dataset.stage = value ? 'execution' : 'compare';
   document.getElementById('brief-back-compare').hidden = !value;
@@ -16,7 +16,10 @@ function showExecution(value) {
 export function renderBriefingChoice() {
   const ledger = document.getElementById('brief-ledger');
   if (!ledger) return;
-  showExecution(briefingFlow().execution);
+  const locked=window.__bdoLockedPlan?.();
+  showExecution(Boolean(locked)||briefingFlow().execution);
+  document.getElementById('brief-back-compare').hidden=Boolean(locked)||!briefingFlow().execution;
+  window.__bdoRenderPlanStatus?.();
   const mode = selectedMode(), label = mode === 'speed' ? '쾌속' : '균형';
   const source = document.querySelector(`[data-brief-mode="${mode}"]`);
   document.getElementById('brief-selected-plan').textContent = `${label} · ${source?.querySelector('.v-compare-stat')?.textContent || ''}`;
@@ -31,7 +34,7 @@ export function renderBriefingChoice() {
     if (!entries.has(name)) entries.set(name, { name, tier: Number(tier), speed: 0, balance: 0 });
     entries.get(name)[key] = Number(entry.dataset.amount);
   }
-  if (!state.session.schedule || !entries.size) { ledger.append(make('p','brief-ledger-empty',state.session.schedule ? '창고 1~5단 순증감 품목이 없습니다.' : '교역 모드를 선택하고 스케줄을 생성하세요.')); return; }
+  if (!state.session.schedule || !entries.size) { ledger.append(make('p','brief-ledger-empty',state.session.schedule ? '창고 1~5단 순증감 품목이 없습니다.' : '브리핑 만들기를 눌러 저장된 교역 모드로 계산하세요.')); return; }
   const table = make('table','brief-ledger-table');
   table.dataset.selected = mode;
   const head = table.createTHead().insertRow();
@@ -56,13 +59,14 @@ export function initBriefingChoice() {
     if (window.__bdoScheduleRuntime?.pending || state.persistencePending > 0) { window.showToast('저장이 끝난 뒤 출항 준비를 진행하세요.'); return; }
     if (!state.session.schedule?.[selectedMode()]?.length) return;
     briefingFlow().comparisonScroll = document.querySelector('.brief-plan-comparison').scrollTop;
-    showExecution(true);
+    showExecution(true,true);
     const mode = selectedMode(), active = briefingFlow().modes[mode];
     if (active) { viewTrip(active,active.active,state.session.schedule[mode]); window.renderModeColumn(`col-${mode}`,state.session.schedule[mode],mode); }
     document.querySelector(`#col-${selectedMode()} .sortie-card:not([hidden]) .v-show-route, #col-${selectedMode()} .sortie-card:not([hidden]) .route-complete-button`)?.focus({preventScroll:true});
   };
   document.getElementById('brief-back-compare').onclick = () => {
-    showExecution(false);
+    if(window.__bdoLockedPlan?.())return;
+    showExecution(false,true);
     document.querySelector(`[data-brief-mode="${selectedMode()}"]`)?.focus({preventScroll:true});
   };
   renderBriefingChoice();

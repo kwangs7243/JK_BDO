@@ -10,7 +10,7 @@ let catalog;
 let initialized = false;
 let setStatusFn = () => {};
 const el = (tag, text, className) => { const node = document.createElement(tag); if (text !== undefined) node.textContent = text; if (className) node.className = className; return node; };
-function invalidateSchedule() { state.session.schedule = null; state.session.completed = null; state.session.diagnostics = null; }
+function invalidateSchedule() { if(state.session.schedule){state.session.selection ||= {};state.session.selection.plan ||= {};state.session.selection.plan.dirtyReasons=['회차 교환 목록 변경'];} }
 function describeResult(result) {
   const parts = [];
   if (result.addedCount) parts.push(`${result.addedCount}건 추가`);
@@ -54,7 +54,7 @@ async function applyInput(mode) {
     };
     setStatusFn("새 회차를 시작하고 저장하고 있습니다.", "saving");
   } else {
-    state.session.scannedTrades = result.trades; invalidateSchedule(); state.session.diagnostics = result;
+    state.session.scannedTrades = result.trades; invalidateSchedule(); if(!state.session.schedule) state.session.diagnostics = result;
   }
   const status = document.querySelector("#trade-import-status"); status.textContent = describeResult(result); status.dataset.kind = result.rejectedCount || result.conflictCount ? "error" : "success";
   document.querySelector("#trade-json-input").value = "";
@@ -88,13 +88,20 @@ export async function applyLiveTradeRows(rows, mode = "new") {
     error.outcomes = rejected;
     throw error;
   }
+  if(mode==='refresh'){
+    if(state.session.scannedTrades===null)throw new Error('갱신할 회차가 없습니다. 새 회차를 시작하세요.');
+    const identity=t=>JSON.stringify([canonicalizeIslandName(t.island),t.fromItem,t.toItem]);
+    const incoming=new Map(result.trades.map(t=>[identity(t),t]));
+    const merged=state.session.scannedTrades.map(t=>{const next=incoming.get(identity(t));if(next){incoming.delete(identity(t));return {...next};}return {...t,deleted:true};});
+    merged.push(...incoming.values());result.trades=merged;
+  }
   if (mode === "new") {
     state.session = { id: crypto.randomUUID(), scannedTrades: result.trades, schedule: null, completed: null,
       remainingParley: Number(state.settings.parley.defaultBudget),
       config: structuredClone({ ship: state.settings.ship, parley: state.settings.parley, tuning: state.settings.tuning }),
       timers: null, selection: { briefMode: "speed", selectedScheduleSlot: 1 }, drag: null, diagnostics: result };
   } else {
-    state.session.scannedTrades = result.trades; invalidateSchedule(); state.session.diagnostics = result;
+    state.session.scannedTrades = result.trades; invalidateSchedule(); if(!state.session.schedule) state.session.diagnostics = result;
   }
   renderTradeList();
   window.dispatchEvent(new CustomEvent("bdo:trade-list-changed"));
@@ -199,6 +206,7 @@ export async function initTradeSessionUI(setStatus) {
     document.querySelector("#remaining-parley").addEventListener("change", (event) => {
       if (window.__bdoScheduleRuntime?.pending) { event.currentTarget.value = state.session.remainingParley ?? ""; setStatusFn("완료 저장을 먼저 확인하거나 재시도하세요.", "error"); return; }
       const value = parseInt(event.currentTarget.value, 10); state.session.remainingParley = Number.isSafeInteger(value) && value >= 0 ? value : 0; event.currentTarget.value = state.session.remainingParley;
+      const mode=window.__bdoLockedPlan?.()||state.session.selection?.briefMode||'speed';const cost=(state.session.schedule?.[mode]||[]).reduce((n,s)=>n+s.trades.filter(t=>!t.completed&&!t.isWaypoint).reduce((a,t)=>a+t.execC*(t.isCoin?state.session.config.parley.crowCost:state.session.config.parley.normalCost),0),0);if(value<cost)window.__bdoMarkPlanChanged?.('남은 교섭력보다 계획 소모량이 큼');
       window.dispatchEvent(new CustomEvent("bdo:session-changed"));
     });
     document.querySelector("#toggle-all-trades").addEventListener("click", () => {

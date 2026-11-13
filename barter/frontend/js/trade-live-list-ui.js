@@ -89,11 +89,13 @@ export function createTradeLiveListUI({ elements, getCatalog, getUnusedPolicy = 
     const reviewRows = visibleRows.filter(({ row }) => row.reviewFields.some((name) => row.fields[name].reviewRequired));
     const applyNew = document.createElement("button"); applyNew.type = "button";
     applyNew.dataset.action = "apply-live-new"; applyNew.textContent = "최종 물교 리스트로 새 회차 시작";
+    const applyRefresh=document.createElement('button');applyRefresh.type='button';applyRefresh.textContent='현재 회차 목록 갱신 · 교섭력 유지';applyRefresh.dataset.action='apply-live-refresh';
     const applyAppend = document.createElement("button"); applyAppend.type = "button";
     applyAppend.dataset.action = "apply-live-append"; applyAppend.textContent = "현재 회차에 추가";
     const updateApplyState = () => {
       const included = visibleRows.map(({row}) => row).filter((row) => !row.excluded);
-      applyNew.disabled = applyAppend.disabled = getPending() || !included.length || included.some((row) => Object.values(row.fields).some((field) => field.reviewRequired));
+      applyRefresh.hidden=state.session.scannedTrades===null;
+      applyNew.disabled = applyRefresh.disabled = applyAppend.disabled = getPending() || !included.length || included.some((row) => Object.values(row.fields).some((field) => field.reviewRequired));
       const blocked = visibleRows.flatMap(({row, index}) => row.excluded ? [] : Object.entries(row.fields).filter(([,field]) => field.reviewRequired).map(([name]) => `${index + 1}행 ${fieldLabels[["island","fromItem","reqAmount","toItem","count","yield"].indexOf(name)]}`));
       blocker.textContent = blocked.length ? `확인할 값 ${blocked.length}곳 · 아래 강조한 부분만 확인하세요. 고정 수량은 자동 적용했습니다.` : included.length ? `최종 리스트 ${included.length}행 준비 완료 · 자동 미사용 ${autoUnusedRows.length}행 · 중복 ${duplicateCount}행 통합` : "포함할 행을 선택하세요.";
     };
@@ -271,6 +273,7 @@ export function createTradeLiveListUI({ elements, getCatalog, getUnusedPolicy = 
       const includedRows = prepareRows(result).map(({row}) => row).filter((row) => !row.excluded);
       const confirmationRevision = state.sessionRevision;
       const confirmationSession = JSON.stringify(state.session.scannedTrades);
+      if(mode==="refresh"&&!await confirmAction("남은 교섭력과 수행 기록을 유지하고 게임 목록을 갱신합니다. 기존 브리핑은 재계산이 필요합니다. 갱신할까요?"))return;
       if (mode === "new" && state.session.scannedTrades !== null && !await confirmAction("현재 회차를 이 최종 물교 목록으로 바꿀까요?")) return;
       if (getPending() || confirmationRevision !== state.sessionRevision || confirmationSession !== JSON.stringify(state.session.scannedTrades)) { tradeRecognitionStatus.textContent = "확인 중 회차가 바뀌었습니다. 다시 시도하세요."; return; }
       button.disabled = true;
@@ -300,7 +303,8 @@ export function createTradeLiveListUI({ elements, getCatalog, getUnusedPolicy = 
     applyNew.addEventListener("click", () => void apply("new", applyNew));
     applyAppend.addEventListener("click", () => void apply("append", applyAppend));
     const actions = document.createElement("div"); actions.className = "trade-live-actions";
-    actions.append(applyNew, applyAppend, blocker);
+    applyRefresh.addEventListener("click",()=>void apply("refresh",applyRefresh));
+    actions.append(applyNew, applyRefresh, applyAppend, blocker);
     liveListSection.prepend(actions);
     if (autoUnusedRows.length) {
       const unused = document.createElement("details"); unused.dataset.role = "live-list-auto-unused";

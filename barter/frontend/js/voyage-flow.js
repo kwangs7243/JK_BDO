@@ -6,11 +6,20 @@ try { const saved = JSON.parse(sessionStorage.getItem(key)); if (saved && typeof
 export const actionable = trade => trade.isWaypoint || trade.execC !== 0;
 export const tripComplete = sortie => (sortie.trades || []).every(t => !actionable(t) || t.completed === true);
 const signature = sortie => JSON.stringify((sortie.trades || []).filter(t => !t.isWaypoint).map(t => [t.originalIndex,t.island,t.fromClean,t.toClean]).sort((a,b) => JSON.stringify(a).localeCompare(JSON.stringify(b))));
-export function saveVoyageFlow() { try { sessionStorage.setItem(key, JSON.stringify(flow)); } catch {} }
+export function saveVoyageFlow(persist = true) {
+ if(state.session.schedule && flow.epoch === JSON.stringify([state.session.id,state.session.diagnostics?.generatedAt,state.session.config?.ship?.mode])) {
+  state.session.selection ||= {};
+  const saved={epoch:flow.epoch,execution:flow.execution,comparisonScroll:0,modes:Object.fromEntries(Object.entries(flow.modes).map(([mode,f])=>[mode,{...f,view:f.active,viewToken:f.activeToken,inspectCargo:false,scroll:{}}]))};
+  const changed=JSON.stringify(state.session.selection.voyage)!==JSON.stringify(saved);state.session.selection.voyage=saved;
+  if(persist&&changed)window.dispatchEvent(new CustomEvent('bdo:session-changed'));
+ }
+ try{sessionStorage.setItem(key,JSON.stringify(flow));}catch{}
+}
 export function briefingFlow() {
   if (!state.session.id && !state.session.schedule && !hydrated) return { execution: false, comparisonScroll: 0, modes: {} };
   hydrated = true;
   const epoch = JSON.stringify([state.session.id,state.session.diagnostics?.generatedAt,state.session.config?.ship?.mode]);
+  if(flow.epoch!==epoch && state.session.selection?.voyage?.epoch===epoch) flow=state.session.selection.voyage;
   if (flow.epoch !== epoch || !state.session.schedule) flow = { epoch, execution: false, comparisonScroll: 0, modes: {} };
   return flow;
 }
@@ -34,10 +43,10 @@ export function voyageFlow(mode, sorties) {
   f.activeToken = signature(sorties[f.active]); f.viewToken = signature(sorties[f.view]);
   return f;
 }
-export function viewTrip(f, index, sorties) { f.view = index; f.viewToken = signature(sorties[index]); f.inspectCargo = false; saveVoyageFlow(); }
+export function viewTrip(f, index, sorties) { f.view = index; f.viewToken = signature(sorties[index]); f.inspectCargo = false; saveVoyageFlow(false); }
 export function returnFromTrip(f, sorties) {
   if (!tripComplete(sorties[f.active])) return false;
   if (f.active+1 < sorties.length) { f.active++; f.phase = 'cargo'; } else f.phase = 'finished';
-  f.activeToken = signature(sorties[f.active]); viewTrip(f,f.active,sorties); return true;
+  f.activeToken = signature(sorties[f.active]); viewTrip(f,f.active,sorties); saveVoyageFlow(); return true;
 }
-window.addEventListener('pagehide',saveVoyageFlow);
+window.addEventListener('pagehide',()=>saveVoyageFlow(false));

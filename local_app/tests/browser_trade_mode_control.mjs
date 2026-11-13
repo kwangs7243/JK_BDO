@@ -38,7 +38,7 @@ try {
     await (await import("/assets/js/persistence.js")).saveInventory({"갈퀴 꽃 씨앗 주머니":{stock:100},"괴생물 촉수":{stock:0}});
     await (await import("/assets/js/trade-ui.js")).applyLiveTradeRows([{island:"베이루와 섬",fromItem:"갈퀴 꽃 씨앗 주머니",toItem:"괴생물 촉수",reqAmount:1,count:3,yield:3}], "new");
   });
-  await page.locator('[data-workspace-view="briefing"]').click();
+  await page.locator('[data-workspace-view="briefing"]').click();await idle();await page.waitForFunction(()=>!!window.__bdoAppState.session.schedule&&!document.querySelector('#brief-recalculate').disabled);
   assert.equal(await select.isDisabled(), false, "freshly recognized session enables mode without a reload");
   assert.equal(await page.locator('.v-settings').evaluate(n=>n.open),false,'mode is accessible while tools are closed');
   assert.equal(await page.locator('.briefing-heading > .brief-config-mode #brief-session-mode').count(),1);

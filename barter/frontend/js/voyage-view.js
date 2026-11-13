@@ -89,5 +89,5 @@ export function enhanceVoyageBoard(root,mode,sorties){
   if(preview){card.classList.add('v-trip-preview');card.querySelectorAll('button').forEach(b=>{if(b!==toggle&&b!==showRoute)b.disabled=true;});route.querySelectorAll('[draggable]').forEach(n=>n.draggable=false);}
   [...route.children].forEach((row,i)=>{if(i!==activeIndex)row.querySelectorAll('.route-depart-button,.route-complete-button').forEach(b=>b.disabled=true);if(!actionable(sortie.trades[i])){row.classList.add('v-skipped');row.querySelector('.v-stop-count').textContent='0회 · 제외';row.querySelectorAll('.route-depart-button,.route-complete-button').forEach(b=>b.disabled=true);}});
  });
- root.prepend(progress,tabs);saveVoyageFlow();
+ root.prepend(progress,tabs);saveVoyageFlow(false);
 }

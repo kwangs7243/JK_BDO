@@ -21,6 +21,7 @@ function requestRoundCompletion() {
     && (state.session.diagnostics?.generatedAt ?? '') === generation
     && completePlan(state.session, mode);
   if (!stillComplete() || window.__bdoScheduleRuntime?.pending || state.persistencePending > 0) return;
+  if(state.session.scannedTrades?.some(t=>!t.deleted&&!t.disabled&&t.count>0)){window.showToast('선택한 계획을 마쳤습니다. 남은 교환으로 재계산하거나 회차 초기화로 새 회차를 준비하세요.');return;}
   requestSessionReset({ completed: true, stillValid: stillComplete });
 }
 

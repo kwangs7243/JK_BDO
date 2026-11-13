@@ -64,6 +64,7 @@ export function initWorkspaceUI() {
   const showView = name => {
     if (!views[name]) return;
     workspace.dataset.view = name;
+    if(name==='briefing')void window.__bdoEnterBriefing?.();
     for (const [key, panel] of Object.entries(views)) panel.hidden = key !== name;
     for (const button of document.querySelectorAll('[data-workspace-view]')) {
       if (button.dataset.workspaceView === name) button.setAttribute('aria-current', 'page');

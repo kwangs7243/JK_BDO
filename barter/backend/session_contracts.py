@@ -38,8 +38,30 @@ def validate_session(value: Any, catalog: dict[str, int]) -> dict[str, Any]:
     for section, payload in config.items():
         validate_setting_section(section, payload, catalog)
     selection = require_object(obj["selection"], "session.selection")
-    if set(selection) - {"briefMode", "selectedScheduleSlot"}:
+    if set(selection) - {"briefMode", "selectedScheduleSlot", "plan", "voyage"}:
         raise ContractError("unsupported persisted session selection")
+    for name in ("plan", "voyage"):
+        if name in selection:
+            require_object(selection[name], "session.selection."+name)
+    if "plan" in selection:
+        plan = selection["plan"]
+        if plan.get("lockedMode") not in (None, "speed", "balance"):
+            raise ContractError("invalid locked plan mode")
+        if not isinstance(plan.get("dirtyReasons", []), list) or any(not isinstance(x, str) or len(x)>200 for x in plan.get("dirtyReasons", [])) or len(plan.get("dirtyReasons", []))>20:
+            raise ContractError("invalid plan change reasons")
+    if "voyage" in selection:
+        voyage = selection["voyage"]
+        if not isinstance(voyage.get("epoch"), str) or type(voyage.get("execution")) is not bool:
+            raise ContractError("invalid voyage identity or execution state")
+        modes = require_object(voyage.get("modes"), "session.selection.voyage.modes")
+        if set(modes) - {"speed", "balance"}:
+            raise ContractError("invalid voyage mode")
+        for mode, flow in modes.items():
+            flow = require_object(flow, "voyage."+mode)
+            for name in ("active", "view"):
+                require_int(flow.get(name), "voyage."+name)
+            if flow.get("phase") not in ("cargo", "route", "return", "finished"):
+                raise ContractError("invalid voyage phase")
     if selection.get("briefMode", "speed") not in {"speed", "balance", "both"}:
         raise ContractError("briefMode must be speed, balance, or both")
     slot = selection.get("selectedScheduleSlot", 1)
