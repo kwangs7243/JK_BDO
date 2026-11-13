@@ -4,6 +4,7 @@ import { state } from './state.js';
 import { inventoryIcon } from './inventory-ui.js';
 import { totalDepartureDuration } from './duration.js';
 const el=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls||'';if(text!==undefined)n.textContent=text;return n;};
+const hasRemainingOffers=()=>state.session.scannedTrades?.some(t=>!t.deleted&&!t.disabled&&t.count>0);
 const number=n=>Number(n||0).toLocaleString('ko-KR');
 const tier=t=>Number(t)>0?`${t}단`:t==='coin'?'까마귀 주화':t==='mat'?'특수':'육지';
 function item(name,count,t){
@@ -28,7 +29,7 @@ export function enhanceVoyageBoard(root,mode,sorties){
  const flow=voyageFlow(mode,sorties);
  const refresh=()=>window.renderModeColumn(root.id,state.session.schedule[mode],mode);
  const tabs=el('nav','voyage-trip-tabs');tabs.setAttribute('aria-label','출항 차수 미리보기');
- const progress=el('div','v-flow-status'),caption=el('span','',`${flow.active+1}차 출항 · ${{cargo:'적재 준비',route:'항로 수행',return:'일리야 복귀',finished:'회차 수행 완료'}[flow.phase]}`);
+ const progress=el('div','v-flow-status'),caption=el('span','',`${flow.active+1}차 출항 · ${{cargo:'적재 준비',route:'항로 수행',return:'일리야 복귀',finished:hasRemainingOffers()?'선택한 계획 완료':'회차 수행 완료'}[flow.phase]}`);
  progress.append(caption);
  if(flow.view!==flow.active||flow.inspectCargo){const back=el('button','','진행 중인 화면으로 돌아가기');back.type='button';back.onclick=()=>{viewTrip(flow,flow.active,sorties);refresh();};progress.append(el('small','','미리보기'),back);}
  cards.forEach((card,index)=>{
@@ -36,7 +37,7 @@ export function enhanceVoyageBoard(root,mode,sorties){
   tab.draggable=true;tab.ondragstart=e=>window.sortieDragStart(e,index,mode);tab.ondragend=window.sortieDragEnd;tab.ondragover=e=>window.sortieDragOver(e,index,mode);tab.ondrop=e=>{window.sortieDrop(e,index,mode);window.renderModeColumn(root.id,state.session.schedule[mode],mode);};card.draggable=false;
   const oldHeading=card.querySelector('.sortie-heading'),cargo=card.querySelector('.sortie-cargo'),route=card.querySelector('.schedule-route'),footer=card.querySelector('.sortie-footer');
   const sailing=el('section','v-sailing'),prep=el('section','v-cargo'),tools=el('div','v-sortie-tools'),toggle=el('button','v-cargo-toggle','출항 적재 보기');toggle.type='button';tools.append(oldHeading,toggle);
-  const cargoTitle=el('header','v-cargo-title'),cargoCaption=el('div','v-cargo-caption'),showRoute=el('button','primary v-show-route',preview?'진행 중인 화면으로 돌아가기':flow.phase==='cargo'?'적재 완료 · 항로 시작 →':'항로로 돌아가기');showRoute.type='button';cargoCaption.append(el('h3','',`${index+1}차 출항 적재`),el('span','',`출항 무게 ${number(sortie.startWeight)} LT · ${sortie.trades[0]?.island||'첫 목적지'} 출발`));cargoTitle.append(cargoCaption,showRoute);prep.append(cargoTitle);
+  const cargoTitle=el('header','v-cargo-title'),cargoCaption=el('div','v-cargo-caption'),showRoute=el('button','primary v-show-route',preview?'진행 중인 화면으로 돌아가기':flow.phase==='cargo'?'적재 완료 · 항로 시작 →':'항로로 돌아가기');showRoute.type='button';cargoCaption.append(el('h3','',`${index+1}차 출항 적재`),el('span','',`출항 무게 ${number(sortie.startWeight)} LT · 일리야 출발 · 첫 목적지 ${sortie.trades.find(t=>!t.completed&&actionable(t))?.island||'없음'}`));cargoTitle.append(cargoCaption,showRoute);prep.append(cargoTitle);
   const groups=new Map();
   for(const chip of cargo.querySelectorAll('.cargo-item')){const name=chip.querySelector('.cargo-item-name').textContent,req=sortie.reqItems[name],t=req.isBase?0:req.tier;if(!groups.has(t))groups.set(t,[]);groups.get(t).push({name,count:req.count});}
   for(const [t,items] of groups){const band=el('section','v-cargo-band'),label=el('h4','v-cargo-tier',tier(t)),itemsRoot=el('div','v-cargo-items');for(const i of items)itemsRoot.append(item(i.name,i.count,t));band.append(label,itemsRoot);prep.append(band);}
@@ -51,7 +52,7 @@ export function enhanceVoyageBoard(root,mode,sorties){
    const actions=active.querySelector('.route-actions'),remove=actions.querySelector('.route-remove-button');if(remove)active.querySelector('.route-content').append(remove);
    actions.querySelector('.route-complete-button').textContent='교환 완료'; actions.querySelector('.route-depart-button').textContent=trade.timerActive?'타이머 중지':'타이머 시작';const timer=active.querySelector('.timer-countdown');hero.append(exchange,actions);if(timer)hero.append(timer);
    const timerButton=actions.querySelector('.route-depart-button');timerButton.addEventListener('click',()=>{timerButton.textContent=trade.timerActive?'타이머 중지':'타이머 시작';});
-   const next=el('div','v-next');next.append(el('small','','다음 목적지'),el('strong','',sortie.trades[activeIndex+1]?.island||'일리야 섬 · 귀환'));hero.append(next);active.classList.add('voyage-current-row');
+   const next=el('div','v-next');next.append(el('small','','다음 목적지'),el('strong','',sortie.trades.slice(activeIndex+1).find(t=>!t.completed&&actionable(t))?.island||'일리야 섬 · 귀환'));hero.append(next);active.classList.add('voyage-current-row');
   }
   [...route.children].forEach((row,i)=>{
    const trade=sortie.trades[i],heading=row.querySelector('.route-heading'),oldActions=row.querySelector('.route-actions'),adjust=row.querySelector('.route-yield-adjust'),info=row.querySelector('.route-trade-info'),debug=row.querySelector('.route-explanation'),remove=row.querySelector('.route-remove-button');
@@ -68,9 +69,9 @@ export function enhanceVoyageBoard(root,mode,sorties){
    const emblem=el('span','v-return-emblem');emblem.setAttribute('aria-hidden','true');emblem.innerHTML='<svg viewBox="0 0 80 80"><path d="M10 65h60M18 57h44M25 48h30M40 10v38M20 36l20-17 20 17M27 36v12m26-12v12M33 13h14M17 66l-5 7m51-7 5 7"/><circle cx="40" cy="40" r="35"/></svg>';
    const copy=el('div','v-return-copy');copy.append(el('small','',`${index+1}차 교환 완료`),el('h3','','일리야 섬으로 복귀'),el('p','',`${sortie.trades.at(-1)?.island||'마지막 목적지'} → 일리야 섬 · 귀환 후 하역`));
    const details=el('div','v-return-metrics'),seconds=Math.round(Number(sortie.returnTime)*60);details.append(el('span','',`예상 귀환 ${Number.isFinite(seconds)?`${Math.floor(seconds/60)}분 ${seconds%60}초`:'미확인'}`),el('span','',sortie.returnOver?'과적 항해':'쾌속 항해'));copy.append(details);
-   const actions=el('div','v-return-actions'),next=el('button','primary v-next-sortie',index+1<cards.length?`복귀 완료 · ${index+2}차 적재 →`:'복귀 완료 · 회차 마치기');next.type='button';
-   next.onclick=()=>{if(window.__bdoScheduleRuntime?.pending||state.persistencePending>0){window.showToast('완료 저장이 끝난 뒤 계속하세요.');return;}if(window.ACTIVE_TIMERS?.[`return_${mode}_${index}`])returnButton.click();if(!returnFromTrip(flow,sorties))return;refresh();if(flow.phase==='finished')window.dispatchEvent(new CustomEvent('bdo:round-returned'));};
-   if(flow.phase==='finished'&&!preview){copy.querySelector('h3').textContent='일리야 복귀 · 회차 수행 완료';next.textContent='다음 회차 준비';}
+   const actions=el('div','v-return-actions'),next=el('button','primary v-next-sortie',index+1<cards.length?`복귀 완료 · ${index+2}차 적재 →`:hasRemainingOffers()?'복귀 완료 · 계획 마치기':'복귀 완료 · 회차 마치기');next.type='button';
+   next.onclick=()=>{if(flow.phase==='finished'&&!preview){document.querySelector('[data-workspace-view=session]').click();return;}if(window.__bdoScheduleRuntime?.pending||state.persistencePending>0){window.showToast('완료 저장이 끝난 뒤 계속하세요.');return;}if(window.ACTIVE_TIMERS?.[`return_${mode}_${index}`])returnButton.click();if(!returnFromTrip(flow,sorties))return;refresh();if(flow.phase==='finished')window.dispatchEvent(new CustomEvent('bdo:round-returned'));};
+   if(flow.phase==='finished'&&!preview){copy.querySelector('h3').textContent=hasRemainingOffers()?'일리야 복귀 · 선택한 계획 완료':'일리야 복귀 · 회차 수행 완료';next.textContent=hasRemainingOffers()?'남은 교환 확인':'다음 회차 준비';}
 
    actions.append(returnButton,returnTimer,next);hero.append(emblem,copy,actions);
    const history=el('details','v-completed-route'),summary=el('summary','',`완료한 항로 ${sortie.trades.length}곳 보기`);history.append(summary,route,routeFoot);sailing.append(hero,history);
