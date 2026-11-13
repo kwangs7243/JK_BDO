@@ -22,7 +22,13 @@ function item(name,count,t){
 export function enhanceVoyageBoard(root,mode,sorties){
  document.querySelectorAll('[data-brief-mode]').forEach(button=>{
   const key=button.dataset.briefMode,plan=state.session.schedule?.[key];if(!plan)return;
-  button.replaceChildren(el('span','v-plan-name',key==='speed'?'쾌속':'균형'),el('span','v-plan-data',`${plan.length}회 · ${totalDepartureDuration(plan)}`));
+  const outcomes=el('span','v-plan-outcomes');
+  const header=document.getElementById(`header-${key}`);
+  const values=[...header.querySelectorAll('.mode-stat strong')].map(n=>n.textContent);
+  for(const [label,value] of [['출항',`${plan.length}회`],['시간',totalDepartureDuration(plan)],['교섭력',values[2]??'—'],['까주',values[3]??'—']]){
+    const stat=el('span','v-compare-stat');stat.append(el('small','',label),el('strong','',value));outcomes.append(stat);
+  }
+  button.replaceChildren(el('span','v-plan-name',key==='speed'?'쾌속':'균형'),outcomes);
  });
  const cards=[...root.querySelectorAll('.sortie-card')];if(!cards.length)return;
  const context=JSON.stringify([state.session.id,state.session.diagnostics?.generatedAt,sorties.map(s=>s.trades.map(t=>[t.originalIndex,t.island,t.fromClean,t.toClean,t.execC]))]);

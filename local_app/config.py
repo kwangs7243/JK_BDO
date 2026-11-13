@@ -2,5 +2,5 @@
 HOST = "127.0.0.1"
 PORT = 18765
 SERVICE = "bdo-suite-local"
-VERSION = "1.0.1"
+VERSION = "1.0.2"
 WORKSPACES = ("barter", "alchemy", "craft")

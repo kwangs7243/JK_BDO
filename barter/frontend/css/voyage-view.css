@@ -129,3 +129,30 @@ body.voyage-design .app-header .header-utilities>button:hover,body.voyage-design
 body.voyage-design .header-utilities svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
 body.voyage-design .app-header .header-tools{border-left:1px solid #a6b5a733;margin-left:4px;padding-left:4px}
 @media(max-width:600px){body.voyage-design #briefing-panel .briefing-heading>.brief-config-mode{padding-left:0;border:0}body.voyage-design :is(#header-speed,#header-balance) .mode-heading-stats{gap:10px}body.voyage-design :is(#header-speed,#header-balance) .mode-stat{gap:6px}body.voyage-design :is(#header-speed,#header-balance) .mode-stat strong{font-size:14px}body.voyage-design .app-header .header-utilities>button,body.voyage-design .app-header .header-tools>summary{padding:5px 7px;font-size:10px}}
+
+body.voyage-design #briefing-panel .brief-config-mode .brief-mode-button{display:flex;align-items:center;justify-content:space-between;gap:16px;width:205px;min-height:42px;padding:9px 13px;border:1px solid #bca46b77;border-radius:6px;color:#ecd6a9;background:linear-gradient(110deg,#8a70372b,#142f3a);font-size:12px;font-weight:400;box-shadow:inset 0 1px #e6d6a40c}
+.brief-mode-button:after{content:'⌄';color:#c6b788}.brief-mode-button[aria-expanded=true]{border-color:#d4bc80!important}
+.brief-mode-options{position:fixed;inset:auto;margin:0;box-sizing:border-box;padding:7px;overflow-y:auto;scrollbar-width:thin;border:1px solid #aa9566;border-radius:8px;background:linear-gradient(125deg,#1c3d47,#102b38);color:#ead9b6;box-shadow:0 16px 45px #0009,inset 0 1px #eee1b11a;font-family:Pretendard,'Malgun Gothic',sans-serif}
+.brief-mode-options::backdrop{background:transparent}
+body.voyage-design .brief-mode-options>button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:36px;padding:9px 12px;border:1px solid transparent;border-left:2px solid transparent;border-radius:4px;background:none;color:#c5d3c9;box-shadow:none;font-size:12px;font-weight:400;text-align:left;line-height:1.5}
+body.voyage-design .brief-mode-options>button[aria-selected=true]{color:#f0d49b;background:#b8a06a1c;border-left-color:#dbbc78}
+.brief-mode-options>button[aria-selected=true]:after{content:'✓';color:#e5ca8d}
+body.voyage-design .brief-mode-options>button:hover,body.voyage-design .brief-mode-options>button:focus-visible{background:#d6c18a19;color:#f3e2bc;outline:1px solid #bda77377;outline-offset:-1px}
+
+body.voyage-design #briefing-panel .brief-config-mode .brief-mode-button{width:225px;font-size:14px;font-weight:500}
+body.voyage-design #briefing-panel :is(#header-speed,#header-balance){display:none}
+.brief-plan-comparison{margin-top:14px;min-width:0}
+body.voyage-design #briefing-panel .brief-plan-comparison .brief-mode-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:12px}
+body.voyage-design #briefing-panel .brief-plan-comparison .brief-mode-tabs button{display:flex;align-items:center;gap:22px;padding:12px 17px;min-height:66px;min-width:0;text-align:left;flex-wrap:nowrap}
+.brief-plan-comparison .v-plan-name{font-size:15px;flex:none}
+.v-plan-outcomes{display:grid;grid-template-columns:auto minmax(95px,1fr) auto auto;gap:12px 22px;align-items:center;flex:1;min-width:0}
+.v-compare-stat{display:flex;flex-direction:column;gap:4px;white-space:nowrap}
+.v-compare-stat small{color:#9fb7b0;font-size:10px;font-weight:400}
+.v-compare-stat strong{color:#dde3d5;font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
+.v-compare-stat:last-child strong{color:#e3c58b}
+.plan-stock-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+body.voyage-design .brief-plan-comparison .mode-settlement{display:block;max-height:145px;overflow:auto;padding:0 10px;margin:0;border:0;border-bottom:1px solid #a6b5a733;background:none;font-weight:400}
+body.voyage-design .brief-plan-comparison .mode-settlement summary{font-weight:400;font-size:11px}
+body.voyage-design .brief-plan-comparison .settlement-tier-line{font-size:12px}
+@media(max-width:1100px){body.voyage-design #briefing-panel .brief-plan-comparison .brief-mode-tabs button{gap:12px;padding:11px}.v-plan-outcomes{gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.brief-plan-comparison .v-plan-name{font-size:13px}body.voyage-design #briefing-panel .brief-plan-comparison .brief-mode-tabs button{align-items:flex-start;flex-direction:column;gap:10px}.v-plan-outcomes{width:100%;gap:8px}.v-compare-stat strong{font-size:11px}.v-compare-stat small{font-size:9px}body.voyage-design .brief-plan-comparison .mode-settlement{padding:0 3px;max-height:140px}.mode-settlement summary small{display:none}}

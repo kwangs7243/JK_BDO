@@ -2,7 +2,7 @@
 
 검은사막의 **물물교환 준비·연금 제작·제작법 확인**을 한곳에서 돕는 Windows 로컬 작업실입니다.
 
-현재 버전: **1.0.1** · Windows · Python / JavaScript · 로컬 CPU 인식
+현재 버전: **1.0.2** · Windows · Python / JavaScript · 로컬 CPU 인식
 
 게임을 직접 조작하는 대신, 사람이 반복하던 캡처·재고 정리·재료 계산·항로 확인을 줄이는 데 집중했습니다. 기존 물교 계산기를 출발점으로, 실제 플레이에서 발견한 불편과 인식 실패를 기록하며 세 개의 작업실로 발전시켰습니다.
 
@@ -154,7 +154,7 @@ npm run test:browser
 ## 개발 역사와 유지보수
 
 - [프로젝트 역사](docs/PROJECT-HISTORY.md): 물교 도우미에서 세 작업실로 발전한 과정과 근거 커밋
-- [변경 이력](CHANGELOG.md): v1.0.1 기준판과 이후 실제 패치 기록
+- [변경 이력](CHANGELOG.md): v1.0.0 기준판과 이후 실제 패치 기록
 - [버전 운영 지침](docs/agents/VERSIONING.md): PATCH/MINOR/MAJOR 판단, 갱신 파일과 완료 절차
 - [인식 패치 지침](docs/agents/RECOGNITION-PATCH.md): 원본 감사·표본 확장·독립 비교
 - [스케줄 후속 지침](docs/agents/SCHEDULER-FOLLOWUP.md): 회차 수집과 계산 보완의 범위

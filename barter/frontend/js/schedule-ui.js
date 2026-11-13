@@ -1,3 +1,4 @@
+import { initBriefModePicker } from "./brief-mode-picker.js";
 import { syncRoundResetButton } from "./round-flow.js";
 import { requestSessionReset } from "./trade-ui.js";
 import { enhanceVoyageBoard } from "./voyage-view.js";
@@ -11,12 +12,14 @@ import { createAutocomplete } from "./autocomplete.js";
 
 const escape = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 
+let tradeModePicker;
 const scheduleStatus = document.querySelector("#schedule-status");
 function setScheduleStatus(message, kind = "info") { scheduleStatus.textContent = message; scheduleStatus.dataset.kind = kind; }
 function syncTradeModeControl() {
   const select = document.getElementById("brief-session-mode");
   select.value = state.session.config?.ship?.mode ?? state.settings.ship?.mode ?? "inner";
   select.disabled = state.session.scannedTrades === null;
+  tradeModePicker?.sync();
 }
 const minutes = (value) => window.formatTimeExact?.(value) ?? `${Math.floor(value || 0)}분`;
 const itemTone = (tier) => tier === "coin" ? "tone-coin" : tier === "mat" ? "tone-special" : !tier ? "tone-land" : `tone-tier-${tier}`;
@@ -72,7 +75,7 @@ function renderModeSettlement(mode, sorties) {
     }
   }
   const fold = document.createElement("details"); const summary = document.createElement("summary");
-  summary.textContent = "창고 결산";
+  summary.textContent = `${mode === "speed" ? "쾌속" : "균형"} 창고 결산`;
   const scope = document.createElement("small"); scope.textContent = "전체 계획 · 품목별 순증감"; summary.append(scope);
   const key = `bdo-settlement-open-${mode}`;
   try { fold.open = sessionStorage.getItem(key) !== "false"; } catch { fold.open = true; }
@@ -101,6 +104,7 @@ function renderModeColumn(id, sorties, mode) {
     root.replaceChildren(Object.assign(document.createElement("p"), { className: "empty", textContent: "조건에 맞는 경로를 찾을 수 없습니다." }));
     header.textContent = `${label} (계산 불가)`;
     renderModeSettlement(mode, []);
+    enhanceVoyageBoard(root, mode, sorties || []);
     return;
   }
   const totalParley = sorties.reduce((sum, sortie) => sum + (sortie.parleyUsed || 0), 0);
@@ -279,6 +283,7 @@ export function initScheduleUI(setStatus) {
   const modeSelect = document.getElementById("brief-session-mode");
   const { MODES, MODE_LABELS } = window.BDO_CONSTANTS;
   for (const mode of MODES) { const option = document.createElement("option"); option.value = mode; option.textContent = MODE_LABELS[mode].replace(/^[^\p{L}\p{N}]+/u, ""); modeSelect.append(option); }
+  tradeModePicker = initBriefModePicker(modeSelect);
   document.getElementById("generate-schedule").addEventListener("click", () => {
     try {
       if (!window.__bdoScheduleRuntime.generateSchedule(state, setScheduleStatus)) return;

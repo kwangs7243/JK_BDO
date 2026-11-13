@@ -42,17 +42,22 @@ try {
   assert.equal(await select.isDisabled(), false, "freshly recognized session enables mode without a reload");
   assert.equal(await page.locator('.v-settings').evaluate(n=>n.open),false,'mode is accessible while tools are closed');
   assert.equal(await page.locator('.briefing-heading > .brief-config-mode #brief-session-mode').count(),1);
-  const modeBox=await select.boundingBox(), tabsBox=await page.locator('.brief-mode-tabs').boundingBox();
-  assert.ok(Math.abs(modeBox.y-tabsBox.y)<4,'mode shares the quick/balanced row');
+  const modeBox=await page.locator('#brief-mode-trigger').boundingBox();
+  assert.ok(modeBox.height>=40,'mode trigger remains readable');
+  await page.locator('#brief-mode-trigger').click();assert.ok(await page.locator('#brief-mode-options').isVisible());assert.notEqual(await page.locator('#brief-mode-options').evaluate(n=>getComputedStyle(n).backgroundColor),'rgb(255, 255, 255)');await page.keyboard.press('Escape');assert.equal(await page.locator('#brief-mode-trigger').getAttribute('aria-expanded'),'false');
   if(process.env.UI_AUDIT_DIR){const {mkdir}=await import('node:fs/promises');await mkdir(process.env.UI_AUDIT_DIR,{recursive:true});await page.screenshot({path:join(process.env.UI_AUDIT_DIR,'briefing-mode-row.png')});}
 
-  await select.selectOption("inner"); await idle();
+  await page.locator('#brief-mode-trigger').click();await page.keyboard.press('Tab');assert.equal(await page.locator('#brief-mode-trigger').getAttribute('aria-expanded'),'false');assert.equal(await page.evaluate(()=>document.activeElement?.matches('button:not(:disabled)')&&!document.activeElement?.closest('#brief-mode-options')),true);
+  await page.locator('#brief-mode-trigger').click();await page.locator('#brief-mode-options [data-mode=inner]').click(); await idle();
   let snapshot = await fetch(`${origin}/api/bootstrap`).then(r => r.json());
   assert.equal(snapshot.workingSession.config.ship.mode, "inner", "changed mode is persisted in the current session");
   assert.ok(snapshot.workingSession.schedule.speed.length, "mode change still calculates a schedule");
-  await select.selectOption("none"); await idle();
+  await page.locator('#brief-mode-trigger').click();await page.locator('#brief-mode-options [data-mode=none]').click(); await idle();
   snapshot = await fetch(`${origin}/api/bootstrap`).then(r => r.json());
   assert.equal(snapshot.workingSession.config.ship.mode, "none");
+  await page.evaluate(async()=>{const {state}=await import('/assets/js/state.js');await(await import('/assets/js/persistence.js')).saveSettings({viewer:{...state.settings.viewer,uiZoom:130}})});
+  await page.locator('#brief-mode-trigger').click();
+  const anchor=await page.locator('#brief-mode-trigger').boundingBox(), menu=await page.locator('#brief-mode-options').boundingBox();assert.ok(Math.abs(anchor.x-menu.x)<3,JSON.stringify({anchor,menu}));assert.ok(menu.y>=anchor.y+anchor.height-2);await page.keyboard.press('Escape');
   await page.reload();
   await page.waitForFunction(() => document.querySelector("#app-content").getAttribute("aria-busy") === "false");
   assert.equal(await select.isDisabled(), false);
