@@ -1,6 +1,6 @@
 # 변경 이력
 
-현재 버전 체계는 2026-11-06에 정립했습니다. 이전 단계는 [프로젝트 역사](docs/PROJECT-HISTORY.md)의 회고용 버전으로 정리하고, 이 문서에는 공식 기준판과 이후 변경을 기록합니다. 정식 버전 번호만으로 Git 태그나 공개 배포가 완료됐다는 뜻은 아닙니다.
+현재 버전 체계는 2026-11-06에 정립했습니다. 이전 단계는 [프로젝트 역사](docs/PROJECT-HISTORY.md)의 회고용 버전으로 정리하고, 이 문서에는 공식 기준판과 이후 변경을 기록합니다. 정식 버전 번호만으로 Git 태그나 공개 배포가 완료됐다는 뜻은 아닙니다. 정식 버전의 확정 소스는 아래 버전 제목의 링크에서 확인할 수 있습니다.
 
 ## [Unreleased]
 
@@ -134,4 +134,20 @@
 - 이번 Git 정리는 기존 v1.0.0 기준판을 게시하는 작업이며 새 제품 수정이나 앱 재시작·추가 기능 검사 없이 진행했다.
 - 수집 당시 세부 로그·운영 백업은 로컬 외부 검증 자료다. 개인 DB·전체 캡처를 공개 문서에 복제하지 않는다.
 
-[1.0.0]: docs/PROJECT-HISTORY.md
+버전별 변경 비교:
+
+- [1.0.0 → 1.0.1](https://github.com/kwangs7243/JK_BDO/compare/v1.0.0...v1.0.1)
+- [1.0.1 → 1.0.2](https://github.com/kwangs7243/JK_BDO/compare/v1.0.1...v1.0.2)
+- [1.0.2 → 1.0.3](https://github.com/kwangs7243/JK_BDO/compare/v1.0.2...v1.0.3)
+- [1.0.3 → 1.0.4](https://github.com/kwangs7243/JK_BDO/compare/v1.0.3...v1.0.4)
+- [1.0.4 → 1.0.5](https://github.com/kwangs7243/JK_BDO/compare/v1.0.4...v1.0.5)
+- [1.0.5 → 1.1.0](https://github.com/kwangs7243/JK_BDO/compare/v1.0.5...v1.1.0)
+
+[Unreleased]: https://github.com/kwangs7243/JK_BDO/compare/v1.1.0...main
+[1.1.0]: https://github.com/kwangs7243/JK_BDO/tree/v1.1.0
+[1.0.5]: https://github.com/kwangs7243/JK_BDO/tree/v1.0.5
+[1.0.4]: https://github.com/kwangs7243/JK_BDO/tree/v1.0.4
+[1.0.3]: https://github.com/kwangs7243/JK_BDO/tree/v1.0.3
+[1.0.2]: https://github.com/kwangs7243/JK_BDO/tree/v1.0.2
+[1.0.1]: https://github.com/kwangs7243/JK_BDO/tree/v1.0.1
+[1.0.0]: https://github.com/kwangs7243/JK_BDO/tree/v1.0.0

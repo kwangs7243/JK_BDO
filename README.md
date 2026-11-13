@@ -6,7 +6,7 @@
 
 게임을 직접 조작하는 대신, 사람이 반복하던 캡처·재고 정리·재료 계산·항로 확인을 줄이는 데 집중했습니다. 기존 물교 계산기를 출발점으로, 실제 플레이에서 발견한 불편과 인식 실패를 기록하며 세 개의 작업실로 발전시켰습니다.
 
-[개발 역사](docs/PROJECT-HISTORY.md) · [변경 이력](CHANGELOG.md) · [버전 운영](docs/agents/VERSIONING.md)
+[개발 역사](docs/PROJECT-HISTORY.md) · [변경 이력](CHANGELOG.md) · [버전 운영](docs/agents/VERSIONING.md) · [현재 버전 소스](https://github.com/kwangs7243/JK_BDO/tree/v1.1.0)
 
 ## 세 개의 작업실
 
