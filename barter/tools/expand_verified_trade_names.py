@@ -23,7 +23,7 @@ from types import SimpleNamespace
 
 from PIL import Image, ImageDraw, ImageFont
 from .trade_live_ocr import NAME_BOUNDS, _crop, _ink
-from .trade_template_reader import VERSION, get_features, text_mask, packed_mask, count_suffix_mask
+from .trade_template_reader import VERSION, get_features, text_mask, packed_mask, count_suffix_mask, quantity_context_key
 
 ROOT = Path(__file__).resolve().parents[2]
 FONT_POLICY = "OCR_PRIMARY_20261027"
@@ -49,7 +49,7 @@ def box_tuple(box):
     return box["x"], box["y"], box["x"] + box["width"], box["y"] + box["height"]
 
 
-def build(database, out, *, bank=None, labels=None, include_counts=False, before=None, warehouse_labels=None):
+def build(database, out, *, bank=None, labels=None, include_counts=False, before=None, warehouse_labels=None, quantity_labels=None, previews=True):
     database, out = Path(database).resolve(), Path(out).resolve()
     if not database.is_file() or out.exists():
         raise ValueError("database must exist and output directory must be new")
@@ -80,6 +80,7 @@ def build(database, out, *, bank=None, labels=None, include_counts=False, before
     (out / "crops").mkdir(); (out / "captures").mkdir()
     extractor = SimpleNamespace(_crop=_crop, _ink=_ink)
     skipped, samples, replay, image_sources = Counter(), {}, {}, {}
+    eligible_rows = set()
     lookup = json.loads(json.dumps(base["lookup"]))
     with closing(sqlite3.connect(database.as_uri() + "?mode=ro", uri=True)) as connection:
         connection.execute("PRAGMA query_only=ON"); connection.execute("BEGIN")
@@ -107,6 +108,7 @@ def build(database, out, *, bank=None, labels=None, include_counts=False, before
                 rb = row["rowBox"]; rb_tuple = box_tuple(rb)
                 if rb_tuple[2] > image.width or rb_tuple[3] > image.height:
                     raise ValueError("row exceeds original image")
+                eligible_rows.add((image_hash, rb_tuple, row["ordinal"]))
                 row_image = image.crop(rb_tuple)
                 bounds_by_field = {**NAME_BOUNDS, **({"count": (.064, .47, .233, .83)} if include_counts else {})}
                 for field_name, bounds in bounds_by_field.items():
@@ -142,12 +144,18 @@ def build(database, out, *, bank=None, labels=None, include_counts=False, before
                     if previous and (previous["verification"] or not verified):
                         continue
                     samples[sample_id] = sample
-                    crop.save(out / sample["crop"])
+                    if previews:
+                        crop.save(out / sample["crop"])
                     if not verified:
                         continue
                     features, groups = get_features(kind, crop, extractor)
                     if not features:
                         skipped["no_complete_name_features"] += 1; continue
+                    existing = [lookup.get(f"{kind}|{mode}|{key}", []) for mode, key in features.items() if key]
+                    known_values = {r["value"] for refs in existing for r in refs}
+                    if known_values == {value}:
+                        skipped["already_known_features"] += 1
+                        continue
                     reference = {"referenceId": digest({**identity, "verification": verified}), "value": value,
                                  "source": {**identity, "verification": verified, "verifiedAt": sample["verifiedAt"]}}
                     for mode, key in features.items():
@@ -180,6 +188,36 @@ def build(database, out, *, bank=None, labels=None, include_counts=False, before
     unknown_checks = set(checks) - set(samples)
     if unknown_checks:
         raise ValueError("labels contain sample IDs absent from eligible source images")
+    if quantity_labels:
+        audit = read_json(quantity_labels)
+        if audit.get("version") != 1 or audit.get("fontPolicy") != FONT_POLICY:
+            raise ValueError("unsupported quantity audit")
+        for label in audit["labels"]:
+            timestamp = datetime.fromisoformat(label["verifiedAt"].replace("Z", "+00:00"))
+            field = label.get("field")
+            if (label.get("verification") != "ORIGINAL_IMAGE_AUDIT" or timestamp.tzinfo is None
+                    or field not in {"reqAmount", "yield"} or type(label.get("value")) is not int
+                    or not 1 <= label["value"] <= 9999):
+                raise ValueError("quantity requires a direct original-image audit")
+            raw = image_sources.get(label["imageSha256"])
+            if raw is None:
+                raise ValueError("quantity source is missing or held out")
+            rb = label["rowBox"]
+            if (label["imageSha256"], tuple(box_tuple(rb)), label.get("ordinal")) not in eligible_rows:
+                raise ValueError("quantity row does not match source evidence")
+            with Image.open(BytesIO(raw)) as image:
+                row = image.convert("RGB").crop(box_tuple(rb))
+            context_key = quantity_context_key(row, field, extractor)
+            if not context_key:
+                raise ValueError("quantity has no complete context")
+            source = {**label, "fontPolicy": FONT_POLICY, "method": "whole-field-two-mask-exact"}
+            reference = {"referenceId": digest({k:v for k,v in source.items() if k != "verifiedAt"}),
+                         "value": label["value"], "source": source}
+            # Native/scaled digit masks alone must never confirm a quantity.
+            # Retain the complete guarded band, including artwork and faint digits.
+            entries = lookup.setdefault("quantity|context|"+context_key, [])
+            if not any(r["referenceId"] == reference["referenceId"] for r in entries):
+                entries.append(reference)
     collisions = [key for key, refs in lookup.items() if len({r["value"] for r in refs}) > 1]
     for key in collisions:
         del lookup[key]
@@ -260,7 +298,7 @@ def build(database, out, *, bank=None, labels=None, include_counts=False, before
         font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 15)
     except OSError:
         font = ImageFont.load_default()
-    for offset in range(0, len(ordered), 24):
+    for offset in range(0, len(ordered), 24) if previews else []:
         sheet = Image.new("RGB", (1200, 12 * 105), "#171b22"); draw = ImageDraw.Draw(sheet)
         for i, sample in enumerate(ordered[offset:offset+24]):
             x, y = (i % 2) * 600 + 8, (i // 2) * 105 + 5
@@ -281,15 +319,17 @@ def main():
     parser.add_argument("--labels", type=Path)
     parser.add_argument("--include-counts", action="store_true", help="Include whole counter crops; only original-image audit labels qualify")
     parser.add_argument("--before", help="Hold out captures at or after this UTC timestamp")
+    parser.add_argument("--no-previews", action="store_true", help="Skip crop/contact rendering for deterministic repeat builds")
+    parser.add_argument("--quantity-labels", type=Path, help="Audited original reqAmount/yield whole contexts; never OCR truth")
     parser.add_argument("--warehouse-labels", type=Path, help="Independently audited whole-slot quantities; never auto-promote OCR quantities")
     parser.add_argument("--model-dir", type=Path)
     args = parser.parse_args()
     if args.database:
         if not args.out or args.model_dir:
             parser.error("extraction requires --out and does not use --model-dir")
-        result = build(args.database, args.out, bank=args.bank, labels=args.labels, include_counts=args.include_counts, before=args.before, warehouse_labels=args.warehouse_labels)
+        result = build(args.database, args.out, bank=args.bank, labels=args.labels, include_counts=args.include_counts, before=args.before, warehouse_labels=args.warehouse_labels, quantity_labels=args.quantity_labels, previews=not args.no_previews)
     else:
-        if not args.model_dir or args.out or args.bank or args.labels:
+        if not args.model_dir or args.out or args.bank or args.labels or args.quantity_labels:
             parser.error("replay requires --model-dir and accepts no extraction options")
         result = replay(args.replay, args.model_dir)
     print(json.dumps(result, ensure_ascii=False))

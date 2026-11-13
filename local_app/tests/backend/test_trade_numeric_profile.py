@@ -123,6 +123,20 @@ class TradeNumericProfileTests(unittest.TestCase):
         array[:,269:] = 150
         self.assertIsNone(native_frame_offset(Image.fromarray(array), metadata))
 
+    def test_clipped_left_border_needs_two_other_matching_boundaries(self):
+        array = np.zeros((456,987,3), dtype=np.uint8)
+        array[:,1:] = 70
+        array[:,265:] = 150
+        array[:,980:] = 0
+        metadata = {"sourceType":"native-screen", "fidelity":{"rescaled":False}}
+        self.assertEqual(native_frame_offset(Image.fromarray(array), metadata), -7)
+        array[:,980:] = 150
+        self.assertIsNone(native_frame_offset(Image.fromarray(array), metadata))
+        array[:,981:] = 0
+        self.assertIsNone(native_frame_offset(Image.fromarray(array), metadata))
+        self.assertIsNone(native_frame_offset(Image.fromarray(array),
+                          {"sourceType":"native-screen", "fidelity":{"rescaled":True}}))
+
     def test_dev_or_unverified_glyphs_cannot_be_fitted(self):
         annotation = {"field":"white", "rowIndex":0, "sourceField":"reqAmount", "verification":"unchecked"}
         for split, verification in [("dev", "ORIGINAL_IMAGE_AUDIT"), ("train", "ORIGINAL_IMAGE_AUDIT")]:

@@ -99,6 +99,34 @@ class NameExpansionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build(self.db, self.root / "unknown", labels=path)
 
+    def test_quantity_audit_requires_original_source_row_and_complete_context(self):
+        image = Image.open(io.BytesIO(self.image)).convert("RGB")
+        ImageDraw.Draw(image).rectangle((310, 42, 317, 51), fill="white")
+        raw = io.BytesIO(); image.save(raw, format="PNG"); self.image = raw.getvalue()
+        self.insert(self.details, "quantity-source")
+        label = {"imageSha256": hashlib.sha256(self.image).hexdigest(), "ordinal": 0,
+                 "rowBox": self.details["snapshot"]["rows"][0]["rowBox"],
+                 "field": "reqAmount", "value": 100, "verification": "ORIGINAL_IMAGE_AUDIT",
+                 "verifiedAt": "2026-11-13T00:00:00Z"}
+        manifest = {"version": 1, "fontPolicy": FONT_POLICY, "labels": [label]}
+        path = self.root / "quantity-labels.json"; path.write_bytes(encoded(manifest))
+        before = hashlib.sha256(self.db.read_bytes()).hexdigest()
+        first = build(self.db, self.root / "quantities", quantity_labels=path)
+        second = build(self.db, self.root / "quantities-repeat", quantity_labels=path)
+        self.assertEqual(first, second)
+        bank = json.loads((self.root / "quantities/candidate-bank.json").read_text(encoding="utf-8"))
+        refs = [r for key, items in bank["lookup"].items() if key.startswith("quantity|context|")
+                for r in items if r["source"].get("imageSha256") == label["imageSha256"]]
+        self.assertEqual(len(refs), 1)
+        self.assertEqual(refs[0]["value"], 100)
+        self.assertEqual(hashlib.sha256(self.db.read_bytes()).hexdigest(), before)
+        for key, value in [("verification", "OCR_CONSENSUS"), ("ordinal", 1), ("value", 0),
+                           ("imageSha256", "0"*64), ("rowBox", {"x":0,"y":1,"width":987,"height":70})]:
+            changed = copy.deepcopy(manifest); changed["labels"][0][key] = value
+            path.write_bytes(encoded(changed))
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                build(self.db, self.root / ("bad-quantity-"+key), quantity_labels=path)
+
     def test_replay_blocks_numeric_changes_without_changing_source_bank(self):
         from barter.backend.services import trade_batch_runtime as runtime
         model = self.root / "model"; model.mkdir()

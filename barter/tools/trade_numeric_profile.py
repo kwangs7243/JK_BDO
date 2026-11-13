@@ -26,7 +26,17 @@ def native_frame_offset(image, metadata):
         if edges[actual] < .75:
             return None
         offsets.append(actual-anchor)
-    return offsets[0] if len(set(offsets)) == 1 else None
+    if len(set(offsets)) == 1:
+        return offsets[0]
+    # The outer left border can fall one pixel outside a translated native frame.
+    # Confirm the same translation at both remaining panel boundaries instead.
+    offset = offsets[1]
+    if FIXED_TRADE_ANCHORS[0]+offset >= 0 or edges[0] < .75:
+        return None
+    right_anchor = 986
+    left, right = right_anchor-8, min(len(edges), right_anchor+9)
+    actual = left+int(np.argmax(edges[left:right]))
+    return offset if edges[actual] >= .75 and actual-right_anchor == offset else None
 
 
 class TradeFieldSequence(NumericProfile):
