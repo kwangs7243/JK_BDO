@@ -1,3 +1,4 @@
+import { renderBriefingChoice } from "./briefing-choice.js";
 import { state } from './state.js';
 import { inventoryIcon } from './inventory-ui.js';
 import { totalDepartureDuration } from './duration.js';
@@ -30,6 +31,7 @@ export function enhanceVoyageBoard(root,mode,sorties){
   }
   button.replaceChildren(el('span','v-plan-name',key==='speed'?'쾌속':'균형'),outcomes);
  });
+ renderBriefingChoice();
  const cards=[...root.querySelectorAll('.sortie-card')];if(!cards.length)return;
  const context=JSON.stringify([state.session.id,state.session.diagnostics?.generatedAt,sorties.map(s=>s.trades.map(t=>[t.originalIndex,t.island,t.fromClean,t.toClean,t.execC]))]);
  if(contexts.get(mode)!==context){

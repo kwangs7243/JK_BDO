@@ -1,3 +1,4 @@
+import { initBriefingChoice, renderBriefingChoice } from "./briefing-choice.js";
 import { initBriefModePicker } from "./brief-mode-picker.js";
 import { syncRoundResetButton } from "./round-flow.js";
 import { requestSessionReset } from "./trade-ui.js";
@@ -65,7 +66,7 @@ function renderModeSettlement(mode, sorties) {
       row.append(tier);
       items.forEach((item, index) => {
         if (index) row.append(document.createTextNode(' · '));
-        const entry = document.createElement('span'); entry.className = 'settlement-entry';
+        const entry = document.createElement('span'); entry.className = 'settlement-entry'; entry.dataset.name = item.name; entry.dataset.amount = item.amount; entry.dataset.tier = tierNumber;
         const itemName = document.createElement('span'); itemName.className = 'settlement-item-name'; itemName.textContent = item.name + ' ';
         const amount = document.createElement('strong'); amount.className = item.amount > 0 ? 'settlement-delta-positive' : 'settlement-delta-negative';
         amount.textContent = (item.amount > 0 ? '+' : '−') + numberFormat.format(Math.abs(item.amount));
@@ -258,10 +259,8 @@ function renderScheduleSlots(setStatus) {
 export function initScheduleUI(setStatus) {
   document.getElementById("v-reset-round").onclick = () => requestSessionReset();
   document.getElementById("v-show-settlement").onclick = () => {
-    const columns = document.getElementById("schedule-columns");
-    const mode = columns.dataset.mode === "balance" ? "balance" : "speed";
-    const fold = document.querySelector(`#summary-${mode} details`);
-    if (fold) { fold.open = true; fold.querySelector("summary").focus({preventScroll:true}); }
+    document.getElementById("brief-back-compare").click();
+    document.getElementById("brief-ledger").focus({preventScroll:true});
   };
   document.getElementById("voyage-focus").addEventListener("click", event => {
     const focused=document.getElementById("briefing-panel").classList.toggle("voyage-focused");
@@ -325,12 +324,14 @@ export function initScheduleUI(setStatus) {
   document.getElementById("close-waypoint").addEventListener("click", window.closeWaypointModal);
   document.getElementById("retry-completion-save").addEventListener("click", () => window.__bdoScheduleRuntime.retryCompletion());
   renderScheduleSlots(setStatus);
+  initBriefingChoice();
   document.querySelectorAll("[data-brief-mode]").forEach((button) => button.addEventListener("click", () => {
     if (window.__bdoScheduleRuntime.pending) { setScheduleStatus("완료 저장을 먼저 확인하거나 재시도하세요.", "error"); syncScheduleState(); return; }
     const mode = button.dataset.briefMode; state.session.selection ||= {}; state.session.selection.briefMode = mode;
     document.getElementById("schedule-columns").dataset.mode = mode;
     document.querySelectorAll("[data-brief-mode]").forEach((tab) => tab.setAttribute("aria-selected", String(tab === button)));
     window.dispatchEvent(new CustomEvent("bdo:session-changed"));
+    renderBriefingChoice();
   }));
   const copyDiagnostics = () => {
     renderScheduleDiagnostics(state);
@@ -348,6 +349,7 @@ export function initScheduleUI(setStatus) {
     if (state.session.schedule === null) {
       document.getElementById("col-speed").replaceChildren();
       document.getElementById("col-balance").replaceChildren();
+      renderBriefingChoice();
       setScheduleStatus("물교 목록이 바뀌었습니다. 다시 스케줄을 생성하세요.", "info");
     }
   });
@@ -370,6 +372,7 @@ export function syncScheduleState() {
     renderScheduleDiagnostics(state);
   }
   renderScheduleSlots(setScheduleStatus);
+  renderBriefingChoice();
 }
 
 

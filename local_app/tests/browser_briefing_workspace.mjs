@@ -52,6 +52,7 @@ try {
   await page.locator('.v-settings > summary').click();await page.locator('#generate-schedule').click();await idle();
   assert.ok(await page.locator('#col-speed .sortie-card').count());
   await page.locator('[data-brief-mode="speed"]').click();await idle();
+  await page.locator('#brief-confirm-plan').click();
   await page.locator('#col-speed .v-show-route').click();await page.locator('#col-speed .route-depart-button').first().click();
   const navigationBefore=await page.evaluate(()=>{
     window.__firstRoute=document.querySelector('#col-speed .route-card');
@@ -80,6 +81,7 @@ try {
   await page.locator('#tuning-dialog [data-close-dialog]').click();
   assert.equal(await page.locator('#briefing-panel').isVisible(),true);
   await page.evaluate(async()=>{const p=await import('/assets/js/persistence.js');await p.saveScheduleSlot(1);await p.loadScheduleSlot(1);});
+  if(await page.locator('#brief-confirm-plan').isVisible())await page.locator('#brief-confirm-plan').click();
   await page.locator('#col-speed .v-show-route').click();await page.locator('#col-speed .v-current .route-complete-button').click();await idle();
   const completed=await boot();
   assert.equal(completed.inventory.find(i=>i.programName==='갈퀴 꽃 씨앗 주머니').stock,97);
@@ -87,13 +89,17 @@ try {
   assert.ok(completed.workingSession.schedule.speed[0].trades[0].completed);
   await page.evaluate(()=>window.completeTrade(document.createElement('button'),'speed',0,0,0));await idle();
   assert.deepEqual(await boot(),completed,'completion is persisted once');
+  await page.reload();await page.waitForFunction(()=>document.querySelector('#app-content')?.getAttribute('aria-busy')==='false');
+  assert.equal(await page.locator('#briefing-panel').getAttribute('data-stage'),'execution','reload retains chosen-plan execution');
   const screenshots=process.env.UI_AUDIT_DIR||temp;
   await import('node:fs/promises').then(m=>m.mkdir(screenshots,{recursive:true}));
   const fixture=JSON.parse(await import('node:fs/promises').then(m=>m.readFile(resolve(root,'local_app/tests/fixtures/ui-schedule.json'),'utf8')));
   await page.evaluate(fixture=>{
     window.renderModeColumn('col-speed',fixture.speed,'speed');window.renderModeColumn('col-balance',fixture.balance,'balance');
   },fixture);
-  await page.locator('[data-brief-mode="speed"]').click();await idle();
+  if(await page.locator('#brief-back-compare').isVisible())await page.locator('#brief-back-compare').click();
+  if(await page.locator('[data-brief-mode="speed"]').isVisible())await page.locator('[data-brief-mode="speed"]').click();await idle();
+  if(await page.locator('#brief-confirm-plan').isVisible())await page.locator('#brief-confirm-plan').click();
   for(const width of [1920,1440,1024]){
     await page.setViewportSize({width,height:1080});
     await page.waitForFunction(()=>Math.abs(document.body.getBoundingClientRect().width-innerWidth)<2);

@@ -156,3 +156,36 @@ body.voyage-design .brief-plan-comparison .mode-settlement summary{font-weight:4
 body.voyage-design .brief-plan-comparison .settlement-tier-line{font-size:12px}
 @media(max-width:1100px){body.voyage-design #briefing-panel .brief-plan-comparison .brief-mode-tabs button{gap:12px;padding:11px}.v-plan-outcomes{gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.brief-plan-comparison .v-plan-name{font-size:13px}body.voyage-design #briefing-panel .brief-plan-comparison .brief-mode-tabs button{align-items:flex-start;flex-direction:column;gap:10px}.v-plan-outcomes{width:100%;gap:8px}.v-compare-stat strong{font-size:11px}.v-compare-stat small{font-size:9px}body.voyage-design .brief-plan-comparison .mode-settlement{padding:0 3px;max-height:140px}.mode-settlement summary small{display:none}}
+
+/* Compare before departure; keep the execution workspace free of comparison panels. */
+body.voyage-design #briefing-panel{min-height:0;overflow:hidden}
+body.voyage-design #briefing-panel[data-stage=compare] .briefing-command{display:flex;flex-direction:column;min-height:0;flex:1;overflow:hidden;padding-bottom:0}
+body.voyage-design #briefing-panel[data-stage=compare] .briefing-body{display:none}
+body.voyage-design #briefing-panel[data-stage=execution] .brief-plan-comparison{display:none}
+body.voyage-design #briefing-panel[data-stage=compare] .brief-plan-comparison{display:flex;flex-direction:column;min-height:0;overflow:auto;scrollbar-width:thin;flex:1;gap:24px;padding:4px 2px 0;margin-top:22px}
+body.voyage-design #briefing-panel .plan-stock-comparison[hidden]{display:none}
+body.voyage-design #briefing-panel .brief-plan-comparison .brief-mode-tabs{flex:none}
+body.voyage-design #briefing-panel .brief-plan-comparison .brief-mode-tabs button{min-height:94px;padding:19px 24px;background:linear-gradient(115deg,#173c47e8,#0d2939c9);border-color:#91a69c55;border-radius:5px}
+body.voyage-design #briefing-panel .brief-plan-comparison .brief-mode-tabs button[aria-selected=true]{border-color:#dbbd7e;background:linear-gradient(115deg,#89753e55,#153340e8);box-shadow:inset 3px 0 #e1c88a,0 6px 22px #051a2533}
+.brief-plan-comparison .v-plan-name{font-size:20px}.brief-plan-comparison .v-compare-stat strong{font-size:17px}.brief-plan-comparison .v-compare-stat small{font-size:11px}
+body.voyage-design #brief-ledger{flex:none;min-width:0;padding:0 24px 15px;background:linear-gradient(110deg,#102e3cdc,#0b2534c4);border-block:1px solid #b4b38744}
+body.voyage-design #brief-ledger h3{position:static;display:block;background:none;border:0;margin:0;padding:23px 0 0;color:#e9dab6;font-size:19px;font-weight:500}
+.brief-ledger-note{margin:8px 0 22px;color:#a8bdb6;font-size:12px;line-height:1.6}
+.brief-ledger-table{width:100%;border-collapse:collapse;table-layout:fixed;font-variant-numeric:tabular-nums}
+.brief-ledger-table th,.brief-ledger-table td{padding:12px 18px;border-bottom:1px solid #a9b5a522;text-align:right;font-size:15px;font-weight:400;color:#d3ded1;background:none}
+.brief-ledger-table thead th{font-size:12px;color:#b0c4ba;padding-block:14px;border-bottom-color:#b8ba9866}.brief-ledger-table th:first-child{width:48%;text-align:left}
+.brief-ledger-table .brief-ledger-item{display:flex;align-items:center;gap:14px;width:auto}.brief-ledger-item img{width:40px;height:40px;object-fit:contain;flex:none}.brief-ledger-item>span{display:grid;gap:4px}.brief-ledger-item small{font-size:10px;color:#a5b8a6}.brief-ledger-item span>span{overflow-wrap:anywhere}
+.brief-ledger-table .brief-positive{color:#91d3b7}.brief-ledger-table .brief-negative{color:#efa194}.brief-ledger-different{background:#a6b99d06}
+.brief-ledger-table[data-selected=speed] :is(th,td):nth-child(3),.brief-ledger-table[data-selected=balance] :is(th,td):nth-child(4){background:#c5ac6410}
+.brief-choice-footer{position:sticky;bottom:-1px;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 24px;background:linear-gradient(110deg,#173a47fa,#102a38fa);border-top:1px solid #bca46b88;box-shadow:0 -10px 22px #061a2633;z-index:3;color:#c6d0bc;font-size:14px}
+body.voyage-design #brief-confirm-plan{padding:14px 28px;background:linear-gradient(115deg,#eed9a2,#b2914c);border:1px solid #ecd498;color:#25312d;font-size:16px;font-weight:600;white-space:nowrap}
+body.voyage-design #brief-back-compare{display:inline-flex;align-items:center;padding:8px 13px;margin-top:12px;background:#102f3bc9;border:1px solid #b3b39155;color:#dfd4b1;font-size:13px}
+body.voyage-design #brief-back-compare[hidden],#brief-selected-plan[hidden]{display:none}
+#brief-selected-plan{display:inline-block;margin-left:15px;color:#c4cdb7;font-size:13px}
+body.voyage-design #briefing-panel[data-stage=execution] .briefing-body{flex:1;min-height:0}
+body.voyage-design #briefing-panel .briefing-heading>.brief-config-mode{font-size:13px}
+@media(max-width:900px){body.voyage-design #brief-ledger{padding-inline:12px}.brief-plan-comparison .v-compare-stat strong{font-size:14px}.brief-plan-comparison .v-plan-name{font-size:17px}.brief-ledger-table th,.brief-ledger-table td{padding:11px 9px;font-size:13px}.brief-ledger-table th:first-child{width:43%}}
+@media(max-width:600px){body.voyage-design #briefing-panel .brief-plan-comparison .brief-mode-tabs button{padding:14px 12px;gap:12px}.brief-plan-comparison .v-plan-name{font-size:17px}.brief-plan-comparison .v-compare-stat strong{font-size:12px}.brief-ledger-item img{width:27px;height:27px}.brief-ledger-table .brief-ledger-item{gap:7px}.brief-ledger-table th,.brief-ledger-table td{padding:10px 4px;font-size:11px}.brief-ledger-table thead th{font-size:10px}.brief-ledger-note{font-size:11px}.brief-choice-footer{padding:12px;align-items:stretch;flex-direction:column;gap:9px}.brief-choice-footer>span{font-size:11px}body.voyage-design #brief-confirm-plan{padding:12px;font-size:14px}body.voyage-design #briefing-panel .briefing-heading>.brief-config-mode{width:100%;padding-top:38px}.brief-ledger-table th:first-child{width:45%}}
+
+body.voyage-design .brief-ledger-table .brief-ledger-item{display:table-cell;width:auto;text-align:left}.brief-ledger-item-content{display:flex;align-items:center;gap:14px}.brief-ledger-item-content>span{display:grid;gap:4px}body.voyage-design .brief-ledger-table tbody tr{background:transparent}body.voyage-design .brief-ledger-table tbody tr.brief-ledger-different{background:#a6b99d06}body.voyage-design .brief-ledger-table thead th{position:static}@media(max-width:600px){.brief-ledger-item-content{gap:7px}}
+body.voyage-design .brief-ledger-item>.brief-ledger-item-content{display:flex;align-items:center;gap:14px}.brief-ledger-item-content>span{display:grid;gap:4px}@media(max-width:600px){body.voyage-design .brief-ledger-item>.brief-ledger-item-content{gap:7px}}
