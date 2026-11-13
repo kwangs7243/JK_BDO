@@ -84,6 +84,104 @@ function improveLocalDepartureRoutes(original, mode, initialInventory) {
             }
             if(!changed)break;
         }
+        // Move complete exchange batches; never split their quantities or touch protected voyages.
+        let reassignEvaluations = 0;
+        const eligible = s => !protectedTrip(s) && !s.trades.some(anchor);
+        for (let pass=0; pass<2 && reassignEvaluations<600; pass++) {
+            let winner=null, bestTime=plan.reduce((n,s)=>n+s.totalTime,0);
+            const consider = (i,j,left,right) => {
+                if (++reassignEvaluations>600 || !left.length && !right.length) return;
+                const replacements=new Map([[i,left.length?rebuild(plan[i],left):null],[j,right.length?rebuild(plan[j],right):null]]);
+                const candidate=plan.map((s,k)=>replacements.has(k)?replacements.get(k):s).filter(Boolean);
+                const time=candidate.reduce((n,s)=>n+s.totalTime,0);
+                if (time>=bestTime-1e-8 || !candidate.every(validTrip)) return;
+                if (!validateSortieSequence(candidate,initialInventory).valid) return;
+                winner=candidate;bestTime=time;
+            };
+            for(let i=0;i<plan.length && reassignEvaluations<600;i++) {
+                if(!eligible(plan[i]))continue;
+                for(let j=i+1;j<plan.length && reassignEvaluations<600;j++) {
+                    if(!eligible(plan[j]))continue;
+                    const a=plan[i].trades,b=plan[j].trades;
+                    for(const [left,right,li,ri] of [[a,b,i,j],[b,a,j,i]]) {
+                        for(let x=0;x<left.length && reassignEvaluations<600;x++) {
+                            for(let at=0;at<=right.length && reassignEvaluations<600;at++) {
+                                const l=left.filter((_,k)=>k!==x),r=right.slice();r.splice(at,0,left[x]);
+                                consider(li,ri,l,r);
+                            }
+                        }
+                    }
+                    for(let x=0;x<a.length && reassignEvaluations<600;x++)for(let y=0;y<b.length && reassignEvaluations<600;y++) {
+                        const left=a.slice(),right=b.slice();[left[x],right[y]]=[right[y],left[x]];consider(i,j,left,right);
+                    }
+                }
+            }
+            if(!winner)break;
+            plan=winner;
+        }
+        // Explore stable interleavings rather than only concatenating two voyages.
+        let mergeEvaluations = 0;
+        const considerReplacement = (indices, orders, best) => {
+            const replacements=new Map(indices.map((index,k)=>[index,orders[k]?.length?rebuild(plan[index],orders[k]):null]));
+            const candidate=plan.map((s,k)=>replacements.has(k)?replacements.get(k):s).filter(Boolean);
+            const time=candidate.reduce((n,s)=>n+s.totalTime,0);
+            if(time>=best.time-1e-8 || candidate.length>plan.length || !candidate.every(validTrip))return;
+            if(!validateSortieSequence(candidate,initialInventory).valid)return;
+            best.plan=candidate;best.time=time;
+        };
+        if (true /* ENABLE_INTERLEAVING */) {
+            const best={plan:null,time:plan.reduce((n,s)=>n+s.totalTime,0)};
+            for(let i=0;i<plan.length && mergeEvaluations<192;i++) {
+                if(!eligible(plan[i]))continue;
+                for(let j=i+1;j<plan.length && mergeEvaluations<192;j++) {
+                    if(!eligible(plan[j]))continue;
+                    const a=plan[i].trades,b=plan[j].trades;
+                    const visit=(x,y,order)=>{
+                        if(mergeEvaluations>=192)return;
+                        if(x===a.length && y===b.length){mergeEvaluations++;considerReplacement([i,j],[order,[]],best);return;}
+                        if(x<a.length)visit(x+1,y,[...order,a[x]]);
+                        if(y<b.length)visit(x,y+1,[...order,b[y]]);
+                    };
+                    visit(0,0,[]);
+                }
+            }
+            if(best.plan)plan=best.plan;
+        }
+        // Redistribute a whole donor voyage across two recipients. Partial states may
+        // be slower; only a complete, globally valid improvement may replace the plan.
+        let redistributionExpansions=0;
+        if (true /* ENABLE_MULTIWAY */) {
+            const best={plan:null,time:plan.reduce((n,s)=>n+s.totalTime,0)};
+            for(let donor=0;donor<plan.length && redistributionExpansions<2048;donor++) {
+                if(!eligible(plan[donor]))continue;
+                for(let left=0;left<plan.length && redistributionExpansions<2048;left++) {
+                    if(left===donor || !eligible(plan[left]))continue;
+                    for(let right=left+1;right<plan.length && redistributionExpansions<2048;right++) {
+                        if(right===donor || !eligible(plan[right]))continue;
+                        let beam=[{left:plan[left].trades,right:plan[right].trades}];
+                        for(const trade of plan[donor].trades) {
+                            const expanded=[];
+                            for(const partial of beam)for(const key of ['left','right']) {
+                                for(let at=0;at<=partial[key].length && redistributionExpansions<2048;at++) {
+                                    redistributionExpansions++;
+                                    const next={left:partial.left,right:partial.right};next[key]=partial[key].slice();next[key].splice(at,0,trade);
+                                    next.score=rebuild(plan[left],next.left).totalTime+rebuild(plan[right],next.right).totalTime;
+                                    expanded.push(next);
+                                }
+                            }
+                            beam=expanded.sort((a,b)=>a.score-b.score).slice(0,8);
+                            if(!beam.length)break;
+                        }
+                        for(const partial of beam) {
+                            // An exhausted search must never publish a partial assignment.
+                            if(partial.left.length+partial.right.length!==plan[left].trades.length+plan[right].trades.length+plan[donor].trades.length)continue;
+                            considerReplacement([donor,left,right],[[],partial.left,partial.right],best);
+                        }
+                    }
+                }
+            }
+            if(best.plan)plan=best.plan;
+        }
         if(signature(plan)!==beforeSignature || cost(plan)!==beforeCost || plan.length>original.length
             || plan.reduce((n,s)=>n+s.totalTime,0)>original.reduce((n,s)=>n+s.totalTime,0)+1e-8
             || !validateSortieSequence(plan,initialInventory).valid) return original;

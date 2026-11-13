@@ -6,7 +6,7 @@ import {createHash} from 'node:crypto';
 import vm from 'node:vm';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
-export function replayCase(record,{sourceRoot=ROOT,postprocess=null}={}){
+export function replayCase(record,{sourceRoot=ROOT,postprocess=null,sourceOverrides={}}={}){
  const input=structuredClone(record.input),elements=Object.fromEntries(['normalWeight','maxWeight','maxParley','parleyPerTrade','parleyCrow'].map(name=>[name,{value:0}]));
  const notices=[];
  const ctx={console:{log(){},warn(){}},document:{getElementById:id=>elements[id]||null,querySelector:()=>null,querySelectorAll:()=>[]},
@@ -15,7 +15,7 @@ export function replayCase(record,{sourceRoot=ROOT,postprocess=null}={}){
  ctx.window=ctx;vm.createContext(ctx);
  const files={};
  for(const name of ['constants','routing','scheduler','tier7','schedule-edit','timer-ui','completion','scheduler-runtime']){
-  const path='barter/frontend/js/domain/'+name+'.js',code=readFileSync(resolve(sourceRoot,path),'utf8');
+  const path='barter/frontend/js/domain/'+name+'.js',code=sourceOverrides[path]??readFileSync(resolve(sourceRoot,path),'utf8');
   files[path]=createHash('sha256').update(code).digest('hex');vm.runInContext(code,ctx,{filename:path});
  }
  ctx.state={inventory:input.inventory,settings:{...input.settings,...input.config},revision:input.inputRevision,
