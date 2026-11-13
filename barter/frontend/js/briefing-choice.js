@@ -1,31 +1,22 @@
+import { briefingFlow, saveVoyageFlow, viewTrip } from './voyage-flow.js';
 import { state } from './state.js';
 import { inventoryIcon } from './inventory-ui.js';
 
 const make = (tag, className, text) => { const node = document.createElement(tag); node.className = className; if (text !== undefined) node.textContent = text; return node; };
 const amount = n => Number(n).toLocaleString('ko-KR');
-let context, confirmed = false, comparisonScroll = 0, previousView;
-try { previousView = JSON.parse(sessionStorage.getItem('bdo-briefing-choice-v1')); } catch {}
-window.addEventListener('pagehide', () => {
-  try { sessionStorage.setItem('bdo-briefing-choice-v1', JSON.stringify({context,confirmed,comparisonScroll})); } catch {}
-});
 const selectedMode = () => state.session.selection?.briefMode === 'balance' ? 'balance' : 'speed';
 function showExecution(value) {
-  confirmed = value;
+  const flow = briefingFlow(); flow.execution = value; saveVoyageFlow();
   const panel = document.getElementById('briefing-panel');
   panel.dataset.stage = value ? 'execution' : 'compare';
   document.getElementById('brief-back-compare').hidden = !value;
   document.getElementById('brief-selected-plan').hidden = !value;
-  if (!value) document.querySelector('.brief-plan-comparison').scrollTop = comparisonScroll;
+  if (!value) document.querySelector('.brief-plan-comparison').scrollTop = flow.comparisonScroll;
 }
 export function renderBriefingChoice() {
   const ledger = document.getElementById('brief-ledger');
   if (!ledger) return;
-  // Completion flags and execution quantities change during a voyage; they must not dismiss it.
-  const nextContext = JSON.stringify([state.session.id, state.session.diagnostics?.generatedAt, state.session.config?.ship?.mode, ['speed','balance'].map(mode => state.session.schedule?.[mode]?.map(s => s.trades?.map(t => [t.originalIndex,t.island,t.fromClean,t.toClean]))) ]);
-  if (context !== nextContext || !state.session.schedule) { context = nextContext;
-    comparisonScroll = previousView?.context === context && Number.isFinite(previousView.comparisonScroll) ? Math.max(0,previousView.comparisonScroll) : 0;
-    showExecution(Boolean(state.session.schedule && previousView?.context === context && previousView.confirmed === true));
-    if (state.session.schedule) previousView = null; }
+  showExecution(briefingFlow().execution);
   const mode = selectedMode(), label = mode === 'speed' ? '쾌속' : '균형';
   const source = document.querySelector(`[data-brief-mode="${mode}"]`);
   document.getElementById('brief-selected-plan').textContent = `${label} · ${source?.querySelector('.v-compare-stat')?.textContent || ''}`;
@@ -64,8 +55,10 @@ export function initBriefingChoice() {
   document.getElementById('brief-confirm-plan').onclick = () => {
     if (window.__bdoScheduleRuntime?.pending || state.persistencePending > 0) { window.showToast('저장이 끝난 뒤 출항 준비를 진행하세요.'); return; }
     if (!state.session.schedule?.[selectedMode()]?.length) return;
-    comparisonScroll = document.querySelector('.brief-plan-comparison').scrollTop;
+    briefingFlow().comparisonScroll = document.querySelector('.brief-plan-comparison').scrollTop;
     showExecution(true);
+    const mode = selectedMode(), active = briefingFlow().modes[mode];
+    if (active) { viewTrip(active,active.active,state.session.schedule[mode]); window.renderModeColumn(`col-${mode}`,state.session.schedule[mode],mode); }
     document.querySelector(`#col-${selectedMode()} .sortie-card:not([hidden]) .v-show-route, #col-${selectedMode()} .sortie-card:not([hidden]) .route-complete-button`)?.focus({preventScroll:true});
   };
   document.getElementById('brief-back-compare').onclick = () => {

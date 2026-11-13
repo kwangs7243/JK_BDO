@@ -1,9 +1,10 @@
+import { actionable } from './voyage-flow.js';
 import { state } from './state.js';
 import { requestSessionReset } from './trade-ui.js';
 
 const completePlan = (session, mode) => {
   const rows = session.schedule?.[mode]?.flatMap(sortie => sortie.trades ?? []);
-  return rows?.length > 0 && rows.every(trade => trade.completed === true);
+  return rows?.length > 0 && rows.every(trade => !actionable(trade) || trade.completed === true);
 };
 
 export function syncRoundResetButton() {

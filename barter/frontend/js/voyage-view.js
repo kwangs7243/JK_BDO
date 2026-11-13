@@ -1,16 +1,8 @@
+import { voyageFlow, viewTrip, returnFromTrip, saveVoyageFlow, actionable } from './voyage-flow.js';
 import { renderBriefingChoice } from "./briefing-choice.js";
 import { state } from './state.js';
 import { inventoryIcon } from './inventory-ui.js';
 import { totalDepartureDuration } from './duration.js';
-const trips=new Map(), cargoViews=new Map(), scrolls=new Map(), contexts=new Map();
-const viewKey='bdo-barter-voyage-view-v1';
-let previousViews={};
-try{const raw=sessionStorage.getItem(viewKey);if(raw&&raw.length<=64000){const saved=JSON.parse(raw);if(saved?.version===1&&saved.modes&&typeof saved.modes==='object')previousViews=saved.modes;}}catch{}
-window.addEventListener('pagehide',()=>{
- const modes={};
- for(const [mode,context] of contexts)modes[mode]={context,selected:trips.get(mode),cargo:Object.fromEntries([...cargoViews].filter(([key])=>key.startsWith(mode+':'))),scroll:Object.fromEntries([...scrolls].filter(([key])=>key.startsWith(mode+':')))};
- try{sessionStorage.setItem(viewKey,JSON.stringify({version:1,modes}));}catch{}
-});
 const el=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls||'';if(text!==undefined)n.textContent=text;return n;};
 const number=n=>Number(n||0).toLocaleString('ko-KR');
 const tier=t=>Number(t)>0?`${t}단`:t==='coin'?'까마귀 주화':t==='mat'?'특수':'육지';
@@ -33,31 +25,23 @@ export function enhanceVoyageBoard(root,mode,sorties){
  });
  renderBriefingChoice();
  const cards=[...root.querySelectorAll('.sortie-card')];if(!cards.length)return;
- const context=JSON.stringify([state.session.id,state.session.diagnostics?.generatedAt,sorties.map(s=>s.trades.map(t=>[t.originalIndex,t.island,t.fromClean,t.toClean,t.execC]))]);
- if(contexts.get(mode)!==context){
-  contexts.set(mode,context);trips.delete(mode);for(const map of [cargoViews,scrolls])for(const key of map.keys())if(key.startsWith(mode+':'))map.delete(key);
-  const saved=previousViews[mode];
-  if(saved?.context===context){
-   if(Number.isInteger(saved.selected)&&saved.selected>=0&&saved.selected<cards.length)trips.set(mode,saved.selected);
-   for(let index=0;index<cards.length;index++){const key=mode+':'+index;if(typeof saved.cargo?.[key]==='boolean')cargoViews.set(key,saved.cargo[key]);if(Number.isFinite(saved.scroll?.[key])&&saved.scroll[key]>=0&&saved.scroll[key]<=2000000)scrolls.set(key,saved.scroll[key]);}
-  }
-  delete previousViews[mode];
- }
- const views=[],positions=[];
- const initial=sorties.findIndex(s=>s.trades.some(t=>!t.completed));let selected=Math.min(trips.get(mode)??Math.max(0,initial),cards.length-1);
- const tabs=el('nav','voyage-trip-tabs');tabs.setAttribute('aria-label','출항 차수');
- const select=i=>{trips.set(mode,i);cards.forEach((c,j)=>c.hidden=j!==i);[...tabs.children].forEach((b,j)=>b.setAttribute('aria-pressed',String(i===j)));positions[i]?.();};
+ const flow=voyageFlow(mode,sorties);
+ const refresh=()=>window.renderModeColumn(root.id,state.session.schedule[mode],mode);
+ const tabs=el('nav','voyage-trip-tabs');tabs.setAttribute('aria-label','출항 차수 미리보기');
+ const progress=el('div','v-flow-status'),caption=el('span','',`${flow.active+1}차 출항 · ${{cargo:'적재 준비',route:'항로 수행',return:'일리야 복귀',finished:'회차 수행 완료'}[flow.phase]}`);
+ progress.append(caption);
+ if(flow.view!==flow.active||flow.inspectCargo){const back=el('button','','진행 중인 화면으로 돌아가기');back.type='button';back.onclick=()=>{viewTrip(flow,flow.active,sorties);refresh();};progress.append(el('small','','미리보기'),back);}
  cards.forEach((card,index)=>{
-  const sortie=sorties[index],key=mode+':'+index,tab=el('button','',index===0?'1차 출항':`${index+1}차`);tab.type='button';tab.onclick=()=>select(index);tabs.append(tab);
+  const sortie=sorties[index],preview=index!==flow.active,tab=el('button','',index===0?'1차 출항':`${index+1}차`);tab.type='button';tab.onclick=()=>{viewTrip(flow,index,sorties);refresh();};tab.setAttribute('aria-pressed',String(flow.view===index));card.hidden=index!==flow.view;tabs.append(tab);
   tab.draggable=true;tab.ondragstart=e=>window.sortieDragStart(e,index,mode);tab.ondragend=window.sortieDragEnd;tab.ondragover=e=>window.sortieDragOver(e,index,mode);tab.ondrop=e=>{window.sortieDrop(e,index,mode);window.renderModeColumn(root.id,state.session.schedule[mode],mode);};card.draggable=false;
   const oldHeading=card.querySelector('.sortie-heading'),cargo=card.querySelector('.sortie-cargo'),route=card.querySelector('.schedule-route'),footer=card.querySelector('.sortie-footer');
   const sailing=el('section','v-sailing'),prep=el('section','v-cargo'),tools=el('div','v-sortie-tools'),toggle=el('button','v-cargo-toggle','출항 적재 보기');toggle.type='button';tools.append(oldHeading,toggle);
-  const cargoTitle=el('header','v-cargo-title'),cargoCaption=el('div','v-cargo-caption'),showRoute=el('button','primary v-show-route','적재 완료 · 출항하기 →');showRoute.type='button';cargoCaption.append(el('h3','',`${index+1}차 출항 적재`),el('span','',`출항 무게 ${number(sortie.startWeight)} LT · ${sortie.trades[0]?.island||'첫 목적지'} 출발`));cargoTitle.append(cargoCaption,showRoute);prep.append(cargoTitle);
+  const cargoTitle=el('header','v-cargo-title'),cargoCaption=el('div','v-cargo-caption'),showRoute=el('button','primary v-show-route',preview?'진행 중인 화면으로 돌아가기':flow.phase==='cargo'?'적재 완료 · 항로 시작 →':'항로로 돌아가기');showRoute.type='button';cargoCaption.append(el('h3','',`${index+1}차 출항 적재`),el('span','',`출항 무게 ${number(sortie.startWeight)} LT · ${sortie.trades[0]?.island||'첫 목적지'} 출발`));cargoTitle.append(cargoCaption,showRoute);prep.append(cargoTitle);
   const groups=new Map();
   for(const chip of cargo.querySelectorAll('.cargo-item')){const name=chip.querySelector('.cargo-item-name').textContent,req=sortie.reqItems[name],t=req.isBase?0:req.tier;if(!groups.has(t))groups.set(t,[]);groups.get(t).push({name,count:req.count});}
   for(const [t,items] of groups){const band=el('section','v-cargo-band'),label=el('h4','v-cargo-tier',tier(t)),itemsRoot=el('div','v-cargo-items');for(const i of items)itemsRoot.append(item(i.name,i.count,t));band.append(label,itemsRoot);prep.append(band);}
   if(!groups.size)prep.append(el('p','v-cargo-empty','이 출항에 미리 적재할 품목이 없습니다.'));
-  route.classList.add('voyage-route-scroll');const activeIndex=sortie.trades.findIndex(t=>!t.completed),active=route.children[activeIndex];
+  route.classList.add('voyage-route-scroll');const activeIndex=sortie.trades.findIndex(t=>!t.completed&&actionable(t)),active=route.children[activeIndex];
   const hero=el('section','v-current');hero.setAttribute('aria-label','현재 목적지와 교환');
   if(active){
    const trade=sortie.trades[activeIndex],dest=el('div','v-destination');dest.append(el('small','','현재 목적지'),el('h3','',trade.island));hero.append(dest);
@@ -65,7 +49,8 @@ export function enhanceVoyageBoard(root,mode,sorties){
    if(!trade.isWaypoint)exchange.append(item(trade.fromClean,trade.execC*trade.reqA,trade.fromTier),el('span','v-arrow','→'),item(trade.toClean,trade.execC*trade.mult,trade.toTier),el('span','v-current-count',`${trade.execC}회 교환`));
    else exchange.append(el('span','','경유지'),trade.consumed?item(trade.consumed.name,trade.consumed.count,trade.consumed.tier):el('span','','소비할 품목 없음'));
    const actions=active.querySelector('.route-actions'),remove=actions.querySelector('.route-remove-button');if(remove)active.querySelector('.route-content').append(remove);
-   actions.querySelector('.route-complete-button').textContent='교환 완료'; actions.querySelector('.route-depart-button').textContent=trade.timerActive?'타이머 중지':'출발';const timer=active.querySelector('.timer-countdown');hero.append(exchange,actions);if(timer)hero.append(timer);
+   actions.querySelector('.route-complete-button').textContent='교환 완료'; actions.querySelector('.route-depart-button').textContent=trade.timerActive?'타이머 중지':'타이머 시작';const timer=active.querySelector('.timer-countdown');hero.append(exchange,actions);if(timer)hero.append(timer);
+   const timerButton=actions.querySelector('.route-depart-button');timerButton.addEventListener('click',()=>{timerButton.textContent=trade.timerActive?'타이머 중지':'타이머 시작';});
    const next=el('div','v-next');next.append(el('small','','다음 목적지'),el('strong','',sortie.trades[activeIndex+1]?.island||'일리야 섬 · 귀환'));hero.append(next);active.classList.add('voyage-current-row');
   }
   [...route.children].forEach((row,i)=>{
@@ -84,15 +69,25 @@ export function enhanceVoyageBoard(root,mode,sorties){
    const copy=el('div','v-return-copy');copy.append(el('small','',`${index+1}차 교환 완료`),el('h3','','일리야 섬으로 복귀'),el('p','',`${sortie.trades.at(-1)?.island||'마지막 목적지'} → 일리야 섬 · 귀환 후 하역`));
    const details=el('div','v-return-metrics'),seconds=Math.round(Number(sortie.returnTime)*60);details.append(el('span','',`예상 귀환 ${Number.isFinite(seconds)?`${Math.floor(seconds/60)}분 ${seconds%60}초`:'미확인'}`),el('span','',sortie.returnOver?'과적 항해':'쾌속 항해'));copy.append(details);
    const actions=el('div','v-return-actions'),next=el('button','primary v-next-sortie',index+1<cards.length?`복귀 완료 · ${index+2}차 적재 →`:'복귀 완료 · 회차 마치기');next.type='button';
-   next.onclick=()=>{if(window.__bdoScheduleRuntime?.pending||state.persistencePending>0){window.showToast('완료 저장이 끝난 뒤 계속하세요.');return;}if(window.ACTIVE_TIMERS?.[`return_${mode}_${index}`])returnButton.click();if(index+1<cards.length){views[index+1](true);select(index+1);cards[index+1].querySelector('.v-show-route').focus({preventScroll:true});}else window.dispatchEvent(new CustomEvent('bdo:round-returned'));};
+   next.onclick=()=>{if(window.__bdoScheduleRuntime?.pending||state.persistencePending>0){window.showToast('완료 저장이 끝난 뒤 계속하세요.');return;}if(window.ACTIVE_TIMERS?.[`return_${mode}_${index}`])returnButton.click();if(!returnFromTrip(flow,sorties))return;refresh();if(flow.phase==='finished')window.dispatchEvent(new CustomEvent('bdo:round-returned'));};
+   if(flow.phase==='finished'&&!preview){copy.querySelector('h3').textContent='일리야 복귀 · 회차 수행 완료';next.textContent='다음 회차 준비';}
+
    actions.append(returnButton,returnTimer,next);hero.append(emblem,copy,actions);
    const history=el('details','v-completed-route'),summary=el('summary','',`완료한 항로 ${sortie.trades.length}곳 보기`);history.append(summary,route,routeFoot);sailing.append(hero,history);
   }else{
    footer.classList.add('v-return-preview');const caption=el('span','v-return-preview-copy',`교환 후 일리야 섬 복귀 · ${sortie.returnOver?'과적':'쾌속'}`);footer.replaceChildren(caption,returnButton,returnTimer);sailing.append(hero,route,footer,routeFoot);
   }
   card.replaceChildren(tools,prep,sailing);
-  positions[index]=()=>{if(!sailing.hidden&&!card.hidden)route.scrollTop=scrolls.get(key)??0;};
-  const display=show=>{cargoViews.set(key,show);card.classList.toggle('v-preparing',show);prep.hidden=!show;sailing.hidden=show;toggle.textContent=show?'항로 보기':'출항 적재 보기';toggle.setAttribute('aria-expanded',String(show));positions[index]();};views[index]=display;toggle.onclick=()=>display(!cargoViews.get(key));showRoute.onclick=()=>{display(false);hero.querySelector('.route-depart-button,.v-next-sortie')?.focus({preventScroll:true});};display(cargoViews.get(key)??!sortie.trades.some(t=>t.completed));
-  route.onscroll=()=>scrolls.set(key,route.scrollTop);
- });root.prepend(tabs);select(selected);
+  const showCargo=preview||flow.inspectCargo||flow.phase==='cargo';
+  card.classList.toggle('v-preparing',showCargo);prep.hidden=!showCargo;sailing.hidden=showCargo;
+  toggle.textContent=showCargo?'항로 보기':'출항 적재 미리보기';toggle.setAttribute('aria-expanded',String(showCargo));toggle.hidden=!preview&&flow.phase==='cargo';
+  toggle.onclick=()=>{if(preview){prep.hidden=!prep.hidden;sailing.hidden=!sailing.hidden;toggle.textContent=prep.hidden?'출항 적재 미리보기':'항로 보기';}else{flow.inspectCargo=!showCargo;saveVoyageFlow();refresh();}};
+  showRoute.onclick=()=>{if(preview)viewTrip(flow,flow.active,sorties);else{flow.inspectCargo=false;if(flow.phase==='cargo')flow.phase='route';saveVoyageFlow();}refresh();};
+  route.scrollTop=flow.scroll[index]||0;route.onscroll=()=>{flow.scroll[index]=route.scrollTop;};
+  returnButton.textContent=window.ACTIVE_TIMERS?.[`return_${mode}_${index}`]?'귀환 타이머 중지':'귀환 타이머 시작';
+  returnButton.addEventListener('click',()=>{returnButton.textContent=window.ACTIVE_TIMERS?.[`return_${mode}_${index}`]?'귀환 타이머 중지':'귀환 타이머 시작';});
+  if(preview){card.classList.add('v-trip-preview');card.querySelectorAll('button').forEach(b=>{if(b!==toggle&&b!==showRoute)b.disabled=true;});route.querySelectorAll('[draggable]').forEach(n=>n.draggable=false);}
+  [...route.children].forEach((row,i)=>{if(i!==activeIndex)row.querySelectorAll('.route-depart-button,.route-complete-button').forEach(b=>b.disabled=true);if(!actionable(sortie.trades[i])){row.classList.add('v-skipped');row.querySelector('.v-stop-count').textContent='0회 · 제외';row.querySelectorAll('.route-depart-button,.route-complete-button').forEach(b=>b.disabled=true);}});
+ });
+ root.prepend(progress,tabs);saveVoyageFlow();
 }
