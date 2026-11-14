@@ -1,5 +1,7 @@
 export const state = {
   revision: null,
+  persistenceIssue: null,
+  sessionUnsaved: false,
   inventory: [],
   order: {},
   settings: {},
@@ -16,6 +18,13 @@ export const state = {
 };
 
 export function applyBootstrap(snapshot) {
+  if (!snapshot || !Number.isSafeInteger(snapshot.revision) || !Array.isArray(snapshot.inventory)
+      || !snapshot.settings || ['ship', 'parley', 'tuning'].some(key =>
+        !snapshot.settings[key] || typeof snapshot.settings[key] !== 'object' || Array.isArray(snapshot.settings[key]))
+      || snapshot.inventory.some(item => typeof item?.programName !== 'string'
+        || item.stock !== null && (!Number.isSafeInteger(item.stock) || item.stock < 0))) {
+    throw new Error('저장 데이터 형식을 확인할 수 없습니다. 기존 화면을 유지합니다.');
+  }
   state.revision = snapshot.revision;
   state.inventory = snapshot.inventory;
   state.order = snapshot.order;

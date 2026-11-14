@@ -14,7 +14,20 @@ try {
   globalThis.fetch=async()=>new Response(JSON.stringify({error:{code:'rejected',message:'safe failure'}}),{status});
   await assert.rejects(requestJSON('/probe',{method:'POST'}),e=>e.status===status&&e.code==='rejected'&&!e.uncertain&&e.message==='safe failure');
  }
+ globalThis.fetch=async()=>new Response(JSON.stringify({error:{code:'unexpected_error'}}),{status:500});
+ await assert.rejects(requestJSON('/probe',{method:'POST'}),e=>e.status===500&&e.uncertain);
  globalThis.fetch=async()=>new Response('{"ok":true,"revision":1}');
  assert.deepEqual(await requestJSON('/probe'),{ok:true,revision:1});
+ globalThis.fetch=async(_path,options)=>new Promise((_,reject)=>options.signal.addEventListener('abort',()=>reject(Error('abort')),{once:true}));
+ await assert.rejects(requestJSON('/probe',{method:'POST',timeoutMs:5}),e=>e.code==='request_timeout'&&e.uncertain);
+ const nativeSetTimeout=globalThis.setTimeout;
+ const delays=[];
+ try {
+  globalThis.setTimeout=(callback,ms,...args)=>{delays.push(ms);return nativeSetTimeout(callback,ms,...args);};
+  globalThis.fetch=async()=>new Response('{"ok":true}');
+  await requestJSON('/api/bootstrap');await requestJSON('/api/inventory',{method:'PATCH'});
+  await requestJSON('/api/warehouse-scan',{method:'POST'});
+  assert.deepEqual(delays,[20000,30000,330000]);
+ } finally {globalThis.setTimeout=nativeSetTimeout;}
  console.log('PASS: invalid JSON/shape, transport loss, HTTP conflicts and storage failures preserve retry classification');
 } finally {globalThis.fetch=nativeFetch;}

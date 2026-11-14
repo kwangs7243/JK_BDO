@@ -90,6 +90,31 @@ class WorkingSessionTests(unittest.TestCase):
             self.assertEqual(response.status_code, 422)
         self.assertEqual(self.bootstrap(), before)
 
+    def test_invalid_execution_values_reject_atomically(self):
+        before = self.bootstrap()
+        for key, value in [("execC", -1), ("execC", 1.5), ("reqA", 0), ("mult", True), ("completed", "yes")]:
+            session = self.session()
+            session["schedule"]["speed"][0]["trades"][0][key] = value
+            response, _ = self.send("PUT", "/api/working-session", {"session": session})
+            self.assertEqual(response.status_code, 422)
+            self.assertEqual(self.bootstrap(), before)
+
+    def test_unexpected_failure_has_safe_json(self):
+        self.app.add_url_rule("/api/injected-failure", view_func=lambda: (_ for _ in ()).throw(ValueError("private diagnostic")))
+        response = self.client.get("/api/injected-failure", base_url=self.origin)
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.get_json()["error"]["code"], "unexpected_error")
+        self.assertNotIn("private diagnostic", response.get_data(as_text=True))
+
+    def test_locked_database_returns_failure_without_partial_write(self):
+        before = self.bootstrap()
+        with closing(sqlite3.connect(self.path)) as lock:
+            lock.execute("BEGIN IMMEDIATE")
+            response = self.client.patch("/api/inventory", json={"mutationId": "locked-write", "baseRevision": before["revision"], "kind": "manual", "patch": {"items": {"갈퀴 꽃 씨앗 주머니": {"stock": 42}}}}, base_url=self.origin, headers={"Origin": self.origin})
+            self.assertEqual(response.status_code, 503)
+            lock.rollback()
+        self.assertEqual(self.bootstrap(), before)
+
     def test_reset_keeps_durable_data_and_other_slots(self):
         session = self.session()
         self.save(session)

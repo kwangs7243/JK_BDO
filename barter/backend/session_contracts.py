@@ -83,6 +83,15 @@ def validate_session(value: Any, catalog: dict[str, int]) -> dict[str, Any]:
                     trade = require_object(trade, "scheduled trade")
                     if not isinstance(trade.get("island"), str):
                         raise ContractError("scheduled trade island must be text")
+                    for name in ("execC", "reqA", "mult"):
+                        if name in trade:
+                            require_int(trade[name], "scheduled trade."+name, minimum=0 if name == "execC" else 1)
+                    for name in ("completed", "isWaypoint"):
+                        if name in trade and type(trade[name]) is not bool:
+                            raise ContractError("invalid scheduled trade flag")
+                    if trade.get("isWaypoint") and trade.get("consumed") is not None:
+                        consumed = require_object(trade["consumed"], "waypoint.consumed")
+                        require_int(consumed.get("count"), "waypoint.consumed.count", minimum=1)
                     if "originalIndex" in trade and trade["originalIndex"] is not None:
                         position = require_int(trade["originalIndex"], "originalIndex")
                         if position >= len(rows):

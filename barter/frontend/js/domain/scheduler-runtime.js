@@ -12,7 +12,7 @@ let scheduleStatus = () => {};
 let pendingCompletion = null;
 let externalSessionMutationPending = false;
 let generatedScheduleRecord = null;
-const sessionMutationPending = () => pendingCompletion || (externalSessionMutationPending ? true : null);
+const sessionMutationPending = () => pendingCompletion || window.__bdoMutationUncertain?.() || (externalSessionMutationPending ? true : null);
 
 const scheduleRecordCopy = value => JSON.parse(JSON.stringify(value));
 function scheduleRecordTrades(rows) {
@@ -93,6 +93,11 @@ function generateSchedule(appState, setStatus) {
   ensureSessionContext(appState);
   if (appState.session.scannedTrades === null) { showToast("먼저 회차 물교 JSON을 적용하세요."); return false; }
   syncLegacyState(appState);
+  const invalidIslands = scannedTrades.filter(t => !t.disabled && !t.deleted && t.count > 0 && !isValidIsland(t.island));
+  if (invalidIslands.length) {
+    showToast(`좌표를 확인할 수 없는 섬입니다: ${invalidIslands.map(t => t.island || '이름 없음').join(', ')}`);
+    return false;
+  }
   const unknown = findUnknownStockTrades(scannedTrades);
   if (unknown.length) { showToast(`현재 재고를 확인해야 계산할 수 있습니다: ${unknown.join(", ")}`); return false; }
   const mode = appState.session.config.ship.mode || "inner";
@@ -129,6 +134,7 @@ function generateSchedule(appState, setStatus) {
 }
 
 function canCompleteScheduleStep(schedule, si, ti) {
+    if(window.__bdoPersistenceBlocked?.()){showToast('미저장 변경 또는 저장 결과부터 확인하세요.');return false;}
     const session=window.__bdoAppState?.session, plan=session?.selection?.plan;
     const mode=schedule===sortiesSpeed?'speed':'balance';
     const existing=plan?.lockedMode || ['speed','balance'].find(key=>session?.schedule?.[key]?.some(s=>s.trades.some(t=>t.completed)));
@@ -305,6 +311,16 @@ function snapshotWorkingSession(appState) {
 
 function restoreWorkingSession(appState, payload, sessionRevision = appState.sessionRevision) {
   if (pendingCompletion) throw new Error("완료 저장이 대기 중입니다. 먼저 저장을 재시도하세요.");
+  if (payload?.schedule) {
+    for (const sorties of Object.values(payload.schedule)) {
+      if (!Array.isArray(sorties) || sorties.some(sortie => !Array.isArray(sortie?.trades)
+          || sortie.trades.some(trade => !trade || !trade.isWaypoint && (
+            ['execC', 'reqA', 'mult'].some(key => !Number.isSafeInteger(trade[key]) || trade[key] < (key === 'execC' ? 0 : 1))
+            || typeof trade.fromClean !== 'string' || typeof trade.toClean !== 'string')))) {
+        throw new Error('저장된 계획의 필수 값이 손상됐습니다. 원본 데이터는 유지하며 불러오기를 중단했습니다.');
+      }
+    }
+  }
   generatedScheduleRecord = null;
   appState.sessionBaseRevision = sessionRevision ?? null;
   appState.sessionGeneration = (appState.sessionGeneration || 0) + 1;
@@ -334,6 +350,7 @@ for (const name of ["routeDrop", "sortieDrop", "adjustTradeCount", "confirmWaypo
 }
 
 window.__bdoScheduleRuntime = { syncLegacyState, generateSchedule, snapshotWorkingSession, restoreWorkingSession, installCompletionAdapters, scheduleRecordFor,
+  get completionPending(){return pendingCompletion;},
   retryCompletion: persistPendingCompletion,
   setExternalSessionMutationPending(value) { externalSessionMutationPending = value === true; },
   get pending() { return sessionMutationPending(); } };

@@ -64,7 +64,6 @@ export function initWorkspaceUI() {
   const showView = name => {
     if (!views[name]) return;
     workspace.dataset.view = name;
-    if(name==='briefing')void window.__bdoEnterBriefing?.();
     for (const [key, panel] of Object.entries(views)) panel.hidden = key !== name;
     for (const button of document.querySelectorAll('[data-workspace-view]')) {
       if (button.dataset.workspaceView === name) button.setAttribute('aria-current', 'page');
@@ -72,6 +71,7 @@ export function initWorkspaceUI() {
     }
     document.getElementById('workspace-title').textContent = titles[name];
     try { sessionStorage.setItem(viewKey, name); } catch {}
+    if(name==='briefing')void window.__bdoEnterBriefing?.();
   };
   window.__bdoOpenBriefing = () => showView('briefing');
   document.getElementById('open-schedule').addEventListener('click', window.__bdoOpenBriefing);

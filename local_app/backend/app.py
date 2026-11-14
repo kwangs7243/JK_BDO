@@ -160,6 +160,14 @@ def create_app(database_path: str | Path | None = None, *, reference_path: str |
     def handle_storage_runtime_error(_error):
         return jsonify({"ok": False, "error": {"code": "storage_error", "message": "Persistent storage operation failed; no success was recorded."}}), 503
 
+    @app.errorhandler(Exception)
+    def handle_unexpected_error(error):
+        from werkzeug.exceptions import HTTPException
+        if isinstance(error, HTTPException):
+            return jsonify({"ok": False, "error": {"code": "http_error", "message": error.name}}), error.code
+        app.logger.exception("Unexpected request failure")
+        return jsonify({"ok": False, "error": {"code": "unexpected_error", "message": "처리 중 오류가 발생했습니다. 저장 결과를 확인하고 다시 시도하세요."}}), 500
+
     return app
 
 

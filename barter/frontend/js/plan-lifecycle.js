@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { saveWorkingSession, whenPersistenceIdle } from './persistence.js';
+import { saveWorkingSession, whenPersistenceIdle, hasUnresolvedPersistence } from './persistence.js';
 import { confirmAction } from '/portal-assets/feedback.js';
 import { inventoryIcon } from './inventory-ui.js';
 let busy=false, requesting=false, generate;
@@ -87,12 +87,13 @@ export function renderPlanStatus(){
 export async function requestPlan(options={}) {
  if(requesting)return false;
  requesting=true;
- try{return await replacePlan(options);}finally{requesting=false;}
+ try{return await replacePlan(options);}catch(e){window.showToast(e.message);return false;}finally{requesting=false;}
 }
 async function replacePlan({force=false,mode=null}={}){
- if(busy||state.session.scannedTrades===null)return false;
+ if(busy||state.revision===null)return false;
+ if(state.session.scannedTrades===null){window.showToast('먼저 물교 목록을 가져오세요.');document.querySelector('[data-workspace-view=session]').click();document.getElementById('open-trade-capture').focus();return false;}
  if(window.__bdoScheduleRuntime.pending){window.showToast('완료 저장을 먼저 확인하세요.');return false;}
- await whenPersistenceIdle();checkInputs();
+ await whenPersistenceIdle();if(hasUnresolvedPersistence()){window.showToast('미저장 변경 또는 저장 결과부터 확인하세요.');return false;}checkInputs();
  const locked=lockedPlan(),dirty=plan().dirtyReasons?.length;
  if(state.session.schedule&&!force&&!dirty){renderPlanStatus();return true;}
  const revision=state.sessionRevision,id=state.session.id;
@@ -108,7 +109,7 @@ async function replacePlan({force=false,mode=null}={}){
   delete state.session.selection.voyage;
   window.__bdoPlanGenerating=false;
   await saveWorkingSession();document.getElementById('schedule-status').textContent='';window.__bdoRenderAll?.();return true;
- }catch(error){if(error.committed){window.showToast('새 계획 저장은 완료됐으나 재조회에 실패했습니다. 새로고침해 확인하세요.');return true;}state.session=before;window.__bdoScheduleRuntime.syncLegacyState(state);window.showToast(`새 계획을 적용하지 못했습니다. 기존 상태를 유지합니다: ${error.message}`);return false;}
+ }catch(error){if(error.uncertain){window.showToast('저장 결과가 아직 확인되지 않았습니다. 상단에서 결과를 확인하세요.');return false;}if(error.committed){window.showToast('새 계획 저장은 완료됐으나 재조회에 실패했습니다. 새로고침해 확인하세요.');return true;}state.session=before;window.__bdoScheduleRuntime.syncLegacyState(state);window.showToast(`새 계획을 적용하지 못했습니다. 기존 상태를 유지합니다: ${error.message}`);return false;}
  finally{window.__bdoPlanGenerating=false;busy=false;window.__bdoScheduleRuntime.syncLegacyState(state);window.__bdoRenderAll?.();renderPlanStatus();}
 }
 export function initPlanLifecycle(){

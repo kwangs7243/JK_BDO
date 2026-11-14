@@ -36,7 +36,7 @@ try {
   const idle = () => evaluate("import('/assets/js/persistence.js').then(m=>m.whenPersistenceIdle())");
   const boot = async () => (await fetch(`${baseUrl}api/bootstrap`)).json();
   const selectSlot = n => evaluate(`const s=document.querySelector('#selected-schedule-slot');s.value='${n}';s.dispatchEvent(new Event('change',{bubbles:true}))`);
-  const click = selector => evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
+  const click = async selector => { await evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`); if(selector==='#open-schedule'){await idle();await delay(80);await evaluate(`const d=document.querySelector('dialog.suite-feedback[open]');if(d?.textContent.includes('남은 계획 재계산'))d.querySelector('.suite-feedback-cancel').click()`);} };
   const saveSlot = async n => {
     await selectSlot(n); await idle();
     await click('#schedule-slot-controls button:nth-of-type(1)');
