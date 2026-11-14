@@ -2,11 +2,13 @@
 
 검은사막의 **물물교환 준비·연금 제작·제작법 확인**을 한곳에서 돕는 Windows 로컬 작업실입니다.
 
-현재 버전: **1.1.1** · Windows · Python / JavaScript · 로컬 CPU 인식
+현재 버전: **1.1.2** · Windows · Python / JavaScript · 로컬 CPU 인식
+
+**1.1.2는 예외 방어를 보완한 소스 버전입니다.** 실제 설치 앱은 1.1.1을 유지하며 이번 작업에서는 설치하지 않았습니다. [변경·검증 범위](docs/EXCEPTION-DEFENSE-112.md)를 확인하세요.
 
 게임을 직접 조작하는 대신, 사람이 반복하던 캡처·재고 정리·재료 계산·항로 확인을 줄이는 데 집중했습니다. 기존 물교 계산기를 출발점으로, 실제 플레이에서 발견한 불편과 인식 실패를 기록하며 세 개의 작업실로 발전시켰습니다.
 
-[개발 역사](docs/PROJECT-HISTORY.md) · [변경 이력](CHANGELOG.md) · [버전 운영](docs/agents/VERSIONING.md) · [현재 버전 소스](https://github.com/kwangs7243/JK_BDO/tree/v1.1.1)
+[개발 역사](docs/PROJECT-HISTORY.md) · [변경 이력](CHANGELOG.md) · [버전 운영](docs/agents/VERSIONING.md) · [설치 기준판 1.1.1 소스](https://github.com/kwangs7243/JK_BDO/tree/v1.1.1)
 
 ## 세 개의 작업실
 
