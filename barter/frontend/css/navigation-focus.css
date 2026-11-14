@@ -1,0 +1,111 @@
+/* Maritime workspace: one round context, one current exchange, a compact route. */
+body.navigation-focus{grid-template-columns:minmax(0,1fr);grid-template-rows:70px minmax(0,1fr)}
+body.navigation-focus .app-sidebar{display:none}
+body.navigation-focus .app-header{grid-column:1;grid-row:1}
+body.navigation-focus #app-content{grid-column:1;display:flex;flex-direction:column;padding:0 26px 20px;gap:0;overflow:hidden}
+body.navigation-focus #app-content>.panel{height:auto;flex:1;min-height:0}
+body.navigation-focus .scenario-context{display:flex;gap:18px;align-items:center;flex-wrap:wrap;flex:none;min-height:49px;padding:10px 0;border-bottom:1px solid #8fa08a40;margin-bottom:20px;font-size:14px;color:#cad8ce}
+.scenario-context #scenario-round{color:#e2d2a5}.scenario-context #scenario-progress{margin-left:auto}.scenario-context strong{color:#f0ddaa;font-variant-numeric:tabular-nums}.scenario-context #scenario-save{font-size:12px;color:#b6ceb8}.scenario-context #scenario-save[data-kind=pending]{color:#edc481}
+body.navigation-focus #scenario-plan-notice{display:flex;gap:18px;align-items:center;padding:16px 20px;margin-bottom:18px;background:#51442485;border-left:3px solid #d2ae68;flex:none}
+#scenario-plan-notice>div{flex:1}#scenario-plan-notice p{margin:5px 0 0;font-size:13px;color:#dfd6bd}#scenario-changes{font-weight:600;color:#f1dfb4}
+body.navigation-focus #persistence-recovery{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 18px!important;padding:15px 20px!important;border-left:3px solid #cfaf68!important;font-size:14px;flex-wrap:wrap}
+body.navigation-focus #persistence-recovery[hidden],body.navigation-focus #scenario-plan-notice[hidden]{display:none}
+body.navigation-focus .brief-lifecycle-bar{display:none}
+body.navigation-focus .briefing-command{flex:none}
+body.navigation-focus #briefing-panel .briefing-heading{gap:16px;margin-bottom:18px}
+body.navigation-focus #briefing-title{font-size:25px;margin-right:10px}
+body.navigation-focus #briefing-panel .briefing-heading>.brief-config-mode{padding:0;width:auto;border:0;font-size:14px;gap:10px;display:flex;align-items:center}
+body.navigation-focus #briefing-panel .brief-config-mode select{position:static;padding:10px 16px;font-size:15px;min-width:210px}
+body.navigation-focus #briefing-panel .brief-config-mode::after{display:none}
+body.navigation-focus #brief-recalculate{padding:9px 15px;font-size:13px;order:2;margin-left:auto;white-space:nowrap}
+body.navigation-focus #briefing-panel .v-settings{order:3;margin-left:0}
+body.navigation-focus #v-reset-round{font-size:12px;order:4}
+body.navigation-focus #brief-selected-plan,body.navigation-focus #briefing-panel .v-flow-status>span{display:none}
+body.navigation-focus #briefing-panel .v-flow-status{display:none}
+body.navigation-focus #briefing-panel .v-flow-status:has(button){display:flex;margin:0 0 14px;padding:10px 14px;background:#51462b99;font-size:14px}
+body.navigation-focus #briefing-panel .v-flow-status:has(button)>span{display:inline}
+body.navigation-focus #brief-back-compare{margin:0 0 12px}
+body.navigation-focus #brief-remaining-metrics{font-size:14px;margin:0 0 12px}
+body.navigation-focus .plan-needs-update #schedule-columns{opacity:1}
+body.navigation-focus .plan-needs-update #schedule-columns button{pointer-events:auto}
+body.navigation-focus .voyage-trip-tabs{flex-wrap:wrap;gap:6px!important;padding-bottom:12px!important}
+body.navigation-focus .voyage-trip-tabs button{padding:7px 20px;font-size:13px;border-radius:4px!important}
+body.navigation-focus #briefing-panel .v-sortie-tools{padding-bottom:15px}
+body.navigation-focus #briefing-panel .v-sortie-tools .sortie-metrics small{font-size:12px}
+body.navigation-focus #briefing-panel .v-sortie-tools .sortie-metrics strong{font-size:14px!important}
+body.navigation-focus #briefing-panel .v-sailing{display:grid;grid-template-columns:minmax(0,1fr) 275px;grid-template-rows:minmax(0,1fr) auto;gap:18px 26px;overflow:hidden;align-items:start}
+body.navigation-focus #briefing-panel .v-current{grid-column:1;grid-row:1;display:flex;flex-direction:column;align-items:stretch;gap:18px;padding:24px 26px;background:linear-gradient(115deg,#1b434ef2,#153542e8);border:0;border-top:2px solid #bba267;min-width:0;max-height:100%;overflow:auto;scrollbar-width:thin}
+body.navigation-focus #briefing-panel .v-current::before,body.navigation-focus #briefing-panel .v-current::after{display:none}
+body.navigation-focus #briefing-panel .v-destination small{font-size:13px;letter-spacing:.04em}
+body.navigation-focus #briefing-panel .v-destination h3{font-size:34px!important;margin:5px 0 8px!important}
+body.navigation-focus #briefing-panel .v-current-exchange{gap:20px;flex-wrap:wrap}
+body.navigation-focus #briefing-panel .v-current-exchange .v-current-count{width:100%;padding:13px 0;border-block:1px solid #80978d44;font-size:14px}
+body.navigation-focus #briefing-panel .v-current-exchange .v-icon{border:0;background:none;width:56px;height:56px}
+body.navigation-focus #briefing-panel .v-current-exchange .v-quantity{font-size:27px}
+body.navigation-focus #briefing-panel .v-current-exchange .v-name{font-size:15px}
+body.navigation-focus #briefing-panel .v-current .route-actions{justify-content:space-between;margin-top:8px}
+body.navigation-focus #briefing-panel .v-current .route-complete-button{min-width:175px;padding:13px 23px!important;font-size:16px!important}
+body.navigation-focus #briefing-panel .v-current>.timer-countdown{position:static;align-self:flex-start;font-size:14px}
+body.navigation-focus #briefing-panel .v-next{padding:15px 0 0;margin-top:4px;font-size:14px}
+body.navigation-focus #briefing-panel .voyage-route-scroll{grid-column:2;grid-row:1;flex:none!important;max-height:100%;height:auto!important;margin:0!important;scroll-snap-type:none!important;overflow:auto!important}
+body.navigation-focus #briefing-panel .route-card{gap:12px;padding:17px 0;min-height:74px;background:transparent}
+body.navigation-focus #briefing-panel .route-card:before{display:none}
+body.navigation-focus #briefing-panel .v-stop-body{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+body.navigation-focus #briefing-panel .v-stop-exchange{display:none}
+body.navigation-focus #briefing-panel .v-stop-count{font-size:12px}.navigation-focus .v-stop-details{font-size:12px;flex-shrink:0}
+body.navigation-focus #briefing-panel .v-stop-details[open]{position:relative;flex:1;min-width:0}
+body.navigation-focus #briefing-panel .route-card:has(.v-stop-details[open]){flex-wrap:wrap}
+body.navigation-focus #briefing-panel .v-stop-details[open] .v-stop-exchange{display:flex;flex-wrap:wrap;margin-block:12px}
+body.navigation-focus #briefing-panel .voyage-current-row{background:none;box-shadow:none}
+body.navigation-focus #briefing-panel .voyage-current-row .route-step-number{background:#cfb373!important;color:#17313b!important}
+body.navigation-focus #briefing-panel .v-route-footer{grid-column:2;grid-row:2;font-size:12px;padding:0;flex-wrap:wrap;gap:8px}
+body.navigation-focus #briefing-panel .v-return-preview{display:none}
+body.navigation-focus #briefing-panel .v-sailing:has(.v-return){display:flex;overflow:auto;scrollbar-width:thin}
+body.navigation-focus #briefing-panel .v-return{width:100%;max-height:none;flex:none;align-items:center;text-align:center;padding:30px}
+body.navigation-focus #briefing-panel .v-return .v-return-actions{justify-content:center}
+body.navigation-focus #briefing-panel .v-completed-route{width:100%}
+body.navigation-focus #briefing-panel .v-completed-route .voyage-route-scroll{max-height:320px!important}
+body.navigation-focus #briefing-panel .v-cargo{overflow:auto;min-height:0;scrollbar-width:thin}
+body.navigation-focus #briefing-panel .v-cargo-title{position:sticky;top:0;z-index:2;padding:19px 22px;background:linear-gradient(110deg,#173b48fa,#102d3afa)}
+body.navigation-focus #briefing-panel .v-cargo-title .v-show-route{padding:13px 23px;font-size:15px}
+body.navigation-focus #briefing-panel .v-cargo-caption h3{font-size:24px}
+body.navigation-focus #briefing-panel .v-cargo-band{padding-block:24px}
+body.navigation-focus #trade-session-panel>.panel-heading{padding-bottom:15px}
+body.navigation-focus .session-toolbar{margin:14px 0;padding:12px 16px;box-shadow:none;border:0;border-bottom:1px solid #8ea18b44;background:#1536418c}
+body.navigation-focus .round-plan-status{display:none}
+body.navigation-focus[data-round-state=empty] .session-toolbar,body.navigation-focus[data-round-state=empty] .list-filter-bar,body.navigation-focus[data-round-state=empty] .session-input-actions{display:none}
+body.navigation-focus[data-round-state=empty] .session-empty-state{min-height:400px;display:flex;align-items:center;justify-content:center;flex-direction:column;background:none;border:0}
+body.navigation-focus[data-round-state=empty] #trade-list-root{background:none;border:0;box-shadow:none}
+body.navigation-focus[data-round-state=empty] .session-empty-state h3{font-size:29px}
+body.navigation-focus[data-round-state=empty] .session-empty-state p{font-size:15px}
+body.navigation-focus #mainPanel{overflow:auto;scrollbar-width:thin}
+body.navigation-focus .warehouse-tier-menu{margin:14px 0;padding:0}
+body.navigation-focus .warehouse-tier-menu .nav-caption{display:none}
+body.navigation-focus .inventory-tier-tabs{display:flex;gap:8px;flex-wrap:wrap}
+body.navigation-focus .inventory-tier-tabs button{padding:8px 21px;font-size:14px}
+body.navigation-focus .inventory-return-actions{display:flex;gap:12px;flex-wrap:wrap}
+body.navigation-focus .ledger-projected{display:block;font-size:17px;color:#ece3c6}.navigation-focus .ledger-delta{display:block;font-size:12px;margin-top:4px}
+body.navigation-focus .brief-ledger-table th,body.navigation-focus .brief-ledger-table td{padding-block:14px;font-size:14px}
+body.navigation-focus .trade-capture-gallery .capture-draft-list{gap:16px}
+@media(max-width:1050px){body.navigation-focus #briefing-panel .v-sailing{grid-template-columns:minmax(0,1fr) 220px;gap:16px}body.navigation-focus .header-utilities>button{font-size:12px}body.navigation-focus #briefing-panel .v-current{padding:20px}body.navigation-focus #app-content{padding-inline:18px}.scenario-context #scenario-progress{margin-left:0}}
+@media(max-width:760px){body.navigation-focus #briefing-panel .v-sailing{display:flex;overflow:auto}body.navigation-focus #briefing-panel .v-current{width:100%;max-height:none;flex:none}body.navigation-focus #briefing-panel .voyage-route-scroll{width:100%;max-height:none!important;overflow:visible!important}body.navigation-focus #briefing-panel .v-route-footer{width:100%}body.navigation-focus .scenario-context{gap:7px 18px;font-size:13px;margin-bottom:15px}body.navigation-focus #briefing-panel .brief-config-mode select{min-width:160px}.navigation-focus .v-current-exchange .v-item{min-width:140px}body.navigation-focus #app-content{padding-inline:12px}body.navigation-focus #scenario-plan-notice{flex-wrap:wrap}}
+
+body.navigation-focus #briefing-panel .briefing-body{display:flex;flex-direction:column;min-height:0}
+body.navigation-focus #schedule-columns{flex:1;min-height:0}
+body.navigation-focus #brief-remaining-metrics{flex:none;margin:12px 0 0;padding-top:10px;border-top:1px solid #869b8b44}
+body.navigation-focus #brief-back-compare{order:1;margin:0 0 0 auto}
+body.navigation-focus #brief-back-compare:not([hidden])~#brief-recalculate{margin-left:0}
+body.navigation-focus #runtime-status{display:none;flex:none;white-space:normal;margin:0 0 15px;padding:13px 17px;font-size:14px;background:#50392caa;border-left:3px solid #d4a578}
+body.navigation-focus #runtime-status[data-kind=error]{display:block}
+body.navigation-focus:has(#persistence-recovery:not([hidden])) #runtime-status{display:none}
+body.navigation-focus #runtime-status button{margin-left:18px}
+
+body.navigation-focus #brief-mode-trigger{font-size:16px;padding:10px 16px}
+@media(max-height:850px),(max-width:760px){
+ body.navigation-focus #briefing-panel[data-stage=execution] .briefing-body{overflow:auto;scrollbar-width:thin}
+ body.navigation-focus #briefing-panel[data-stage=execution] #schedule-columns{flex:none;overflow:visible}
+ body.navigation-focus #briefing-panel[data-stage=execution] #schedule-columns>section,body.navigation-focus #briefing-panel[data-stage=execution] .schedule-column{height:auto;overflow:visible}
+ body.navigation-focus #briefing-panel .v-sailing{flex:none;min-height:450px;overflow:visible}
+ body.navigation-focus #briefing-panel .v-current{max-height:none;overflow:visible}
+ body.navigation-focus #briefing-panel .voyage-route-scroll{max-height:450px!important}
+}

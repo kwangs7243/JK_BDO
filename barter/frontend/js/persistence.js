@@ -209,12 +209,14 @@ let recovering = false;
 export function renderPersistenceRecovery() {
   const host = document.getElementById('persistence-recovery');
   if (!host) return;
+  const base = document.getElementById('scenario-notice') || document.body;
   const parent = hasUnresolvedPersistence()
-    ? [...document.querySelectorAll('dialog:modal')].at(-1) || document.body : document.body;
+    ? [...document.querySelectorAll('dialog:modal')].at(-1) || base : base;
   if (host.parentElement !== parent) {
-    if (parent === document.body) parent.append(host);
+    if (parent === base) parent.append(host);
     else parent.insertBefore(host, parent.querySelector('.dialog-body') || parent.firstChild);
-    Object.assign(host.style, parent === document.body
+    Object.assign(host.style, parent === base && base !== document.body
+      ? {position: 'relative', top: 'auto', right: 'auto', margin: '0', maxWidth: 'none'} : parent === document.body
       ? {position: 'fixed', top: '82px', right: '24px', margin: '0', maxWidth: 'min(760px,90vw)'}
       : {position: 'relative', top: 'auto', right: 'auto', margin: '0 20px 12px', maxWidth: 'none'});
   }
@@ -227,6 +229,7 @@ export function renderPersistenceRecovery() {
   const button = host.querySelector('button');
   button.disabled = recovering || state.persistencePending > 0;
   button.textContent = api.hasPendingRequest() || state.persistenceIssue ? '저장 결과 확인' : '다시 저장';
+  window.__bdoRenderScenarioUI?.();
 }
 export async function retryPersistence() {
   if (recovering || state.persistencePending > 0) return;

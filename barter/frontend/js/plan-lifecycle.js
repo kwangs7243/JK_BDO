@@ -1,3 +1,4 @@
+import {renderScenarioUI} from './scenario-ui.js';
 import { state } from './state.js';
 import { saveWorkingSession, whenPersistenceIdle, hasUnresolvedPersistence } from './persistence.js';
 import { confirmAction } from '/portal-assets/feedback.js';
@@ -67,22 +68,25 @@ export function renderPlanStatus(){
  const locked=lockedPlan(),dirty=plan().dirtyReasons?.length,exists=!!state.session.schedule;
  if(locked){state.session.selection.briefMode=locked;document.getElementById('schedule-columns').dataset.mode=locked;}
  const remaining=state.session.scannedTrades?.filter(t=>!t.disabled&&!t.deleted&&t.count>0).length||0;
- const flow=state.session.selection?.voyage?.modes?.[locked];
- const finished=locked&&flow?.phase==='finished';
+ const chosen=locked||(state.session.selection?.briefMode==="balance"?"balance":"speed");
+ const execution=!!locked||!!state.session.selection?.voyage?.execution;
+ const flow=state.session.selection?.voyage?.modes?.[chosen];
+ const finished=execution&&flow?.phase==='finished';
  const progress=flow?`${flow.active+1}차 · ${{cargo:'적재 준비',route:'항로 수행',return:'일리야 복귀',finished:'수행 완료'}[flow.phase]}`:'항로 수행';
  const empty=exists&&!Object.values(state.session.schedule).some(ss=>ss.length);
- const text=state.session.scannedTrades===null?'게임 물교 목록을 가져오세요.':dirty?`${plan().dirtyReasons.join(' · ')} · 재계산 필요`:finished?`선택한 계획 수행 완료 · 남은 교환 ${remaining}행 · 추가 계산 또는 새 회차 준비`:empty?'현재 조건으로 출항 가능한 계획이 없습니다. 재고·교환 제외·교섭력을 확인하세요.':locked?`${locked==='speed'?'쾌속':'균형'} 진행 중 · ${progress} · 회차 남은 교환 ${remaining}행`:exists?'출항 전 · 두 계획의 창고결산과 항로를 비교하세요.':'회차 준비 완료 · 저장된 교역 모드로 브리핑을 만듭니다.';
+ const text=state.session.scannedTrades===null?'게임 물교 목록을 가져오세요.':dirty?`${plan().dirtyReasons.join(' · ')} · 재계산 필요`:finished?`선택한 계획 수행 완료 · 남은 교환 ${remaining}행 · 추가 계산 또는 새 회차 준비`:empty?'현재 조건으로 출항 가능한 계획이 없습니다. 재고·교환 제외·교섭력을 확인하세요.':execution?`${chosen==='speed'?'쾌속':'균형'} 진행 중 · ${progress} · 회차 남은 교환 ${remaining}행`:exists?'출항 전 · 두 계획의 창고결산과 항로를 비교하세요.':'회차 준비 완료 · 저장된 교역 모드로 브리핑을 만듭니다.';
  for(const id of ['round-plan-status','brief-plan-status'])document.getElementById(id).textContent=text;
- const label=dirty?'변경 반영해 재계산':!exists?'브리핑 만들기':finished?'완료한 계획 보기':locked?'진행 항로 이어보기':'브리핑 보기';
+ const label=dirty?'변경 전 항로 보기':!exists?'브리핑 만들기':finished?'완료한 계획 보기':execution?'진행 항로 이어보기':'브리핑 보기';
  document.getElementById('open-schedule').textContent=label;
  const button=document.getElementById('brief-recalculate');button.textContent=exists?'남은 교환으로 재계산':'브리핑 만들기';button.disabled=busy||state.session.scannedTrades===null;
- const totals=locked?remainingSummary(locked):null;
+ const totals=execution?remainingSummary(chosen):null;
  let metrics=document.getElementById('brief-remaining-metrics');if(!metrics){metrics=document.createElement('p');metrics.id='brief-remaining-metrics';document.querySelector('.brief-lifecycle-bar').after(metrics);}
- metrics.hidden=!locked;metrics.textContent=locked?`남은 계획 교섭력 ${totals.cost.toLocaleString()} · 현재 잔여 ${Number(state.session.remainingParley).toLocaleString()} · 까마귀주화 추가 ${totals.coins.toLocaleString()}개`:'';
+ metrics.hidden=!execution;metrics.textContent=execution?`남은 계획 교섭력 ${totals.cost.toLocaleString()} · 까마귀주화 추가 ${totals.coins.toLocaleString()}개`:'';
  document.getElementById('briefing-panel').classList.toggle('plan-needs-update',!!dirty);
  document.querySelectorAll('[data-brief-mode]').forEach(b=>b.disabled=!!locked&&b.dataset.briefMode!==locked);
  for(const mode of ['speed','balance'])for(const prefix of ['open-map-','brief-map-']){const button=document.getElementById(prefix+mode);if(button){button.hidden=!!locked&&mode!==locked;button.textContent=locked?'진행 항로 지도':`${mode==='speed'?'쾌속':'균형'} 항로 지도`;}}
  document.getElementById('brief-plan-status').setAttribute('role','status');
+ renderScenarioUI();
 }
 export async function requestPlan(options={}) {
  if(requesting)return false;
@@ -99,7 +103,7 @@ async function replacePlan({force=false,mode=null}={}){
  const revision=state.sessionRevision,id=state.session.id;
  if(state.session.schedule&&(locked||dirty)&&!await confirmAction('현재 남은 교환·교섭력·재고로 계획을 새로 계산합니다. 새 계획은 일리야 복귀·하역·재적재 후 출항 기준이며, 현재 해상 위치에서 바로 이어지는 항로가 아닙니다. 기존 남은 계획을 교체할까요?',{title:'남은 계획 재계산',acceptLabel:'재계산',cancelLabel:'기존 상태 유지'}))return false;
  if(revision!==state.sessionRevision||id!==state.session.id){window.showToast('확인 중 회차가 바뀌었습니다. 다시 확인하세요.');return false;}
- busy=true;renderPlanStatus();const before=structuredClone(state.session);
+ busy=true;window.__bdoPlanBusy=true;renderPlanStatus();const before=structuredClone(state.session);
  try{
   if(mode)state.session.config.ship.mode=mode;
   window.__bdoPlanGenerating=true;
@@ -110,15 +114,15 @@ async function replacePlan({force=false,mode=null}={}){
   window.__bdoPlanGenerating=false;
   await saveWorkingSession();document.getElementById('schedule-status').textContent='';window.__bdoRenderAll?.();return true;
  }catch(error){if(error.uncertain){window.showToast('저장 결과가 아직 확인되지 않았습니다. 상단에서 결과를 확인하세요.');return false;}if(error.committed){window.showToast('새 계획 저장은 완료됐으나 재조회에 실패했습니다. 새로고침해 확인하세요.');return true;}state.session=before;window.__bdoScheduleRuntime.syncLegacyState(state);window.showToast(`새 계획을 적용하지 못했습니다. 기존 상태를 유지합니다: ${error.message}`);return false;}
- finally{window.__bdoPlanGenerating=false;busy=false;window.__bdoScheduleRuntime.syncLegacyState(state);window.__bdoRenderAll?.();renderPlanStatus();}
+ finally{window.__bdoPlanGenerating=false;busy=false;window.__bdoPlanBusy=false;window.__bdoScheduleRuntime.syncLegacyState(state);window.__bdoRenderAll?.();renderPlanStatus();}
 }
 export function initPlanLifecycle(){
  generate=window.__bdoScheduleRuntime.generateSchedule;
  window.__bdoScheduleRuntime.generateSchedule=(s,status)=>{if(s.session.schedule){if(plan().config===configKey(s.session.config)){status('설정을 저장했습니다. 현재 계획은 유지합니다.','success');return false;}markPlanChanged('계산 설정 변경');status('진행 중인 계획은 재계산 확인 후 교체할 수 있습니다.','info');return false;}return generate(s,status);};
  window.__bdoLockedPlan=lockedPlan;window.__bdoMarkPlanChanged=markPlanChanged;window.__bdoRenderPlanStatus=()=>{checkInputs();renderPlanStatus();};
- window.__bdoEnterBriefing=()=>requestPlan();
+ window.__bdoEnterBriefing=()=>{if(state.session.schedule){checkInputs();renderPlanStatus();return true;}return requestPlan();};
  document.getElementById('v-show-settlement').addEventListener('click',showSelectedSettlement);
- document.getElementById('brief-recalculate').onclick=()=>requestPlan({force:true});
+ document.getElementById('brief-recalculate').onclick=async()=>{if(await requestPlan({force:true}))window.__bdoOpenBriefing?.();};
  window.addEventListener('bdo:session-changed',renderPlanStatus);
  renderPlanStatus();
 }

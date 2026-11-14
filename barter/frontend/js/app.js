@@ -8,6 +8,7 @@ import { initRecognitionUI } from "./recognition-ui.js";
 import { openPatchReview } from "./patch-review.js";
 import { initTradeSessionUI, renderTradeList } from "./trade-ui.js";
 import { initScheduleUI, syncScheduleState } from "./schedule-ui.js";
+import {initScenarioUI} from "./scenario-ui.js";
 import { initWorkspaceUI } from "./workspace-ui.js";
 import { initLeaveGuard } from "./leave-guard.js";
 import { initTradePolicyUI } from "./trade-policy-ui.js";
@@ -36,6 +37,7 @@ const warehouseCaptureUI = initWarehouseScanUI({ setStatus, onPatch: (patch, rep
 const recognitionUI = initRecognitionUI({ warehouseCaptureUI });
 initScheduleUI(setStatus);
 initWorkspaceUI();
+initScenarioUI();
 initTradePolicyUI(setStatus);
 window.__bdoRenderTradeList = renderTradeList;
 window.__bdoRenderAll = renderAll;

@@ -4,7 +4,7 @@ const ready=()=>page.waitForFunction(()=>document.querySelector('#app-content')?
 const idle=()=>page.evaluate(async()=>await(await import('/assets/js/persistence.js')).whenPersistenceIdle());
 const boot=()=>fetch(base+'/api/bootstrap').then(r=>r.json());
 try{
- await page.route('**/api/bootstrap',r=>r.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{message:'initial offline'}})}));await page.goto(base+'/barter/');await ready();assert.ok(await page.getByRole('button',{name:'불러오기 재시도',exact:true}).isVisible());await page.unroute('**/api/bootstrap');await page.getByRole('button',{name:'불러오기 재시도',exact:true}).click();await page.waitForFunction(()=>window.__bdoAppState.inventory.length===70);await page.locator('#open-schedule').click();await idle();assert.ok(await page.locator('#trade-session-panel').isVisible());assert.equal((await boot()).workingSession,null);
+ await page.route('**/api/bootstrap',r=>r.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:{message:'initial offline'}})}));await page.goto(base+'/barter/');await ready();assert.ok(await page.getByRole('button',{name:'불러오기 재시도',exact:true}).isVisible());await page.unroute('**/api/bootstrap');await page.getByRole('button',{name:'불러오기 재시도',exact:true}).click();await page.waitForFunction(()=>window.__bdoAppState.inventory.length===70);await page.locator('[data-workspace-view=briefing]').click();await idle();assert.ok(await page.locator('#trade-session-panel').isVisible());assert.equal((await boot()).workingSession,null);
  await page.evaluate(async()=>{await(await import('/assets/js/persistence.js')).saveInventory({'갈퀴 꽃 씨앗 주머니':{stock:100},'괴생물 촉수':{stock:0}});await(await import('/assets/js/trade-ui.js')).applyLiveTradeRows(['베이루와 섬','레마 섬','에베토 섬'].map(island=>({island,fromItem:'갈퀴 꽃 씨앗 주머니',toItem:'괴생물 촉수',reqAmount:1,count:3,yield:3})),'new');});
  await page.locator('#open-schedule').click();await page.waitForFunction(()=>!!window.__bdoAppState.session.schedule&&!document.querySelector('#brief-recalculate').disabled);await idle();
  // Server commits the plan but its response is corrupt. Do not roll the local plan back.
@@ -22,7 +22,7 @@ try{
  await page.waitForFunction(()=>document.querySelector('#persistence-recovery')?.parentElement?.id==='settings-dialog');
  assert.ok(await page.locator('#settings-dialog #persistence-recovery button').isVisible());
  await page.locator('#settings-dialog [data-close-dialog]').click();
- await page.waitForFunction(()=>document.querySelector('#persistence-recovery')?.parentElement===document.body);
+ await page.waitForFunction(()=>document.querySelector('#persistence-recovery')?.parentElement?.id==='scenario-notice');
  await page.locator('#persistence-recovery button').click();await idle();assert.ok(await page.locator('#persistence-recovery').isVisible());await page.unroute('**/api/bootstrap');await page.locator('#persistence-recovery button').click();await idle();assert.equal((await boot()).inventory.find(i=>i.programName==='괴생물 촉수').stock,7);assert.equal(bodies.length,countBefore);
  // Recovering an unrelated inventory save must not discard an earlier failed session edit.
  await page.locator('[data-workspace-view=session]').click();

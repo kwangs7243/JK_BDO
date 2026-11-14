@@ -16,8 +16,9 @@
   <link rel="stylesheet" href="/assets/css/workspace.css">
   <link rel="stylesheet" href="/assets/css/notifications.css">
 <link rel="stylesheet" href="/assets/css/independent.css"><link rel="stylesheet" href="/assets/css/voyage-view.css"><link rel="stylesheet" href="/assets/css/maritime-suite.css">  <link rel="stylesheet" href="/assets/css/trade-capture-gallery.css">
+  <link rel="stylesheet" href="/assets/css/navigation-focus.css">
 </head>
-<body class="barter-final art-maritime voyage-design">
+<body class="barter-final art-maritime voyage-design navigation-focus">
   <a class="skip-link" href="#app-content">작업 영역으로 이동</a>
   <aside class="app-sidebar" aria-label="주 메뉴">
 
@@ -49,6 +50,9 @@
     <nav class="concept-switch" aria-label="앱 이동"><a href="/barter/" class="active" aria-current="page">물교</a><a href="/alchemy/">연금</a><a href="/craft/">제작노트</a></nav>
   </header>
   <main id="app-content" aria-busy="true" class="workspace" data-view="session" tabindex="-1">
+    <div class="scenario-context" aria-label="현재 회차와 진행 상태"><span id="scenario-round">현재 회차 · 불러오는 중</span><span id="scenario-progress"></span><span>남은 교섭력 <strong id="scenario-parley">—</strong></span><span id="scenario-save" role="status"></span></div>
+    <div id="scenario-notice"></div>
+    <aside id="scenario-plan-notice" hidden role="status"><div><strong id="scenario-changes"></strong><p>표시된 항로는 변경 전 계획입니다. 열람은 가능하며 교환 완료는 변경 확인 후 진행하세요.</p></div></aside>
     <section class="panel session-panel" id="trade-session-panel">
       <div class="panel-heading session-heading"><div><h2>현재 회차</h2><span id="session-trade-count" class="hint">회차 없음</span></div><div class="session-input-actions"><button id="open-trade-capture" class="primary" type="button">물교 가져오기</button><button id="open-json-import" class="secondary" type="button">JSON 입력</button><button id="add-manual-trade" class="secondary" type="button">+ 행 추가</button><span class="action-divider" aria-hidden="true"></span><button id="toggle-all-trades" class="soft-action" type="button">전체 비활성</button><button id="reset-session" class="danger" type="button">회차 초기화</button></div></div>
       <p id="round-plan-status" class="round-plan-status" role="status"></p><div class="session-toolbar"><div class="session-budget"><label for="remaining-parley">남은 교섭력</label><input id="remaining-parley" type="number" min="0" step="1"></div><div class="session-plan-actions"><button id="open-schedule" class="primary" type="button">출항 브리핑</button></div><div class="session-map-actions"><button id="open-map-speed" type="button">쾌속 지도</button><button id="open-map-balance" type="button">균형 지도</button></div><span id="trade-import-status" class="status-note" role="status"></span></div>
@@ -56,8 +60,8 @@
       <div id="trade-list-root" class="trade-list-scroll"></div>
     </section>
     <section class="panel inventory-panel" id="mainPanel">
-      <div class="panel-heading"><div><h2>창고</h2><span class="hint">현재 재고와 목표 재고</span></div><button id="open-warehouse-scan" type="button">창고 스캔</button></div>
-      <div class="inventory-toolbar"><label class="search-field" for="inventory-search">품목 검색<input id="inventory-search" type="search" placeholder="예: 씨앗 주머니"></label><label class="field" for="inventory-stock-filter">재고 상태<select id="inventory-stock-filter"><option value="all">모든 품목</option><option value="short">목표 미달</option><option value="unknown">미확인</option></select></label><span id="inventory-filter-summary" role="status"></span></div>
+      <div class="panel-heading"><div><h2>창고</h2><span class="hint">현재 재고와 목표 재고</span></div><div class="inventory-return-actions"><button id="inventory-return-voyage" type="button" class="primary" hidden>진행 항로로 돌아가기 →</button><button id="open-warehouse-scan" type="button">창고 스캔</button></div></div>
+      <div class="inventory-toolbar"><label class="search-field" for="inventory-search">품목 검색<input id="inventory-search" type="search" placeholder="예: 씨앗 주머니"></label><label class="field" for="inventory-stock-filter">재고 상태<select id="inventory-stock-filter"><option value="all">모든 품목</option><option value="needed">이번 계획 관련 품목</option><option value="short">목표 미달</option><option value="unknown">미확인</option></select></label><span id="inventory-filter-summary" role="status"></span></div>
 
       <p class="inventory-null-hint">빈칸 = 미확인 · 0 = 확인된 0개 · 수량을 수정하면 저장됩니다.</p>
       <div id="inventory-root"></div>
@@ -71,8 +75,8 @@
     <div id="schedule-slot-controls" class="schedule-slot-controls" aria-label="스케줄 저장 슬롯"></div>
     <button id="retry-completion-save" type="button" hidden>완료 저장 재시도</button>
   </section>
-  <section class="briefing-calculation" aria-label="계산 설정">
-    <button id="generate-schedule" class="primary" type="button">스케줄 생성 / 다시 계산</button>
+  <section class="briefing-calculation" aria-label="계산 설정" hidden>
+    <button id="generate-schedule" type="button">스케줄 생성 / 다시 계산</button>
   </section>
   <section class="briefing-tools-section" aria-label="보조 도구">
     <span class="briefing-control-label">보조 도구</span>

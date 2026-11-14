@@ -7,7 +7,7 @@ const flow=()=>page.evaluate(()=>JSON.parse(sessionStorage.getItem('bdo-voyage-f
 try{
  await page.goto(base+'/barter/');await page.waitForFunction(()=>document.querySelector('#app-content')?.getAttribute('aria-busy')==='false');
  await page.evaluate(async()=>{const p=await import('/assets/js/persistence.js');await p.saveInventory({'갈퀴 꽃 씨앗 주머니':{stock:100},'괴생물 촉수':{stock:0}});await(await import('/assets/js/trade-ui.js')).applyLiveTradeRows([{island:'베이루와 섬',fromItem:'갈퀴 꽃 씨앗 주머니',toItem:'괴생물 촉수',reqAmount:1,count:4,yield:3}],'new');});
- await page.locator('[data-workspace-view=briefing]').click();await page.locator('.v-settings>summary').click();await page.locator('#generate-schedule').click();await idle();await page.locator('.v-settings>summary').click();
+ await page.locator('[data-workspace-view=briefing]').click();await page.waitForFunction(()=>!!window.__bdoAppState.session.schedule);await idle();
  await page.evaluate(async()=>{const {state}=await import('/assets/js/state.js');const original=structuredClone(state.session.schedule.speed[0]);original.trades=[{...original.trades[0],execC:2}];const next=structuredClone(original);state.session.schedule.speed=[original,next];for(const s of state.session.schedule.speed)window.rebuildSortieReq(s);await(await import('/assets/js/persistence.js')).saveWorkingSession();window.__bdoRenderAll();});
  await page.locator('#brief-confirm-plan').click();assert.equal((await flow()).phase,'cargo');await active().locator('.v-show-route').click();assert.equal((await flow()).phase,'route');
  await idle();const before=await fetch(base+'/api/bootstrap').then(r=>r.json());

@@ -7,6 +7,10 @@ export function applyInventoryFilters() {
   const query = normalize(document.getElementById('inventory-search')?.value);
   const mode = document.getElementById('inventory-stock-filter')?.value ?? 'all';
   const items = new Map(state.inventory.map(item => [item.programName, item]));
+  const requested = state.session.selection?.plan?.lockedMode || state.session.selection?.briefMode;
+  const selected = requested === 'balance' ? 'balance' : 'speed';
+  const needed = new Set((state.session.schedule?.[selected] || []).flatMap(sortie => sortie.trades
+    .filter(trade => !trade.completed).flatMap(trade => trade.isWaypoint ? [trade.consumed?.name] : [trade.fromClean, trade.toClean])));
   let shown = 0;
   for (const section of document.querySelectorAll('#inventory-root .tier-section')) {
     let count = 0;
@@ -14,7 +18,7 @@ export function applyInventoryFilters() {
       const item = items.get(row.dataset.name);
       const matches = item && (inventoryTier === 'all' || row.dataset.tier === inventoryTier)
         && normalize(item.programName).includes(query)
-        && (mode === 'all' || (mode === 'unknown' ? item.stock === null
+        && (mode === 'all' || (mode === 'needed' ? needed.has(item.programName) : mode === 'unknown' ? item.stock === null
           : item.stock !== null && item.target !== null && item.stock < item.target));
       row.hidden = !matches;
       if (matches) count++;

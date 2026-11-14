@@ -27,7 +27,7 @@ export function renderBriefingChoice() {
   const confirm = document.getElementById('brief-confirm-plan');
   confirm.disabled = !state.session.schedule?.[mode]?.length;
   confirm.textContent = `${label}으로 출항 준비 →`;
-  ledger.replaceChildren(make('h3', '', '창고 결산 비교'), make('p', 'brief-ledger-note', '전체 계획의 1~5단 품목 순증감 · 현재 재고는 진행 중인 교환을 반영한 값입니다.'));
+  ledger.replaceChildren(make('h3', '', '창고 결산 비교'), make('p', 'brief-ledger-note', '현재 재고와 각 계획을 마친 예상 재고 · 작은 숫자는 전체 계획의 증감입니다.'));
   const entries = new Map();
   for (const key of ['speed','balance']) for (const entry of document.querySelectorAll(`#summary-${key} .settlement-entry`)) {
     const { name, tier } = entry.dataset;
@@ -38,7 +38,7 @@ export function renderBriefingChoice() {
   const table = make('table','brief-ledger-table');
   table.dataset.selected = mode;
   const head = table.createTHead().insertRow();
-  for (const caption of ['품목','현재','쾌속 증감','균형 증감']) { const th = make('th','',caption); th.scope = 'col'; head.append(th); }
+  for (const caption of ['품목','현재','쾌속 후','균형 후']) { const th = make('th','',caption); th.scope = 'col'; head.append(th); }
   const stocks = new Map(state.inventory.map(item => [item.programName,item.stock]));
   const body = table.createTBody();
   for (const item of [...entries.values()].sort((a,b) => a.tier-b.tier || a.name.localeCompare(b.name,'ko'))) {
@@ -49,7 +49,12 @@ export function renderBriefingChoice() {
     if (icon) { const img = make('img',''); img.src = icon; img.alt = ''; img.loading = 'lazy'; img.onerror = () => img.remove(); content.append(img); }
     const copy = make('span',''); copy.append(make('small','',`${item.tier}단`),make('span','',item.name)); content.append(copy); name.append(content); row.append(name);
     row.insertCell().textContent = stocks.get(item.name) == null ? '미확인' : amount(stocks.get(item.name));
-    for (const key of ['speed','balance']) { const cell = row.insertCell(); cell.className = item[key] > 0 ? 'brief-positive' : item[key] < 0 ? 'brief-negative' : ''; cell.textContent = item[key] ? `${item[key]>0?'+':'−'}${amount(Math.abs(item[key]))}` : '—'; }
+    for (const key of ['speed','balance']) {
+      const cell = row.insertCell(), current = stocks.get(item.name);
+      const projected = make('strong','ledger-projected',current == null ? '미확인' : amount(current + item[key]));
+      const delta = make('span',`ledger-delta ${item[key]>0?'brief-positive':item[key]<0?'brief-negative':''}`,item[key] ? `${item[key]>0?'+':'−'}${amount(Math.abs(item[key]))}` : '변동 없음');
+      cell.append(projected, delta);
+    }
   }
   ledger.append(table);
 }

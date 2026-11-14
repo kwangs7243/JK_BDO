@@ -45,7 +45,7 @@ export function enhanceVoyageBoard(root,mode,sorties){
   route.classList.add('voyage-route-scroll');const activeIndex=sortie.trades.findIndex(t=>!t.completed&&actionable(t)),active=route.children[activeIndex];
   const hero=el('section','v-current');hero.setAttribute('aria-label','현재 목적지와 교환');
   if(active){
-   const trade=sortie.trades[activeIndex],dest=el('div','v-destination');dest.append(el('small','','현재 목적지'),el('h3','',trade.island));hero.append(dest);
+   const trade=sortie.trades[activeIndex],dest=el('div','v-destination');dest.append(el('small','','지금 게임에서 목적지로 설정'),el('h3','',trade.island));hero.append(dest);
    const exchange=el('div','v-current-exchange');
    if(!trade.isWaypoint)exchange.append(item(trade.fromClean,trade.execC*trade.reqA,trade.fromTier),el('span','v-arrow','→'),item(trade.toClean,trade.execC*trade.mult,trade.toTier),el('span','v-current-count',`${trade.execC}회 교환`));
    else exchange.append(el('span','','경유지'),trade.consumed?item(trade.consumed.name,trade.consumed.count,trade.consumed.tier):el('span','','소비할 품목 없음'));
@@ -58,8 +58,8 @@ export function enhanceVoyageBoard(root,mode,sorties){
    const trade=sortie.trades[i],heading=row.querySelector('.route-heading'),oldActions=row.querySelector('.route-actions'),adjust=row.querySelector('.route-yield-adjust'),info=row.querySelector('.route-trade-info'),debug=row.querySelector('.route-explanation'),remove=row.querySelector('.route-remove-button');
    const content=el('div','v-stop-body'),exchange=el('div','v-stop-exchange');
    if(!trade.isWaypoint)exchange.append(item(trade.fromClean,trade.execC*trade.reqA,trade.fromTier),el('span','v-arrow','→'),item(trade.toClean,trade.execC*trade.mult,trade.toTier));else exchange.append(el('span','',trade.consumed?`경유지 · ${trade.consumed.name} ×${number(trade.consumed.count)}`:'경유지 · 교환 없음'));
-   content.append(heading,exchange,el('span','v-stop-count',trade.isWaypoint?'경유':`${trade.execC}회 교환`));if(trade.over)content.append(el('span','v-over','과적 구간'));
-   const detail=el('details','v-stop-details'),summary=el('summary','','상세');detail.append(summary);for(const n of [info,adjust,oldActions,remove,debug])if(n)detail.append(n);
+   content.append(heading,el('span','v-stop-count',trade.isWaypoint?'경유':`${trade.execC}회 교환`));if(trade.over)content.append(el('span','v-over','과적 구간'));
+   const detail=el('details','v-stop-details'),summary=el('summary','','상세');detail.append(summary,exchange);for(const n of [info,adjust,oldActions,remove,debug])if(n)detail.append(n);
    const step=row.querySelector('.route-step-number');row.replaceChildren(step,content,detail);
   });
   const routeFoot=el('div','v-route-footer'),jump=el('button','','현재 교환으로');jump.type='button';jump.disabled=!active;jump.onclick=()=>{if(active)route.scrollTo({top:active.offsetTop-route.firstElementChild.offsetTop,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});};routeFoot.append(el('span','',`${sortie.trades.filter(t=>t.completed).length} / ${sortie.trades.length} 교환 완료`),jump);
@@ -90,5 +90,5 @@ export function enhanceVoyageBoard(root,mode,sorties){
   if(preview){card.classList.add('v-trip-preview');card.querySelectorAll('button').forEach(b=>{if(b!==toggle&&b!==showRoute)b.disabled=true;});route.querySelectorAll('[draggable]').forEach(n=>n.draggable=false);}
   [...route.children].forEach((row,i)=>{if(i!==activeIndex)row.querySelectorAll('.route-depart-button,.route-complete-button').forEach(b=>b.disabled=true);if(!actionable(sortie.trades[i])){row.classList.add('v-skipped');row.querySelector('.v-stop-count').textContent='0회 · 제외';row.querySelectorAll('.route-depart-button,.route-complete-button').forEach(b=>b.disabled=true);}});
  });
- root.prepend(progress,tabs);saveVoyageFlow(false);
+ root.prepend(progress,tabs);saveVoyageFlow(false);window.__bdoRenderPlanStatus?.();
 }
